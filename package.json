@@ -1,0 +1,55 @@
+{
+  "name": "sitemap-regression",
+  "version": "0.0.1",
+  "description": "Regression testing for sitemaps",
+  "author": "Fabian Keller <contact@fabian-keller.de>",
+  "homepage": "https://github.com/FaKeller/sitemap-regression",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:FaKeller/sitemap-regression.git"
+  },
+  "scripts": {
+    "test": "jest --forceExit",
+    "build": "yarn run ts:build && yarn run tslint",
+    "start": "yarn run build && yarn run watch",
+    "serve": "node dist/main.js",
+    "serve:watch": "./node_modules/nodemon/bin/nodemon.js dist/main.js",
+    "ts:build": "tsc",
+    "ts:watch": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"green.bold,blue.bold\" \"yarn run ts:watch\" \"yarn run serve:watch\"",
+    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/assemblyline"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|tsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "20.0.2",
+    "@types/lodash": "4.14.68",
+    "@types/node": "8.0.7",
+    "concurrently": "3.5.0",
+    "jest": "20.0.4",
+    "nodemon": "1.11.0",
+    "pkg": "4.1.1",
+    "shelljs": "0.7.8",
+    "ts-jest": "20.0.6",
+    "tslint": "5.4.3",
+    "typescript": "2.4.1"
+  },
+  "dependencies": {
+    "command-line-args": "4.0.6",
+    "dotenv": "4.0.0",
+    "lodash": "4.17.4"
+  }
+
+
+}
