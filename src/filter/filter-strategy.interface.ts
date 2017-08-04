@@ -4,6 +4,6 @@ import {Observable} from 'rxjs/Observable';
 /**
  * Depending on what level of regression testing is aimed at, a strategy may filter certain entries of the sitemap.
  */
-export interface RegressionStrategy {
+export interface FilterStrategy {
     filter(entries: Observable<SitemapEntry[]>): Observable<SitemapEntry[]>;
 }

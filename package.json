@@ -33,9 +33,10 @@
     ]
   },
   "devDependencies": {
+    "@types/commander": "2.9.1",
     "@types/jest": "20.0.2",
     "@types/lodash": "4.14.68",
-    "@types/moment": "^2.13.0",
+    "@types/moment": "2.13.0",
     "@types/node": "8.0.7",
     "concurrently": "3.5.0",
     "jest": "20.0.4",
@@ -47,11 +48,11 @@
     "typescript": "2.4.1"
   },
   "dependencies": {
-    "command-line-args": "4.0.6",
+    "commander": "2.11.0",
     "dotenv": "4.0.0",
     "lodash": "4.17.4",
-    "moment": "^2.18.1",
-    "rxjs": "^5.4.2",
-    "sitemapper": "^2.1.13"
+    "moment": "2.18.1",
+    "rxjs": "5.4.2",
+    "sitemapper": "2.1.13"
   }
 }
