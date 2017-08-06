@@ -19,7 +19,7 @@
     "ts:watch": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"green.bold,blue.bold\" \"yarn run ts:watch\" \"yarn run serve:watch\"",
-    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/assemblyline"
+    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/sitemap-regression"
   },
   "jest": {
     "transform": {
