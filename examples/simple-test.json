@@ -1,0 +1,20 @@
+{
+  "testCase": "SimpleTest: demonstrate basic sitemap-regression functionality",
+  "loaders": [
+    {
+      "loader": "file",
+      "options": {
+        "filePath": "test-data.txt"
+      }
+    }
+  ],
+  "replacements": [
+    {
+      "replacement": "static",
+      "options": {
+        "replace": "http://localhost/",
+        "by": "http://localhost/"
+      }
+    }
+  ]
+}

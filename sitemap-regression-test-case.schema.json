@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SitemapRegressionTestCase",
+  "description": "A test case definition that is understood by https://github.com/FaKeller/sitemap-regression",
+  "type": "object",
+  "properties": {
+    "testCase": {
+      "type": "string"
+    },
+    "loaders": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/definitions/FileLoader" },
+          { "$ref": "#/definitions/SitemapLoader" }
+        ]
+      },
+      "minItems": 1
+    },
+    "replacements": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/definitions/StaticReplacement" }
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "required": ["testCase"],
+  "definitions": {
+    "FileLoader": {
+      "type": "object",
+      "properties": {
+        "loader": {
+          "enum": ["file"]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string"
+            }
+          },
+          "required": ["filePath"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["loader", "options"],
+      "additionalProperties": false
+    },
+    "SitemapLoader": {
+      "type": "object",
+      "properties": {
+        "loader": {
+          "enum": ["sitemap"]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "sitemap": {
+              "type": "string"
+            }
+          },
+          "required": ["sitemap"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["loader", "options"],
+      "additionalProperties": false
+    },
+    "StaticReplacement": {
+      "type": "object",
+      "properties": {
+        "replacement": {
+          "enum": ["static"]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "replace": {
+              "type": "string"
+            },
+            "by": {
+              "type": "string"
+            }
+          },
+          "required": ["replace", "by"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["replacement", "options"],
+      "additionalProperties": false
+    }
+  }
+}

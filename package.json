@@ -41,6 +41,7 @@
     "@types/request": "^2.0.0",
     "@types/strftime": "^0.9.2",
     "@types/winston": "^2.3.4",
+    "ajv-cli": "^2.1.0",
     "concurrently": "3.5.0",
     "jest": "20.0.4",
     "nodemon": "1.11.0",
@@ -51,6 +52,7 @@
     "typescript": "2.4.1"
   },
   "dependencies": {
+    "ajv": "^5.2.2",
     "commander": "2.11.0",
     "dotenv": "4.0.0",
     "lodash": "4.17.4",

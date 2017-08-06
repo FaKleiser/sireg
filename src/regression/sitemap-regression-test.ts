@@ -39,7 +39,9 @@ export class SitemapRegressionTest {
             .flatMap((entry: SitemapEntry): any => {
                 return new Observable(observer => {
                     winston.debug(`About to check ${entry.url}`);
-                    const req: Request = request(entry.url, (error: any, response: RequestResponse, body: any) => {
+                    const req: Request = request(entry.url, {
+                        timeout: 1500
+                    }, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
                             observer.error({'msg': `Could not get ${entry.url}`, err: error});
                         } else if (200 != response.statusCode) {
