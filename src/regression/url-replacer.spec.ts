@@ -11,7 +11,7 @@ describe('UrlReplacer', () => {
     test('Remains the same without any replacement rules', () => {
         expect(sut.replace('http://www.example.com')).toEqual('http://www.example.com');
     });
-    
+
     test('Can replace domain to localhost', () => {
         sut.withReplacement('http://www.example.com', 'http://localhost');
         expect(sut.replace('http://www.example.com')).toEqual('http://localhost');

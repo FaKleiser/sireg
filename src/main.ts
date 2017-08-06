@@ -33,7 +33,7 @@ sitemapRegression
         loader = new FileLoaderStrategy('test-data.txt');
 
         // create regression test
-        let regression = new SitemapRegressionTest(loader);
+        const regression: SitemapRegressionTest = new SitemapRegressionTest(loader);
 
         // setup filtering
         regression.withFilter(new AllEntriesStrategy());

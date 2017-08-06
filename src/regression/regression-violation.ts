@@ -1,5 +1,4 @@
 export class RegressionViolation {
-    
     private affectedUrl: string;
     private statusCode: number;
 

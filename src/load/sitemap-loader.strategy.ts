@@ -6,7 +6,7 @@ const Sitemapper: any = require('sitemapper');
 
 export class SitemapLoaderStrategy implements LoaderStrategy {
 
-    private _sitemapper = new Sitemapper();
+    private _sitemapper: any = new Sitemapper();
 
     constructor(private _sitemapUrl: string) {
     }

@@ -6,10 +6,8 @@ import {SitemapEntry} from '../model/sitemap-entry.model';
 import {UrlReplacer} from './url-replacer';
 import {RegressionViolation} from './regression-violation';
 import * as request from 'request';
-import {RequestResponse} from 'request';
+import {Request, RequestResponse} from 'request';
 import winston = require('winston');
-
-const http = require('http');
 
 export class SitemapRegressionTest {
 
@@ -41,7 +39,7 @@ export class SitemapRegressionTest {
             .flatMap((entry: SitemapEntry): any => {
                 return new Observable(observer => {
                     winston.debug(`About to check ${entry.url}`);
-                    let req = request(entry.url, (error: any, response: RequestResponse, body: any) => {
+                    const req: Request = request(entry.url, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
                             observer.error({'msg': `Could not get ${entry.url}`, err: error});
                         } else if (200 != response.statusCode) {

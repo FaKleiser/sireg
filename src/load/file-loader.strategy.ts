@@ -1,8 +1,7 @@
 import {LoaderStrategy} from './loader-strategy.interface';
 import {Observable} from 'rxjs/Observable';
 import {SitemapEntry} from '../model/sitemap-entry.model';
-
-const fs = require('fs');
+import * as fs from 'fs';
 
 export class FileLoaderStrategy implements LoaderStrategy {
 
@@ -13,10 +12,10 @@ export class FileLoaderStrategy implements LoaderStrategy {
     }
 
     public load(): Observable<SitemapEntry[]> {
-        let fileString = fs.readFileSync(this.fileName, 'utf-8');
+        const fileString: string = fs.readFileSync(this.fileName, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => {
-                const entries = fileContent
+                const entries: SitemapEntry[] = fileContent
                     .split('\n')
                     .map(url => url.replace('\n', '').replace('\r', ''))
                     .filter(url => url != undefined && url.length > 0)
