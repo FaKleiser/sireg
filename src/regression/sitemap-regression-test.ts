@@ -5,9 +5,9 @@ import {Observable} from 'rxjs/Observable';
 import {SitemapEntry} from '../model/sitemap-entry.model';
 import {UrlReplacer} from './url-replacer';
 import {RegressionViolation} from './regression-violation';
-import {ClientRequest, IncomingMessage} from 'http';
 import * as request from 'request';
 import {RequestResponse} from 'request';
+import winston = require('winston');
 
 const http = require('http');
 
@@ -32,14 +32,15 @@ export class SitemapRegressionTest {
     }
 
     public regressionTest(): Observable<RegressionViolation> {
-        let entries = this.loader.load();
-        entries = this.filter.filter(entries);
+        let entries: Observable<SitemapEntry[]> = this.loader.load();
+        entries = this.filter.filter(entries)
+            .do((all: SitemapEntry[]) => winston.info(`About to check ${all.length} URLs`));
 
         return entries.flatMap(entries => entries)
             .map(entry => new SitemapEntry(this.urlReplacer.replace(entry.url)))
             .flatMap((entry: SitemapEntry): any => {
                 return new Observable(observer => {
-                    console.log(`About to check ${entry.url}`);
+                    winston.debug(`About to check ${entry.url}`);
                     let req = request(entry.url, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
                             observer.error({'msg': `Could not get ${entry.url}`, err: error});
