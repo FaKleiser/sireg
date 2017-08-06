@@ -45,7 +45,7 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
     winston.info('Starting sitemap regression');
 
     // load config
-    const config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    const config: any = JSON.parse(fs.readFileSync(configFile, 'utf8'));
     // fixme: validate with json schema
 
     // setup loader
