@@ -4,12 +4,15 @@ import {CommanderStatic} from 'commander';
 import {SitemapRegressionTest} from './regression/sitemap-regression-test';
 import {FileLoaderStrategy} from './load/file-loader.strategy';
 import {LoaderStrategy} from './load/loader-strategy.interface';
-import {RegressionViolation} from './regression/regression-violation';
+import {RegressionResult} from './regression/result/regression-result';
 import {Subscription} from 'rxjs/Subscription';
 import strftime = require('strftime');
 import winston = require('winston');
 import * as fs from 'fs';
-
+import * as http from 'http';
+import * as https from 'https';
+import {TestCaseConfig} from './regression/config/test-case-config';
+import {RegressionResultSet} from './regression/result/regression-result-set';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -22,6 +25,9 @@ winston.add(winston.transports.Console, {
     timestamp: () => strftime('%F %T.%L')
 });
 
+
+http.globalAgent.maxSockets = 2;
+https.globalAgent.maxSockets = 2;
 
 const sitemapRegression: CommanderStatic = require('commander');
 
@@ -45,7 +51,7 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
     winston.info('Starting sitemap regression');
 
     // load config
-    const config: any = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    const config: TestCaseConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
     // fixme: validate with json schema
 
     // setup loader
@@ -65,7 +71,7 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
     }
 
     // create regression test
-    const regression: SitemapRegressionTest = new SitemapRegressionTest(loader);
+    const regression: SitemapRegressionTest = new SitemapRegressionTest([loader]);
 
     // setup filtering
     regression.withFilter(new AllEntriesStrategy());
@@ -83,13 +89,13 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
 
 
     // find violations
-    const violations: RegressionViolation[] = [];
+    let resultSet: RegressionResultSet;
     let subscription: Subscription;
     await new Promise((acc, err) => {
         subscription = regression
             .regressionTest()
             .subscribe(
-                (violation: RegressionViolation) => violations.push(violation),
+                (result: RegressionResultSet) => resultSet = result,
                 (err: any) => winston.error('An error occured:', err),
                 () => acc()
             );
@@ -97,11 +103,9 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
     subscription.unsubscribe();
 
     // print violations
-    if (violations.length > 0) {
-        winston.error(`Sitemap regression found the following errors (${violations.length}):`);
-        for (const violation of violations) {
-            winston.error(violation.toString());
-        }
+    if (resultSet && resultSet.hasViolations) {
+        winston.error(`Sitemap regression found the following errors (${Object.keys(resultSet.violations).length}):`);
+        resultSet.print();
         process.exit(1);
     } else {
         winston.info('Sitemap regression found no errors.');

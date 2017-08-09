@@ -4,20 +4,18 @@ import {AllEntriesStrategy} from '../filter/all-entries.strategy';
 import {Observable} from 'rxjs/Observable';
 import {SitemapEntry} from '../model/sitemap-entry.model';
 import {UrlReplacer} from './url-replacer';
-import {RegressionViolation} from './regression-violation';
 import * as request from 'request';
-import * as http from 'http';
 import {Request, RequestResponse} from 'request';
 import winston = require('winston');
+import {RegressionResultSet} from './result/regression-result-set';
+import {RegressionResult} from './result/regression-result';
 
 export class SitemapRegressionTest {
 
-    private loader: LoaderStrategy;
     private filter: FilterStrategy = new AllEntriesStrategy();
     private urlReplacer: UrlReplacer = new UrlReplacer();
 
-    constructor(loader: LoaderStrategy) {
-        this.loader = loader;
+    constructor(private loaders: LoaderStrategy[]) {
     }
 
     public withFilter(filter: FilterStrategy): this {
@@ -30,12 +28,12 @@ export class SitemapRegressionTest {
         return this;
     }
 
-    public regressionTest(): Observable<RegressionViolation> {
-        let entries: Observable<SitemapEntry[]> = this.loader.load();
-        entries = this.filter.filter(entries)
-            .do((all: SitemapEntry[]) => winston.info(`About to check ${all.length} URLs`));
+    public regressionTest(): Observable<RegressionResultSet> {
+        let entries: Observable<SitemapEntry[]> = Observable.from(this.loaders)
+            .flatMap((loader: LoaderStrategy) => loader.load());
 
-        var agent = new http.Agent({maxSockets: 5}); // 5 concurrent connections per origin
+        entries = this.filter.filter(entries)
+            .do((all: SitemapEntry[]) => winston.debug(`About to check ${all.length} URLs`));
 
         return entries.flatMap(entries => entries)
             .map(entry => new SitemapEntry(this.urlReplacer.replace(entry.url)))
@@ -44,17 +42,18 @@ export class SitemapRegressionTest {
                     winston.debug(`About to check ${entry.url}`);
                     const req: Request = request(entry.url, {
                         timeout: 1500,
-                        agent: agent
                     }, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
                             observer.error({'msg': `Could not get ${entry.url}`, err: error});
-                        } else if (200 != response.statusCode) {
-                            observer.next(new RegressionViolation(entry.url, response.statusCode));
+                        } else {
+                            observer.next(new RegressionResult(entry.url, response.statusCode));
                         }
                         observer.complete();
                     });
                     return () => req.abort();
                 });
-            }, 3);
+            }, 3)
+            .toArray()
+            .map((results: RegressionResult[]) => new RegressionResultSet().addResults(results));
     }
 }
