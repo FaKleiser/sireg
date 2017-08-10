@@ -1,19 +1,10 @@
 {
-  "testCase": "SimpleTest: demonstrate basic sitemap-regression functionality",
+  "testCase": "SimpleTest: demonstrate basic sireg functionality",
   "loaders": [
     {
       "loader": "file",
       "options": {
-        "filePath": "test-data.txt"
-      }
-    }
-  ],
-  "replacers": [
-    {
-      "replacer": "static",
-      "options": {
-        "replace": "http://localhost/",
-        "with": "http://localhost/"
+        "filePath": "examples/simple-test-urls.txt"
       }
     }
   ]

@@ -1,0 +1,20 @@
+{
+  "testCase": "Test case to be used in a CI pipeline on a staging version of your website",
+  "loaders": [
+    {
+      "loader": "sitemap",
+      "options": {
+        "sitemap": "http://<DOMAIN>/sitemap.xml"
+      }
+    }
+  ],
+  "replacers": [
+    {
+      "replacer": "static",
+      "options": {
+        "replace": "http://<DOMAIN>/",
+        "with": "http://localhost:8080/"
+      }
+    }
+  ]
+}

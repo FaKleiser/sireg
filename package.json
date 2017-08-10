@@ -1,13 +1,13 @@
 {
-  "name": "sitemap-regression",
-  "version": "0.0.1",
-  "description": "Regression testing for sitemaps",
+  "name": "sireg",
+  "version": "0.1.0",
+  "description": "Regression testing for websites",
   "author": "Fabian Keller <contact@fabian-keller.de>",
-  "homepage": "https://github.com/FaKeller/sitemap-regression",
+  "homepage": "https://github.com/FaKeller/sireg",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:FaKeller/sitemap-regression.git"
+    "url": "git@github.com:FaKeller/sireg.git"
   },
   "scripts": {
     "test": "jest --forceExit",
@@ -19,7 +19,7 @@
     "ts:watch": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"green.bold,blue.bold\" \"yarn run ts:watch\" \"yarn run serve:watch\"",
-    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/sitemap-regression"
+    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/sireg"
   },
   "jest": {
     "transform": {
