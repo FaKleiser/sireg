@@ -1,12 +1,13 @@
-# SitemapRegression
+# sireg - regression testing for websites
 
 [![Travis](https://img.shields.io/travis/FaKeller/sitemap-regression.svg)](https://travis-ci.org/FaKeller/sitemap-regression)
 
-Because your sitemap deserves a regression test as well.
+Because your website deserves a regression test as well.
 
-This tool helps you regression test your website based on your sitemap.
+This tool helps you regression test your website.
 Never deploy a change to your website that breaks parts of it.
-The tool reads all URLs from a sitemap and regression tests whether the URLs defined exist on another target (e.g., a staging version of your website).
+The tool performs HTTP requests to a given set of URLs and regression tests whether the status code is 200.
+The tool supports rewriting the loaded URLs so that you can point the tool to a staging server in your build pipeline. 
 
 **Features:**
 
@@ -23,17 +24,15 @@ The tool reads all URLs from a sitemap and regression tests whether the URLs def
 
 ## Usage
 
-Either download a [released binary](/releases) or install the tool via npm with `npm install --save sitemap-regression` or `yarn add sitemap-regression`.
-
-Then, use it as follows:
+Download a [released binary](/releases) and then use it as follows:
 
 ```bash
-./sitemap-regression ./path/to/test-case.json
+sireg my-test-case.json
 ```
 
 You may find example test case definitions in the [/examples directory](/examples).
 
-SitemapRegression provides a [JSON schema](http://json-schema.org/) file to help you write valid test cases: [sitemap-regression-test-case.schema.json](/sitemap-regression-test-case.schema.json).
+sireg provides a [JSON schema](http://json-schema.org/) file to help you write valid test cases: [sireg-test-case.schema.json](/sireg-test-case.schema.json).
 In case you are using IntelliJ, make sure to [setup IDE support for JSON schema](https://www.jetbrains.com/help/idea/json-schema.html).
 
 ## Contributing

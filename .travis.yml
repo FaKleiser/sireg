@@ -13,8 +13,8 @@ deploy:
   api_key:
     secure: HJWvKmGYIdtu+eWj00p53dlp7VVnMsYlBe71vsEiQPZmPahJjwMj1pkRY0i6gLooZTZl9zcp+r/M7v8unYd0cuNo3q4YLD52sPKqIRaebpRDA3gqusUhoC4tL0zG6i+HiG3jSj+juiz8y006DoDbYydOCKf/RoIJSxVYLW/6rB5P8vMpPDeIgH/nxTLGcpxWfQ/UFCoV5fWw8oYrajPxeezqXZPB6EJOkZcZ0mAB5BbG4WueSvkHlLJT0byzjiOotvd3FdsnP+eLc41Dz4luuQaw9/fJ3twxOb2wsHBkAzhWFvGDut3F0n5u2T0GK224OGBCWz4xZ16Xad2DvXYWGOO0xojPhhqW+q0VeMZtoyeebePwA2Oxpe/us4undtXNQuGWtYYcnh7lY5VypeLiXLakdLAg5g9zZBQFNdZWb4F/Jiwz8ByI00ErYNTBcmmYTvldWSpZbBQQrtI9XAbzIBrujHNYHhPbAoSShhCgaIB3DRDhr01zmoHWKSwV4KuAXHphkfA++qksAUmBKWipTNfk+XLm+5hyXxWwCkv2sD5EbRy93pDr7nqJtdJi6f+5O3X6YVxeJ9Mk/8JOZLM0eoeciUIGCSjbehi+1icExn2uxGFsdIHaiHjjz9sloOOsv6T+bGEYJiEPxiua+k3auFpHDfnJlrZOrXpBh0A2otI=
   file_glob: true
-  file: dist/bin/sitemap*
+  file: dist/bin/sireg*
   skip_cleanup: true
   on:
-    repo: FaKeller/sitemap-regression
+    repo: FaKeller/sireg
     tags: true

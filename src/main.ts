@@ -44,7 +44,7 @@ sitemapRegression
 sitemapRegression.parse(process.argv);
 
 async function sitemapRegressionExec(configFile: string): Promise<void> {
-    winston.info('Starting sitemap regression');
+    winston.info('Starting sireg');
 
     // load config
     const config: TestCaseConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
@@ -66,11 +66,11 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
 
     // print violations
     if (resultSet && resultSet.hasViolations) {
-        winston.error(`Sitemap regression found the following errors (${Object.keys(resultSet.violations).length}):`);
+        winston.error(`sireg found the following errors (${Object.keys(resultSet.violations).length}):`);
         resultSet.print();
         process.exit(1);
     } else {
-        winston.info('Sitemap regression found no errors.');
+        winston.info('sireg found no errors.');
         process.exit(0);
     }
 }
