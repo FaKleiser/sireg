@@ -25,15 +25,17 @@ winston.add(winston.transports.Console, {
 http.globalAgent.maxSockets = 2;
 https.globalAgent.maxSockets = 2;
 
-const sitemapRegression: CommanderStatic = require('commander');
+const sireg: CommanderStatic = require('commander');
 
 // == define CLI commands
-sitemapRegression
-    .version('0.1.0')
-    .arguments('<config>')
+sireg
+    .version('0.1.0');
+
+sireg.command('test <config>')
+    .description('Execute the given test case')
     .action((configFile: string) => {
         try {
-            sitemapRegressionExec(configFile);
+            siregExec(configFile);
         } catch (e) {
             winston.error(`Critical error occucured. Exiting application. Error was:\n ${e.stack}`);
             process.exit(1);
@@ -41,9 +43,12 @@ sitemapRegression
     });
 
 
-sitemapRegression.parse(process.argv);
+if (!process.argv.slice(2).length) {
+    sireg.outputHelp();
+}
+sireg.parse(process.argv);
 
-async function sitemapRegressionExec(configFile: string): Promise<void> {
+async function siregExec(configFile: string): Promise<void> {
     winston.info('Starting sireg');
 
     // load config

@@ -27,7 +27,7 @@ The tool supports rewriting the loaded URLs so that you can point the tool to a 
 Download a [released binary](/releases) and then use it as follows:
 
 ```bash
-sireg my-test-case.json
+sireg test my-test-case.json
 ```
 
 You may find example test case definitions in the [/examples directory](/examples).
