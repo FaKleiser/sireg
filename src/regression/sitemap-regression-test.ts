@@ -2,18 +2,18 @@ import {LoaderStrategy} from '../load/loader-strategy.interface';
 import {FilterStrategy} from '../filter/filter-strategy.interface';
 import {Observable} from 'rxjs/Observable';
 import {SiteUrl} from '../model/site-url.model';
-import {UrlReplacer} from './url-replacer';
 import * as request from 'request';
 import {Request, RequestResponse} from 'request';
 import {RegressionResultSet} from './result/regression-result-set';
 import {RegressionResult} from './result/regression-result';
+import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
 import winston = require('winston');
 
 export class SitemapRegressionTest {
 
     private _loaders: LoaderStrategy[] = [];
     private _filters: FilterStrategy[] = [];
-    private urlReplacer: UrlReplacer = new UrlReplacer();
+    private _replacers: UrlReplacerStrategy[] = [];
 
     constructor() {
     }
@@ -28,8 +28,8 @@ export class SitemapRegressionTest {
         return this;
     }
 
-    public withReplacement(replace: string, by: string): this {
-        this.urlReplacer.withReplacement(replace, by);
+    public addReplacer(replacer: UrlReplacerStrategy): this {
+        this._replacers.push(replacer);
         return this;
     }
 
@@ -48,28 +48,31 @@ export class SitemapRegressionTest {
         }
         entries = entries.do((all: SiteUrl[]) => winston.info(`About to check ${all.length} filtered URLs`));
 
-        // 3. apply replacements
-        // todo: refactor
+        // 3. turn the site url array into a stream of individual site urls.
+        let single: Observable<SiteUrl> = entries.flatMap(entries => entries);
+
+        // 4. apply replacements
+        for (const replacer of this._replacers) {
+            single = single.map((url: SiteUrl) => replacer.replace(url));
+        }
 
         // 4. regression
-        return entries.flatMap(entries => entries)
-            .map(entry => new SiteUrl(this.urlReplacer.replace(entry.url)))
-            .flatMap((entry: SiteUrl): any => {
-                return new Observable(observer => {
-                    winston.debug(`About to check ${entry.url}`);
-                    const req: Request = request(entry.url, {
-                        timeout: 1500,
-                    }, (error: any, response: RequestResponse, body: any) => {
-                        if (error) {
-                            observer.error({'msg': `Could not get ${entry.url}`, err: error});
-                        } else {
-                            observer.next(new RegressionResult(entry.url, response.statusCode));
-                        }
-                        observer.complete();
-                    });
-                    return () => req.abort();
+        return single.flatMap((entry: SiteUrl): any => {
+            return new Observable(observer => {
+                winston.debug(`About to check ${entry.url}`);
+                const req: Request = request(entry.url, {
+                    timeout: 1500,
+                }, (error: any, response: RequestResponse, body: any) => {
+                    if (error) {
+                        observer.error({'msg': `Could not get ${entry.url}`, err: error});
+                    } else {
+                        observer.next(new RegressionResult(entry.url, response.statusCode));
+                    }
+                    observer.complete();
                 });
-            }, 3)
+                return () => req.abort();
+            });
+        }, 3)
             .toArray()
             .map((results: RegressionResult[]) => new RegressionResultSet().addResults(results));
     }

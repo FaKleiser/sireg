@@ -6,11 +6,13 @@ import {AllEntriesStrategy} from '../filter/all-entries.strategy';
 import Symbols from '../inversify.symbols';
 import * as winston from 'winston';
 import {InvalidTestCase} from './config/invalid-test-case';
+import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
 
 @injectable()
 export class SitemapRegressionTestFactory {
 
-    constructor(@inject(Symbols.LoaderStrategyFactory) private loaderFactory: (loader: string) => (options: any) => LoaderStrategy) {
+    constructor(@inject(Symbols.LoaderStrategyFactory) private loaderFactory: (loader: string) => (options: any) => LoaderStrategy,
+                @inject(Symbols.UrlReplacerStrategyFactory) private replacerFactory: (replacer: string) => (options: any) => UrlReplacerStrategy) {
     }
 
     public factory(config: TestCaseConfig): SitemapRegressionTest {
@@ -35,15 +37,16 @@ export class SitemapRegressionTestFactory {
         test.addFilter(new AllEntriesStrategy());
 
         // define replacements
-        for (const replacementCfg of config.replacements || []) {
-            switch (replacementCfg.replacement) {
-                case 'static':
-                    test.withReplacement(replacementCfg.options.replace, replacementCfg.options.by);
-                    break;
-                default:
-                    throw new Error(`Unsupported replacement: ${replacementCfg.replacement}`);
+        for (const replacerCfg of config.replacers || []) {
+            try {
+                const factory: (options: any) => UrlReplacerStrategy = this.replacerFactory(replacerCfg.replacer);
+                test.addReplacer(factory(replacerCfg.options));
+            } catch (e) {
+                winston.error(e);
+                throw new InvalidTestCase(config, `An error occured while trying to setup replacer ${replacerCfg.replacer} with config ${JSON.stringify(replacerCfg.options)}.`);
             }
         }
+
         return test;
     }
 
