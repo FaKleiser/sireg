@@ -1,6 +1,6 @@
 # sireg - regression testing for websites
 
-[![Travis](https://img.shields.io/travis/FaKeller/sitemap-regression.svg)](https://travis-ci.org/FaKeller/sitemap-regression)
+[![Travis](https://img.shields.io/travis/FaKeller/sireg.svg)](https://travis-ci.org/FaKeller/sireg)
 
 Because your website deserves a regression test as well.
 
