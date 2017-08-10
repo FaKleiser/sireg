@@ -1,9 +1,11 @@
-import {SitemapEntry} from '../model/sitemap-entry.model';
 import {Observable} from 'rxjs/Observable';
+import {SiteUrl} from '../model/site-url.model';
 
 /**
  * Loads a bunch of sitemap entries.
  */
 export interface LoaderStrategy {
-    load(): Observable<SitemapEntry[]>;
+    setOptions(options: any): this;
+
+    load(): Observable<SiteUrl[]>;
 }

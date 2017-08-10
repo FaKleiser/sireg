@@ -1,9 +1,8 @@
-import {SitemapEntry} from '../model/sitemap-entry.model';
-import {Observable} from 'rxjs/Observable';
+import {SiteUrl} from '../model/site-url.model';
 
 /**
  * Depending on what level of regression testing is aimed at, a strategy may filter certain entries of the sitemap.
  */
 export interface FilterStrategy {
-    filter(entries: Observable<SitemapEntry[]>): Observable<SitemapEntry[]>;
+    filter(entries: SiteUrl[]): SiteUrl[];
 }

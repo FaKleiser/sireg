@@ -8,12 +8,12 @@
       }
     }
   ],
-  "replacements": [
+  "replacers": [
     {
-      "replacement": "static",
+      "replacer": "static",
       "options": {
         "replace": "http://localhost/",
-        "by": "http://localhost/"
+        "with": "http://localhost/"
       }
     }
   ]

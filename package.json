@@ -30,6 +30,9 @@
       "ts",
       "tsx",
       "js"
+    ],
+    "setupFiles": [
+      "./dist/jest-setup.js"
     ]
   },
   "devDependencies": {
@@ -55,8 +58,10 @@
     "ajv": "^5.2.2",
     "commander": "2.11.0",
     "dotenv": "4.0.0",
+    "inversify": "^4.3.0",
     "lodash": "4.17.4",
     "moment": "2.18.1",
+    "reflect-metadata": "^0.1.10",
     "request": "^2.81.0",
     "rxjs": "5.4.2",
     "sitemapper": "2.1.13",

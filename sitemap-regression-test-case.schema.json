@@ -17,11 +17,11 @@
       },
       "minItems": 1
     },
-    "replacements": {
+    "replacers": {
       "type": "array",
       "items": {
         "oneOf": [
-          { "$ref": "#/definitions/StaticReplacement" }
+          { "$ref": "#/definitions/StaticReplacer" }
         ]
       },
       "minItems": 1
@@ -70,10 +70,10 @@
       "required": ["loader", "options"],
       "additionalProperties": false
     },
-    "StaticReplacement": {
+    "StaticReplacer": {
       "type": "object",
       "properties": {
-        "replacement": {
+        "replacer": {
           "enum": ["static"]
         },
         "options": {
@@ -82,15 +82,15 @@
             "replace": {
               "type": "string"
             },
-            "by": {
+            "with": {
               "type": "string"
             }
           },
-          "required": ["replace", "by"],
+          "required": ["replace", "with"],
           "additionalProperties": false
         }
       },
-      "required": ["replacement", "options"],
+      "required": ["replacer", "options"],
       "additionalProperties": false
     }
   }

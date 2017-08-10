@@ -1,24 +1,35 @@
 import {LoaderStrategy} from './loader-strategy.interface';
-import {SitemapEntry} from '../model/sitemap-entry.model';
+import {SiteUrl} from '../model/site-url.model';
 import {Observable} from 'rxjs/Rx';
+import {inject, injectable} from 'inversify';
+import Symbols from '../inversify.symbols';
+import * as winston from 'winston';
 
-const Sitemapper: any = require('sitemapper');
+export interface SitemapLoaderOptions {
+    sitemap: string;
+}
 
+@injectable()
 export class SitemapLoaderStrategy implements LoaderStrategy {
 
-    private _sitemapper: any = new Sitemapper();
+    private _options: SitemapLoaderOptions;
 
-    constructor(private _sitemapUrl: string) {
+    constructor(@inject(Symbols.Sitemapper) private sitemapper: any) {
     }
 
-    load(): Observable<SitemapEntry[]> {
-        return Observable.fromPromise(this._sitemapper.fetch(this._sitemapUrl))
+    setOptions(options: any): this {
+        this._options = options;
+        return this;
+    }
+
+    load(): Observable<SiteUrl[]> {
+        return Observable.fromPromise(this.sitemapper.fetch(this._options.sitemap))
             .map((sitemap: any) => {
-                const entries: SitemapEntry[] = [];
+                const entries: SiteUrl[] = [];
                 for (const site of sitemap.sites) {
-                    entries.push(new SitemapEntry(site));
+                    entries.push(new SiteUrl(site));
                 }
-                console.log(`Loaded ${entries.length} entries from sitemap ${this._sitemapUrl}`);
+                winston.info(`Loaded ${entries.length} entries from sitemap ${this._options.sitemap}`);
                 return entries;
             });
     }
