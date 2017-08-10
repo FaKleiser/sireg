@@ -1,18 +1,14 @@
-import {SitemapLoaderStrategy} from './load/sitemap-loader.strategy';
-import {AllEntriesStrategy} from './filter/all-entries.strategy';
+import {container} from './inversify.config';
 import {CommanderStatic} from 'commander';
-import {SitemapRegressionTest} from './regression/sitemap-regression-test';
-import {FileLoaderStrategy} from './load/file-loader.strategy';
-import {LoaderStrategy} from './load/loader-strategy.interface';
-import {RegressionResult} from './regression/result/regression-result';
 import {Subscription} from 'rxjs/Subscription';
-import strftime = require('strftime');
-import winston = require('winston');
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 import {TestCaseConfig} from './regression/config/test-case-config';
 import {RegressionResultSet} from './regression/result/regression-result-set';
+import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
+import strftime = require('strftime');
+import winston = require('winston');
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -52,47 +48,13 @@ async function sitemapRegressionExec(configFile: string): Promise<void> {
 
     // load config
     const config: TestCaseConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-    // fixme: validate with json schema
-
-    // setup loader
-    // fixme: support multiple loaders
-    let loader: LoaderStrategy;
-    for (const loaderCfg of config.loaders) {
-        switch (loaderCfg.loader) {
-            case 'file':
-                loader = new FileLoaderStrategy(loaderCfg.options.filePath);
-                break;
-            case 'sitemap':
-                loader = new SitemapLoaderStrategy(loaderCfg.options.sitemap);
-                break;
-            default:
-                throw new Error(`Unsupported loader: ${loaderCfg.loader}`);
-        }
-    }
-
-    // create regression test
-    const regression: SitemapRegressionTest = new SitemapRegressionTest([loader]);
-
-    // setup filtering
-    regression.withFilter(new AllEntriesStrategy());
-
-    // define replacements
-    for (const replacementCfg of config.replacements || []) {
-        switch (replacementCfg.replacement) {
-            case 'static':
-                regression.withReplacement(replacementCfg.options.replace, replacementCfg.options.by);
-                break;
-            default:
-                throw new Error(`Unsupported replacement: ${replacementCfg.replacement}`);
-        }
-    }
-
+    const testFactory: SitemapRegressionTestFactory = container.get(SitemapRegressionTestFactory);
 
     // find violations
     let resultSet: RegressionResultSet;
     let subscription: Subscription;
     await new Promise((acc, err) => {
-        subscription = regression
+        subscription = testFactory.factory(config)
             .regressionTest()
             .subscribe(
                 (result: RegressionResultSet) => resultSet = result,

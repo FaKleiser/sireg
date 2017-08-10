@@ -2,17 +2,25 @@ import {LoaderStrategy} from './loader-strategy.interface';
 import {Observable} from 'rxjs/Observable';
 import {SitemapEntry} from '../model/sitemap-entry.model';
 import * as fs from 'fs';
+import {injectable, interfaces} from 'inversify';
+import Factory = interfaces.Factory;
 
+export interface FileLoaderOptions {
+    filePath: string;
+}
+
+@injectable()
 export class FileLoaderStrategy implements LoaderStrategy {
 
-    private fileName: string;
+    private _options: FileLoaderOptions;
 
-    constructor(fileName: string) {
-        this.fileName = fileName;
+    setOptions(options: any): this {
+        this._options = options;
+        return this;
     }
 
     public load(): Observable<SitemapEntry[]> {
-        const fileString: string = fs.readFileSync(this.fileName, 'utf-8');
+        const fileString: string = fs.readFileSync(this._options.filePath, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => {
                 const entries: SitemapEntry[] = fileContent
