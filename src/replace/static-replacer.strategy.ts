@@ -1,11 +1,13 @@
 import {UrlReplacerStrategy} from './url-replacer-strategy.interface';
 import {SiteUrl} from '../model/site-url.model';
+import {injectable} from 'inversify';
 
 export interface StaticReplacerStrategyOptions {
     'replace': string;
     'with': string;
 }
 
+@injectable()
 export class StaticReplacerStrategy implements UrlReplacerStrategy {
 
     private options: StaticReplacerStrategyOptions;

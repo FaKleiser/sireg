@@ -6,6 +6,7 @@ import {Container, interfaces} from 'inversify';
 import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
 import Symbols from './inversify.symbols';
 import {UrlReplacerStrategy} from './replace/url-replacer-strategy.interface';
+import {StaticReplacerStrategy} from './replace/static-replacer.strategy';
 
 const container: Container = new Container();
 
@@ -14,10 +15,8 @@ const container: Container = new Container();
 container.bind<SitemapRegressionTestFactory>(SitemapRegressionTestFactory).to(SitemapRegressionTestFactory);
 
 // == LOADER
-
 container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(FileLoaderStrategy).whenTargetNamed('file');
 container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(SitemapLoaderStrategy).whenTargetNamed('sitemap');
-
 // used to resolve the actual loader strategies by name
 container.bind<interfaces.Factory<LoaderStrategy>>(Symbols.LoaderStrategyFactory).toFactory<LoaderStrategy>((context) => {
     return (loaderName: string) => (options: any) => {
@@ -29,7 +28,7 @@ container.bind<interfaces.Factory<LoaderStrategy>>(Symbols.LoaderStrategyFactory
 
 
 // == REPLACER
-
+container.bind<UrlReplacerStrategy>(Symbols.UrlReplacerStrategy).to(StaticReplacerStrategy).whenTargetNamed('static');
 // used to resolve the actual loader strategies by name
 container.bind<interfaces.Factory<UrlReplacerStrategy>>(Symbols.UrlReplacerStrategyFactory).toFactory<UrlReplacerStrategy>((context) => {
     return (replacerName: string) => (options: any) => {

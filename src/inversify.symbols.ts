@@ -1,4 +1,5 @@
-const Symbols: {[type: string]: any} = {
+/* tslint:disable:typedef */
+const Symbols = {
     LoaderStrategyFactory: Symbol('Factory<LoaderStrategy>'),
     LoaderStrategy: Symbol('LoaderStrategy'),
 

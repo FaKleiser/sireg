@@ -4,6 +4,8 @@ import {TestCaseConfig} from './config/test-case-config';
 import {InvalidTestCase} from './config/invalid-test-case';
 import {container} from '../inversify.config';
 import {SitemapRegressionTest} from './sitemap-regression-test';
+import {StaticReplacerStrategy} from '../replace/static-replacer.strategy';
+import {FileLoaderStrategy} from '../load/file-loader.strategy';
 import Mock = jest.Mock;
 
 describe('SitemapRegressionTestFactory', () => {
@@ -29,6 +31,7 @@ describe('SitemapRegressionTestFactory', () => {
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}]
         });
         expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t.loaders[0]).toBeInstanceOf(FileLoaderStrategy);
         expect(t.loaders.length).toBe(1);
     });
 
@@ -52,6 +55,26 @@ describe('SitemapRegressionTestFactory', () => {
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
                 {'loader': 'unknown', 'options': {'filePath': 'somePath'}}
             ]
+        })).toThrow(InvalidTestCase);
+    });
+
+
+    test('Can factory test with a replacer', () => {
+        t = sut.factory({
+            testCase: 'IntegrationTest',
+            loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
+            replacers: [{'replacer': 'static', options: {replace: 'foo', 'with': 'bar'}}]
+        });
+        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t.replacers[0]).toBeInstanceOf(StaticReplacerStrategy);
+        expect(t.replacers.length).toBe(1);
+    });
+
+    test('An unknown url replacer causes the factory to fail', () => {
+        expect(() => sut.factory({
+            testCase: 'IntegrationTest',
+            loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
+            replacers: [{'replacer': 'unknown', options: {}}]
         })).toThrow(InvalidTestCase);
     });
 });

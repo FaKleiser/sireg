@@ -85,4 +85,8 @@ export class SitemapRegressionTest {
     get filters(): FilterStrategy[] {
         return this._filters;
     }
+
+    get replacers(): UrlReplacerStrategy[] {
+        return this._replacers;
+    }
 }
