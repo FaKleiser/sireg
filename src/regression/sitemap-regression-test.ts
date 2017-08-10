@@ -12,20 +12,20 @@ import winston = require('winston');
 
 export class SitemapRegressionTest {
 
-    private loaders: LoaderStrategy[] = [];
-    private filters: FilterStrategy[] = [];
+    private _loaders: LoaderStrategy[] = [];
+    private _filters: FilterStrategy[] = [];
     private urlReplacer: UrlReplacer = new UrlReplacer();
 
     constructor() {
     }
 
     public addLoader(loader: LoaderStrategy): this {
-        this.loaders.push(loader);
+        this._loaders.push(loader);
         return this;
     }
 
     public addFilter(filter: FilterStrategy): this {
-        this.filters.push(filter);
+        this._filters.push(filter);
         return this;
     }
 
@@ -36,7 +36,7 @@ export class SitemapRegressionTest {
 
     public regressionTest(): Observable<RegressionResultSet> {
         // 1. load
-        let entries: Observable<SitemapEntry[]> = Observable.from(this.loaders)
+        let entries: Observable<SitemapEntry[]> = Observable.from(this._loaders)
             // load all
             .flatMap((loader: LoaderStrategy) => loader.load())
             // combine all found SiteUrls to a single array
@@ -44,7 +44,7 @@ export class SitemapRegressionTest {
             .do((all: SitemapEntry[]) => winston.info(`Loaded ${all.length} URLs`));
 
         // 2. filter
-        for (const filter of this.filters) {
+        for (const filter of this._filters) {
             entries = entries.map((all: SitemapEntry[]) => filter.filter(all));
         }
         entries = entries.do((all: SitemapEntry[]) => winston.info(`About to check ${all.length} filtered URLs`));
@@ -73,5 +73,14 @@ export class SitemapRegressionTest {
             }, 3)
             .toArray()
             .map((results: RegressionResult[]) => new RegressionResultSet().addResults(results));
+    }
+
+
+    get loaders(): LoaderStrategy[] {
+        return this._loaders;
+    }
+
+    get filters(): FilterStrategy[] {
+        return this._filters;
     }
 }

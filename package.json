@@ -30,6 +30,9 @@
       "ts",
       "tsx",
       "js"
+    ],
+    "setupFiles": [
+      "./dist/jest-setup.js"
     ]
   },
   "devDependencies": {

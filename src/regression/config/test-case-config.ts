@@ -3,8 +3,10 @@ export interface TestCaseConfig {
     testCase: string;
     /** The loaders to load URLs from */
     loaders: { 'loader': string, 'options': any }[];
+    /** The filter configuration */
+    filters?: { 'filter': string, 'options': any }[];
     /** The replacements to perform on the url before issuing the HTTP request */
-    replacements: { 'replacement': string, 'options': any }[];
+    replacements?: { 'replacement': string, 'options': any }[];
     /** The reporters used to report the regression test results */
-    reporters: { 'reporter': string, 'options': any }[];
+    reporters?: { 'reporter': string, 'options': any }[];
 }
