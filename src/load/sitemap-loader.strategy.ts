@@ -1,5 +1,5 @@
 import {LoaderStrategy} from './loader-strategy.interface';
-import {SitemapEntry} from '../model/sitemap-entry.model';
+import {SiteUrl} from '../model/site-url.model';
 import {Observable} from 'rxjs/Rx';
 import {inject, injectable} from 'inversify';
 import Symbols from '../inversify.symbols';
@@ -22,12 +22,12 @@ export class SitemapLoaderStrategy implements LoaderStrategy {
         return this;
     }
 
-    load(): Observable<SitemapEntry[]> {
+    load(): Observable<SiteUrl[]> {
         return Observable.fromPromise(this.sitemapper.fetch(this._options.sitemap))
             .map((sitemap: any) => {
-                const entries: SitemapEntry[] = [];
+                const entries: SiteUrl[] = [];
                 for (const site of sitemap.sites) {
-                    entries.push(new SitemapEntry(site));
+                    entries.push(new SiteUrl(site));
                 }
                 winston.info(`Loaded ${entries.length} entries from sitemap ${this._options.sitemap}`);
                 return entries;

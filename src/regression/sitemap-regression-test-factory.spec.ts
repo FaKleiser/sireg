@@ -10,6 +10,7 @@ describe('SitemapRegressionTestFactory', () => {
 
     let loaderFactoryMock: Mock<LoaderStrategyResolver>;
     let sut: SitemapRegressionTestFactory;
+    let t: SitemapRegressionTest;
 
     beforeEach(() => {
         loaderFactoryMock = jest.fn();
@@ -23,16 +24,16 @@ describe('SitemapRegressionTestFactory', () => {
     });
 
     test('Can factory test with single loader', () => {
-        let test = sut.factory({
+        t = sut.factory({
             testCase: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}]
         });
-        expect(test).toBeInstanceOf(SitemapRegressionTest);
-        expect(test.loaders.length).toBe(1);
+        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t.loaders.length).toBe(1);
     });
 
     test('Can factory test with multiple loaders', () => {
-        let test = sut.factory({
+        t = sut.factory({
             testCase: 'IntegrationTest',
             loaders: [
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
@@ -40,8 +41,8 @@ describe('SitemapRegressionTestFactory', () => {
                 {'loader': 'file', 'options': {'filePath': 'somePath'}}
             ]
         });
-        expect(test).toBeInstanceOf(SitemapRegressionTest);
-        expect(test.loaders.length).toBe(3);
+        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t.loaders.length).toBe(3);
     });
 
     test('An unknown loader cause the factory to fail', () => {

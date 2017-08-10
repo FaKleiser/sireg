@@ -1,8 +1,7 @@
 import {LoaderStrategy} from '../load/loader-strategy.interface';
 import {FilterStrategy} from '../filter/filter-strategy.interface';
-import {AllEntriesStrategy} from '../filter/all-entries.strategy';
 import {Observable} from 'rxjs/Observable';
-import {SitemapEntry} from '../model/sitemap-entry.model';
+import {SiteUrl} from '../model/site-url.model';
 import {UrlReplacer} from './url-replacer';
 import * as request from 'request';
 import {Request, RequestResponse} from 'request';
@@ -36,26 +35,26 @@ export class SitemapRegressionTest {
 
     public regressionTest(): Observable<RegressionResultSet> {
         // 1. load
-        let entries: Observable<SitemapEntry[]> = Observable.from(this._loaders)
-            // load all
+        let entries: Observable<SiteUrl[]> = Observable.from(this._loaders)
+        // load all
             .flatMap((loader: LoaderStrategy) => loader.load())
             // combine all found SiteUrls to a single array
-            .reduce((acc: SitemapEntry[], cur: SitemapEntry[]) => [].concat(acc, cur), [])
-            .do((all: SitemapEntry[]) => winston.info(`Loaded ${all.length} URLs`));
+            .reduce((acc: SiteUrl[], cur: SiteUrl[]) => [].concat(acc, cur), [])
+            .do((all: SiteUrl[]) => winston.info(`Loaded ${all.length} URLs`));
 
         // 2. filter
         for (const filter of this._filters) {
-            entries = entries.map((all: SitemapEntry[]) => filter.filter(all));
+            entries = entries.map((all: SiteUrl[]) => filter.filter(all));
         }
-        entries = entries.do((all: SitemapEntry[]) => winston.info(`About to check ${all.length} filtered URLs`));
+        entries = entries.do((all: SiteUrl[]) => winston.info(`About to check ${all.length} filtered URLs`));
 
         // 3. apply replacements
         // todo: refactor
 
         // 4. regression
         return entries.flatMap(entries => entries)
-            .map(entry => new SitemapEntry(this.urlReplacer.replace(entry.url)))
-            .flatMap((entry: SitemapEntry): any => {
+            .map(entry => new SiteUrl(this.urlReplacer.replace(entry.url)))
+            .flatMap((entry: SiteUrl): any => {
                 return new Observable(observer => {
                     winston.debug(`About to check ${entry.url}`);
                     const req: Request = request(entry.url, {
