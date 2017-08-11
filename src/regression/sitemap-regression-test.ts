@@ -18,7 +18,8 @@ export class SitemapRegressionTest {
     private _replacers: UrlReplacerStrategy[] = [];
     private _reporters: ReporterStrategy[] = [];
 
-    private readonly NUM_CONCURRENT_REQUESTS: number = 3;
+    private readonly DEFAULT_CONCURRENT_REQUESTS: number = 3;
+    private readonly DEFAULT_REQUEST_TIMEOUT: number = 1500;
 
     constructor(private config: TestCaseConfig) {
     }
@@ -73,7 +74,7 @@ export class SitemapRegressionTest {
                 return new Observable(observer => {
                     winston.debug(`About to check ${siteUrl.url}`);
                     const req: Request = request(siteUrl.url, {
-                        timeout: 1500,
+                        timeout: this.config.settings.requestTimeout,
                     }, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
                             observer.next(RegressionResult.httpError(siteUrl, error));
@@ -84,7 +85,7 @@ export class SitemapRegressionTest {
                     });
                     return () => req.abort();
                 });
-            }, this.NUM_CONCURRENT_REQUESTS)
+            }, this.config.settings.concurrentRequests)
             // collect individual regression results
             .reduce<RegressionResult, RegressionResultSet>((set: RegressionResultSet, res: RegressionResult): RegressionResultSet => {
                 return set.addResult(res);
