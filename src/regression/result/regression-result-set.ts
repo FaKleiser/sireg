@@ -3,8 +3,9 @@ import {RegressionResult} from './regression-result';
 
 export class RegressionResultSet {
 
-    private _violations: { [url: string]: number } = {};
-    private _passed: { [url: string]: number } = {};
+    private _violations: Map<string, RegressionResult> = new Map();
+    private _passed: Map<string, RegressionResult> = new Map();
+    private _errors: Map<string, RegressionResult> = new Map();
 
     public addResults(results: RegressionResult[]): this {
         results.forEach(this.addResult, this);
@@ -12,30 +13,35 @@ export class RegressionResultSet {
     }
 
     public addResult(result: RegressionResult): this {
-        if (200 == result.statusCode) {
-            this._passed[result.affectedUrl] = result.statusCode;
+        if (result.hasError) {
+            this._errors.set(result.affectedUrl.url, result);
         } else {
-            this._violations[result.affectedUrl] = result.statusCode;
+            if (200 == result.statusCode) {
+                this._passed.set(result.affectedUrl.url, result);
+            } else {
+                this._violations.set(result.affectedUrl.url, result);
+            }
         }
         return this;
     }
 
-    public get hasViolations(): boolean {
-        return Object.keys(this._violations).length > 0;
+    get hasViolations(): boolean {
+        return this._violations.size > 0;
     }
 
-    get violations(): { [p: string]: number } {
-        return this._violations;
+    get violations(): RegressionResult[] {
+        return Array.from(this._violations.values());
     }
 
-    get passed(): { [p: string]: number } {
-        return this._passed;
+    get passed(): RegressionResult[] {
+        return Array.from(this._passed.values());
     }
 
-    public print(): void {
-        for (const url in this._violations) {
-            if (!this._violations.hasOwnProperty(url)) continue;
-            winston.info(`[${this._violations[url]}] ${url}`);
-        }
+    get hasErrors(): boolean {
+        return this._errors.size > 0;
+    }
+
+    get errors(): RegressionResult[] {
+        return Array.from(this._errors.values());
     }
 }

@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Added
+- Added `Reporter`s that are capable of reporting the result of a regression test case.
+
 
 ## v0.1.0 - 2017-08-10
 

@@ -7,16 +7,19 @@ import Symbols from '../inversify.symbols';
 import * as winston from 'winston';
 import {InvalidTestCase} from './config/invalid-test-case';
 import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
+import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
+import {ConsoleReporter} from '../reporter/console-reporter.strategy';
 
 @injectable()
 export class SitemapRegressionTestFactory {
 
     constructor(@inject(Symbols.LoaderStrategyFactory) private loaderFactory: (loader: string) => (options: any) => LoaderStrategy,
-                @inject(Symbols.UrlReplacerStrategyFactory) private replacerFactory: (replacer: string) => (options: any) => UrlReplacerStrategy) {
+                @inject(Symbols.UrlReplacerStrategyFactory) private replacerFactory: (replacer: string) => (options: any) => UrlReplacerStrategy,
+                @inject(Symbols.ReporterStrategyFactory) private reporterFactory: (reporter: string) => (options: any) => ReporterStrategy) {
     }
 
     public factory(config: TestCaseConfig): SitemapRegressionTest {
-        const test: SitemapRegressionTest = new SitemapRegressionTest();
+        const test: SitemapRegressionTest = new SitemapRegressionTest(config);
         winston.info(`Configuring test case: ${config.testCase}`);
 
         // setup loaders
@@ -44,6 +47,20 @@ export class SitemapRegressionTestFactory {
             } catch (e) {
                 winston.error(e);
                 throw new InvalidTestCase(config, `An error occured while trying to setup replacer ${replacerCfg.replacer} with config ${JSON.stringify(replacerCfg.options)}.`);
+            }
+        }
+
+        // define reporters
+        if (!config.reporters || config.reporters.length === 0) {
+            config.reporters = [{reporter: 'console'}];
+        }
+        for (const reporterCfg of config.reporters || []) {
+            try {
+                const factory: (options: any) => ReporterStrategy = this.reporterFactory(reporterCfg.reporter);
+                test.addReporter(factory(reporterCfg.options));
+            } catch (e) {
+                winston.error(e);
+                throw new InvalidTestCase(config, `An error occured while trying to setup reporter ${reporterCfg.reporter} with config ${JSON.stringify(reporterCfg.options)}.`);
             }
         }
 

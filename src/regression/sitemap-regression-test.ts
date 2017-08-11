@@ -7,6 +7,8 @@ import {Request, RequestResponse} from 'request';
 import {RegressionResultSet} from './result/regression-result-set';
 import {RegressionResult} from './result/regression-result';
 import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
+import {TestCaseConfig} from './config/test-case-config';
+import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
 import winston = require('winston');
 
 export class SitemapRegressionTest {
@@ -14,8 +16,11 @@ export class SitemapRegressionTest {
     private _loaders: LoaderStrategy[] = [];
     private _filters: FilterStrategy[] = [];
     private _replacers: UrlReplacerStrategy[] = [];
+    private _reporters: ReporterStrategy[] = [];
 
-    constructor() {
+    private readonly NUM_CONCURRENT_REQUESTS: number = 3;
+
+    constructor(private config: TestCaseConfig) {
     }
 
     public addLoader(loader: LoaderStrategy): this {
@@ -30,6 +35,11 @@ export class SitemapRegressionTest {
 
     public addReplacer(replacer: UrlReplacerStrategy): this {
         this._replacers.push(replacer);
+        return this;
+    }
+
+    public addReporter(reporter: ReporterStrategy): this {
+        this._reporters.push(reporter);
         return this;
     }
 
@@ -57,24 +67,31 @@ export class SitemapRegressionTest {
         }
 
         // 4. regression
-        return single.flatMap((entry: SiteUrl): any => {
-            return new Observable(observer => {
-                winston.debug(`About to check ${entry.url}`);
-                const req: Request = request(entry.url, {
-                    timeout: 1500,
-                }, (error: any, response: RequestResponse, body: any) => {
-                    if (error) {
-                        observer.error({'msg': `Could not get ${entry.url}`, err: error});
-                    } else {
-                        observer.next(new RegressionResult(entry.url, response.statusCode));
-                    }
-                    observer.complete();
+        return single
+        // request each url
+            .flatMap<SiteUrl, RegressionResult>((siteUrl: SiteUrl): any => {
+                return new Observable(observer => {
+                    winston.debug(`About to check ${siteUrl.url}`);
+                    const req: Request = request(siteUrl.url, {
+                        timeout: 1500,
+                    }, (error: any, response: RequestResponse, body: any) => {
+                        if (error) {
+                            observer.next(RegressionResult.httpError(siteUrl, error));
+                        } else {
+                            observer.next(RegressionResult.httpResponse(siteUrl, response));
+                        }
+                        observer.complete();
+                    });
+                    return () => req.abort();
                 });
-                return () => req.abort();
+            }, this.NUM_CONCURRENT_REQUESTS)
+            // collect individual regression results
+            .reduce<RegressionResult, RegressionResultSet>((set: RegressionResultSet, res: RegressionResult): RegressionResultSet => {
+                return set.addResult(res);
+            }, new RegressionResultSet())
+            .do((res: RegressionResultSet) => {
+                this._reporters.forEach((reporter: ReporterStrategy) => reporter.report(this.config, res));
             });
-        }, 3)
-            .toArray()
-            .map((results: RegressionResult[]) => new RegressionResultSet().addResults(results));
     }
 
 
@@ -88,5 +105,9 @@ export class SitemapRegressionTest {
 
     get replacers(): UrlReplacerStrategy[] {
         return this._replacers;
+    }
+
+    get reporters(): ReporterStrategy[] {
+        return this._reporters;
     }
 }
