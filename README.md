@@ -1,6 +1,7 @@
 # sireg - regression testing for websites
 
 [![Travis](https://img.shields.io/travis/FaKeller/sireg.svg)](https://travis-ci.org/FaKeller/sireg)
+[![David](https://img.shields.io/david/FaKeller/sireg.svg)](https://david-dm.org/FaKeller/sireg)
 
 Because your website deserves a regression test as well.
 
@@ -123,7 +124,7 @@ This is very useful in combination with the sitemap loader!
 
 The test case may define settings which affect the execution of the tool.
 
-```json
+```js
 {
   "testCase": "My test case name",
   "settings": {
