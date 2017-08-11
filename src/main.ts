@@ -7,6 +7,7 @@ import * as https from 'https';
 import {TestCaseConfig} from './regression/config/test-case-config';
 import {RegressionResultSet} from './regression/result/regression-result-set';
 import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
+import {defaultsDeep} from 'lodash';
 import strftime = require('strftime');
 import winston = require('winston');
 
@@ -20,10 +21,6 @@ winston.add(winston.transports.Console, {
     stderrLevels: [],
     timestamp: () => strftime('%F %T.%L')
 });
-
-
-http.globalAgent.maxSockets = 2;
-https.globalAgent.maxSockets = 2;
 
 const sireg: CommanderStatic = require('commander');
 
@@ -52,7 +49,14 @@ async function siregExec(configFile: string): Promise<void> {
     winston.info('Starting sireg');
 
     // load config
-    const config: TestCaseConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    const config: TestCaseConfig = defaultsDeep(JSON.parse(fs.readFileSync(configFile, 'utf8')), {
+        settings: {
+            concurrentRequests: 3,
+            requestTimeout: 3000
+        }
+    });
+    http.globalAgent.maxSockets = config.settings.concurrentRequests;
+    https.globalAgent.maxSockets = config.settings.concurrentRequests;
     const testFactory: SitemapRegressionTestFactory = container.get(SitemapRegressionTestFactory);
 
     // find violations
