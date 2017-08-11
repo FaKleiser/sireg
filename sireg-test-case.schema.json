@@ -25,6 +25,18 @@
         ]
       },
       "minItems": 1
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "concurrentRequests": {
+          "type": "number"
+        },
+        "requestTimeout": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,
