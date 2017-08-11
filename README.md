@@ -22,6 +22,23 @@ The tool supports rewriting the loaded URLs so that you can point the tool to a 
 > **Under construction:** The tool is currently being developed, so anything may change anytime. 
 > If you'd like to shape the future of the project, get in touch and open a PR :-)
 
+## Table of Contents
+
+- [Workflow](#workflow)
+- [Usage](#usage)
+- [Available Loaders](#available-loaders)
+- [Available Replacers](#available-replacers)
+- [sireg Test Case Settings](#sireg-test-case-settings)
+
+## Workflow
+
+The workflow of the tool is straight forward:
+
+:arrow_forward: Load URLS ➔ Filter URLs* ➔ Apply URL replacements ➔ Request URLs ➔ Report Results
+
+*yet to be implemented
+
+
 ## Usage
 
 Download a [released binary](/releases) and then use it as follows:
@@ -34,6 +51,100 @@ You may find example test case definitions in the [/examples directory](/example
 
 sireg provides a [JSON schema](http://json-schema.org/) file to help you write valid test cases: [sireg-test-case.schema.json](/sireg-test-case.schema.json).
 In case you are using IntelliJ, make sure to [setup IDE support for JSON schema](https://www.jetbrains.com/help/idea/json-schema.html).
+
+
+## Available Loaders
+
+Loaders are used to setup your test.
+They provide a collection of URLs to examine.
+
+### Sitemap Loader
+
+The sitemap loader loads all URLs from the supplied sitemap.
+
+```json
+{
+  "loaders": [
+    {
+      "loader": "sitemap",
+      "options": {
+        "sitemap": "http://<DOMAIN>/sitemap.xml"
+      }
+    }
+  ]
+}
+```
+
+### File Loader
+
+The file loader loads a set of URLs to analyze from a file.
+Each line of the given file must be a valid URL.
+
+```json
+{
+  "loaders": [
+    {
+      "loader": "file",
+      "options": {
+        "filePath": "path/to/urls.txt"
+      }
+    }
+  ]
+}
+```
+
+
+## Available Replacers
+
+Replacers are used to modify the URLs loaded by any loader.
+By modifying the URL you have the option to change the target of the HTTP requests being fired.
+
+### Static Replacer
+
+The static replacer replaces the exact string with the replacement provided.
+This is very useful in combination with the sitemap loader!
+
+```json
+{
+  "replacers": [
+    {
+      "replacer": "static",
+      "options": {
+        "replace": "http://<DOMAIN>/",
+        "with": "http://localhost:8080/"
+      }
+    }
+  ]
+}
+```
+
+
+## sireg Test Case Settings
+
+The test case may define settings which affect the execution of the tool.
+
+```json
+{
+  "testCase": "My test case name",
+  "settings": {
+    // sireg settings here
+  }
+}
+```  
+
+- `concurrentRequests` [Default: 3] - The number of concurrent HTTP requests to execute. Make sure your server can handle the load, there is no throttling.
+- `requestTimeout` [Default: 3000] - The number of milliseconds to wait for a server to send response headers (and start the response body) before aborting the request.
+
+
+## Roadmap
+
+sireg aims to support:
+
+- [ ] Filters to limit the set of URLs that are being tested (based on heuristics, for example).
+- [ ] Features to test redirect locations.
+- [ ] More reporters (CSV, for example)
+- [ ] Provide a crawler to make it easy to start testing existing sites.
+
 
 ## Contributing
 
