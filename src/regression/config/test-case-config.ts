@@ -2,7 +2,7 @@ export interface TestCaseConfig {
     /** The title of the test case */
     testCase: string;
     /** sireg settings */
-    settings: {
+    settings?: {
         /** maximum number of http requests to run in parallel */
         concurrentRequests: number;
         /** number of milliseconds to wait for a server to send response headers (and start the response body) before aborting the request */
