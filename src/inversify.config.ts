@@ -7,6 +7,8 @@ import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test
 import Symbols from './inversify.symbols';
 import {UrlReplacerStrategy} from './replace/url-replacer-strategy.interface';
 import {StaticReplacerStrategy} from './replace/static-replacer.strategy';
+import {ReporterStrategy} from './reporter/reporter-strategy.interface';
+import {ConsoleReporter} from './reporter/console-reporter.strategy';
 
 const container: Container = new Container();
 
@@ -37,6 +39,19 @@ container.bind<interfaces.Factory<UrlReplacerStrategy>>(Symbols.UrlReplacerStrat
         return loader;
     };
 });
+
+
+// == REPORTER
+container.bind<ReporterStrategy>(Symbols.ReporterStrategy).to(ConsoleReporter).whenTargetNamed('console');
+// used to resolve the actual loader strategies by name
+container.bind<interfaces.Factory<ReporterStrategy>>(Symbols.ReporterStrategyFactory).toFactory<ReporterStrategy>((context) => {
+    return (replacerName: string) => (options: any) => {
+        const loader: ReporterStrategy = context.container.getNamed<ReporterStrategy>(Symbols.ReporterStrategy, replacerName);
+        loader.setOptions(options);
+        return loader;
+    };
+});
+
 
 
 // == EXTERNAL

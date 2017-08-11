@@ -71,11 +71,8 @@ async function siregExec(configFile: string): Promise<void> {
 
     // print violations
     if (resultSet && (resultSet.hasViolations || resultSet.hasErrors)) {
-        winston.error(`sireg found the following errors (${Object.keys(resultSet.violations).length}):`);
-        resultSet.print();
         process.exit(1);
     } else {
-        winston.info('sireg found no errors.');
         process.exit(0);
     }
 }

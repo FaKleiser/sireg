@@ -6,6 +6,9 @@ const Symbols = {
     UrlReplacerStrategyFactory: Symbol('Factory<UrlReplacerStrategy>'),
     UrlReplacerStrategy: Symbol('UrlReplacerStrategy'),
 
+    ReporterStrategyFactory: Symbol('Factory<ReporterStrategy>'),
+    ReporterStrategy: Symbol('ReporterStrategy'),
+
     Sitemapper: Symbol('Sitemapper'),
 };
 

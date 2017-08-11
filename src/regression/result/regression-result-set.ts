@@ -44,13 +44,4 @@ export class RegressionResultSet {
     get errors(): RegressionResult[] {
         return Array.from(this._errors.values());
     }
-
-    public print(): void {
-        this._violations.forEach((result: RegressionResult) => {
-            winston.info(`[${result.statusCode}] ${result.affectedUrl.url}`);
-        });
-        this._errors.forEach((result: RegressionResult) => {
-            winston.error(`[${result.errorCode}] ${result.affectedUrl.url}: ${result.errorMessage}`);
-        });
-    }
 }

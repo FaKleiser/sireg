@@ -7,6 +7,8 @@ import {Request, RequestResponse} from 'request';
 import {RegressionResultSet} from './result/regression-result-set';
 import {RegressionResult} from './result/regression-result';
 import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
+import {TestCaseConfig} from './config/test-case-config';
+import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
 import winston = require('winston');
 
 export class SitemapRegressionTest {
@@ -14,10 +16,11 @@ export class SitemapRegressionTest {
     private _loaders: LoaderStrategy[] = [];
     private _filters: FilterStrategy[] = [];
     private _replacers: UrlReplacerStrategy[] = [];
+    private _reporters: ReporterStrategy[] = [];
 
     private readonly NUM_CONCURRENT_REQUESTS: number = 3;
 
-    constructor() {
+    constructor(private config: TestCaseConfig) {
     }
 
     public addLoader(loader: LoaderStrategy): this {
@@ -32,6 +35,11 @@ export class SitemapRegressionTest {
 
     public addReplacer(replacer: UrlReplacerStrategy): this {
         this._replacers.push(replacer);
+        return this;
+    }
+
+    public addReporter(reporter: ReporterStrategy): this {
+        this._reporters.push(reporter);
         return this;
     }
 
@@ -80,7 +88,10 @@ export class SitemapRegressionTest {
             // collect individual regression results
             .reduce<RegressionResult, RegressionResultSet>((set: RegressionResultSet, res: RegressionResult): RegressionResultSet => {
                 return set.addResult(res);
-            }, new RegressionResultSet());
+            }, new RegressionResultSet())
+            .do((res: RegressionResultSet) => {
+                this._reporters.forEach((reporter: ReporterStrategy) => reporter.report(this.config, res));
+            });
     }
 
 
@@ -94,5 +105,9 @@ export class SitemapRegressionTest {
 
     get replacers(): UrlReplacerStrategy[] {
         return this._replacers;
+    }
+
+    get reporters(): ReporterStrategy[] {
+        return this._reporters;
     }
 }
