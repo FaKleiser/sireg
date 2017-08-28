@@ -1,7 +1,9 @@
-import winston = require('winston');
 import {RegressionResult} from './regression-result';
+import {SiteUrl} from '../../model/site-url.model';
 
 export class RegressionResultSet {
+
+    private static DEFAULT_SUCCESS_STATUS_CODE: number = 200;
 
     private _violations: Map<string, RegressionResult> = new Map();
     private _passed: Map<string, RegressionResult> = new Map();
@@ -13,15 +15,31 @@ export class RegressionResultSet {
     }
 
     public addResult(result: RegressionResult): this {
+        const expected: SiteUrl = result.affectedUrl;
+
+        // HTTP errors lead to failures
         if (result.hasError) {
-            this._errors.set(result.affectedUrl.url, result);
-        } else {
-            if (200 == result.statusCode) {
-                this._passed.set(result.affectedUrl.url, result);
-            } else {
-                this._violations.set(result.affectedUrl.url, result);
+            this._errors.set(expected.url, result);
+            return this;
+        }
+
+        // check expected redirect location
+        if (expected.hasExpectedUrl) {
+            if (result.actualUrl != expected.expectedUrl) {
+                result.customErrorMessage = `Expected redirect target to be ${expected.expectedUrl}, but was redirected to ${result.actualUrl}`;
+                this._violations.set(expected.url, result);
+                return this;
             }
         }
+
+        // check expected status code
+        if ((expected.expectedStatusCode || RegressionResultSet.DEFAULT_SUCCESS_STATUS_CODE) != result.statusCode) {
+            this._violations.set(expected.url, result);
+            return this;
+        }
+
+        // no violations so far - looks good
+        this._passed.set(expected.url, result);
         return this;
     }
 

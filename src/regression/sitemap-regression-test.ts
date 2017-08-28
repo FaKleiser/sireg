@@ -10,6 +10,7 @@ import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
 import {TestCaseConfig} from './config/test-case-config';
 import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
 import winston = require('winston');
+import http = require('http');
 
 export class SitemapRegressionTest {
 
@@ -73,13 +74,21 @@ export class SitemapRegressionTest {
             .flatMap<SiteUrl, RegressionResult>((siteUrl: SiteUrl): any => {
                 return new Observable(observer => {
                     winston.debug(`About to check ${siteUrl.url}`);
+                    const redirectsStack: http.IncomingMessage[] = [];
                     const req: Request = request(siteUrl.url, {
                         timeout: this.config.settings.requestTimeout,
+                        followRedirect: (response: http.IncomingMessage): boolean => {
+                            if (response.statusCode >= 300 && response.statusCode <= 308) {
+                                redirectsStack.push(response);
+                                return true;
+                            }
+                            return false;
+                        }
                     }, (error: any, response: RequestResponse, body: any) => {
                         if (error) {
-                            observer.next(RegressionResult.httpError(siteUrl, error));
+                            observer.next(RegressionResult.httpError(siteUrl, error, redirectsStack));
                         } else {
-                            observer.next(RegressionResult.httpResponse(siteUrl, response));
+                            observer.next(RegressionResult.httpResponse(siteUrl, response, redirectsStack));
                         }
                         observer.complete();
                     });

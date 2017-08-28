@@ -7,6 +7,10 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Added
+- CSV loader
+- Beta: redirect tests by setting expected urls and status code  
+
 
 ## v0.1.1 - 2017-08-11
 

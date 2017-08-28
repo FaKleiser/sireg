@@ -9,6 +9,7 @@ import {UrlReplacerStrategy} from './replace/url-replacer-strategy.interface';
 import {StaticReplacerStrategy} from './replace/static-replacer.strategy';
 import {ReporterStrategy} from './reporter/reporter-strategy.interface';
 import {ConsoleReporter} from './reporter/console-reporter.strategy';
+import {CsvLoaderStrategy} from './load/csv-loader.strategy';
 
 const container: Container = new Container();
 
@@ -18,6 +19,7 @@ container.bind<SitemapRegressionTestFactory>(SitemapRegressionTestFactory).to(Si
 
 // == LOADER
 container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(FileLoaderStrategy).whenTargetNamed('file');
+container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(CsvLoaderStrategy).whenTargetNamed('csv');
 container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(SitemapLoaderStrategy).whenTargetNamed('sitemap');
 // used to resolve the actual loader strategies by name
 container.bind<interfaces.Factory<LoaderStrategy>>(Symbols.LoaderStrategyFactory).toFactory<LoaderStrategy>((context) => {

@@ -2,8 +2,9 @@ import {ReporterStrategy} from './reporter-strategy.interface';
 import {TestCaseConfig} from '../regression/config/test-case-config';
 import {RegressionResultSet} from '../regression/result/regression-result-set';
 import {injectable} from 'inversify';
-process.stdout.isTTY = true;
 import * as c from 'colors/safe';
+
+process.stdout.isTTY = true;
 
 @injectable()
 export class ConsoleReporter implements ReporterStrategy {
@@ -24,10 +25,10 @@ export class ConsoleReporter implements ReporterStrategy {
                 console.log(`  [${error.errorCode}] ${error.affectedUrl.url} with error message: ${error.errorMessage}`);
             }
             for (const violation of result.violations) {
-                console.log(`  [${violation.statusCode}] ${violation.affectedUrl.url}`);
+                console.log(`  [${violation.statusCode}] ${violation.affectedUrl.url}`
+                    + ((violation.hasError) ? ` with error message: ${violation.errorMessage}` : ''));
             }
         }
-
 
 
         // summary statistics
