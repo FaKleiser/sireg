@@ -141,9 +141,11 @@ The test case may define settings which affect the execution of the tool.
 
 sireg aims to support:
 
+- [x] Testing that a bunch of URLs end up at a good status code.
+- [x] Regression testing all URLs from an existing sitemap.
 - [ ] Filters to limit the set of URLs that are being tested (based on heuristics, for example).
 - [ ] Features to test redirect locations.
-- [ ] More reporters (CSV, for example)
+- [ ] More reporters (CSV, for example).
 - [ ] Provide a crawler to make it easy to start testing existing sites.
 
 
