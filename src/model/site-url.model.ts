@@ -3,10 +3,18 @@
  */
 export class SiteUrl {
 
-    constructor(private _url: string) {
+    constructor(private _url: string, private _expectedUrl: string = undefined, private _expectedStatusCode: number = undefined) {
     }
 
     get url(): string {
         return this._url;
+    }
+
+    public get expectedUrl(): string {
+        return this._expectedUrl;
+    }
+
+    public get expectedStatusCode(): number {
+        return this._expectedStatusCode;
     }
 }

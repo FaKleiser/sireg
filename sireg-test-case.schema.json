@@ -12,6 +12,7 @@
       "items": {
         "oneOf": [
           { "$ref": "#/definitions/FileLoader" },
+          { "$ref": "#/definitions/CsvLoader" },
           { "$ref": "#/definitions/SitemapLoader" }
         ]
       },
@@ -47,6 +48,26 @@
       "properties": {
         "loader": {
           "enum": ["file"]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "filePath": {
+              "type": "string"
+            }
+          },
+          "required": ["filePath"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["loader", "options"],
+      "additionalProperties": false
+    },
+    "CsvLoader": {
+      "type": "object",
+      "properties": {
+        "loader": {
+          "enum": ["csv"]
         },
         "options": {
           "type": "object",
