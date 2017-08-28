@@ -14,6 +14,10 @@ export class SiteUrl {
         return this._expectedUrl;
     }
 
+    public get hasExpectedUrl(): boolean {
+        return '' != this._expectedUrl;
+    }
+
     public get expectedStatusCode(): number {
         return this._expectedStatusCode;
     }

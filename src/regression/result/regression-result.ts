@@ -9,6 +9,7 @@ export class RegressionResult {
     private _httpResponse: RequestResponse;
     private _error: any;
     private _redirectsStack: http.IncomingMessage[];
+    private _customErrorMessage: string;
 
     private constructor(affectedUrl: SiteUrl, redirectsStack: http.IncomingMessage[] = []) {
         this._affectedUrl = affectedUrl;
@@ -36,15 +37,19 @@ export class RegressionResult {
     }
 
     /**
-     * Returns the URL that was actually requests after potentially following all redirects.
+     * Returns the URL that was actually requested after potentially following all redirects.
      */
-    get actualUrl(): SiteUrl {
+    get actualUrl(): string {
         const url: string = this._httpResponse.url || (this._httpResponse.request as any)['href'];
-        return new SiteUrl(url);
+        return url;
+    }
+
+    public set customErrorMessage(value: string) {
+        this._customErrorMessage = value;
     }
 
     get hasError(): boolean {
-        return undefined != this._error;
+        return undefined != this._error || undefined != this._customErrorMessage;
     }
 
     get errorCode(): string {
@@ -52,7 +57,7 @@ export class RegressionResult {
     }
 
     get errorMessage(): string {
-        return JSON.stringify(this._error);
+        return this._customErrorMessage || JSON.stringify(this._error);
     }
 
     get error(): any {

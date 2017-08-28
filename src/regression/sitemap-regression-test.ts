@@ -85,9 +85,6 @@ export class SitemapRegressionTest {
                             return false;
                         }
                     }, (error: any, response: RequestResponse, body: any) => {
-                        if (redirectsStack.length > 0) {
-                            winston.debug(`Redirect: ${siteUrl.url} to ${(response.request as any)['href']}`);
-                        }
                         if (error) {
                             observer.next(RegressionResult.httpError(siteUrl, error, redirectsStack));
                         } else {
