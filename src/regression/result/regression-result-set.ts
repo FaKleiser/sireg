@@ -23,12 +23,6 @@ export class RegressionResultSet {
             return this;
         }
 
-        // check expected status code
-        if ((expected.expectedStatusCode || RegressionResultSet.DEFAULT_SUCCESS_STATUS_CODE) != result.statusCode) {
-            this._violations.set(expected.url, result);
-            return this;
-        }
-
         // check expected redirect location
         if (expected.hasExpectedUrl) {
             if (result.actualUrl != expected.expectedUrl) {
@@ -36,6 +30,12 @@ export class RegressionResultSet {
                 this._violations.set(expected.url, result);
                 return this;
             }
+        }
+
+        // check expected status code
+        if ((expected.expectedStatusCode || RegressionResultSet.DEFAULT_SUCCESS_STATUS_CODE) != result.statusCode) {
+            this._violations.set(expected.url, result);
+            return this;
         }
 
         // no violations so far - looks good
