@@ -8,6 +8,11 @@ This file keeps track of all changes to this project. This project follows [sema
 ## [UNRELEASED]
 
 
+## v0.2.1 - 2017-09-13
+
+Maintenance Release - updating deployment pipeline.
+
+
 ## v0.2.0 - 2017-08-28
 
 ### Added

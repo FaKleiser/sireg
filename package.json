@@ -1,6 +1,6 @@
 {
   "name": "sireg",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "Regression testing for websites",
   "author": "Fabian Keller <contact@fabian-keller.de>",
   "homepage": "https://github.com/FaKeller/sireg",
