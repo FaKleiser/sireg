@@ -9,12 +9,19 @@ script:
 - yarn test
 - yarn run package
 deploy:
-  provider: releases
-  api_key:
-    secure: HJWvKmGYIdtu+eWj00p53dlp7VVnMsYlBe71vsEiQPZmPahJjwMj1pkRY0i6gLooZTZl9zcp+r/M7v8unYd0cuNo3q4YLD52sPKqIRaebpRDA3gqusUhoC4tL0zG6i+HiG3jSj+juiz8y006DoDbYydOCKf/RoIJSxVYLW/6rB5P8vMpPDeIgH/nxTLGcpxWfQ/UFCoV5fWw8oYrajPxeezqXZPB6EJOkZcZ0mAB5BbG4WueSvkHlLJT0byzjiOotvd3FdsnP+eLc41Dz4luuQaw9/fJ3twxOb2wsHBkAzhWFvGDut3F0n5u2T0GK224OGBCWz4xZ16Xad2DvXYWGOO0xojPhhqW+q0VeMZtoyeebePwA2Oxpe/us4undtXNQuGWtYYcnh7lY5VypeLiXLakdLAg5g9zZBQFNdZWb4F/Jiwz8ByI00ErYNTBcmmYTvldWSpZbBQQrtI9XAbzIBrujHNYHhPbAoSShhCgaIB3DRDhr01zmoHWKSwV4KuAXHphkfA++qksAUmBKWipTNfk+XLm+5hyXxWwCkv2sD5EbRy93pDr7nqJtdJi6f+5O3X6YVxeJ9Mk/8JOZLM0eoeciUIGCSjbehi+1icExn2uxGFsdIHaiHjjz9sloOOsv6T+bGEYJiEPxiua+k3auFpHDfnJlrZOrXpBh0A2otI=
-  file_glob: true
-  file: dist/bin/sireg*
-  skip_cleanup: true
-  on:
-    repo: FaKeller/sireg
-    tags: true
+  - provider: releases
+    api_key:
+      secure: HJWvKmGYIdtu+eWj00p53dlp7VVnMsYlBe71vsEiQPZmPahJjwMj1pkRY0i6gLooZTZl9zcp+r/M7v8unYd0cuNo3q4YLD52sPKqIRaebpRDA3gqusUhoC4tL0zG6i+HiG3jSj+juiz8y006DoDbYydOCKf/RoIJSxVYLW/6rB5P8vMpPDeIgH/nxTLGcpxWfQ/UFCoV5fWw8oYrajPxeezqXZPB6EJOkZcZ0mAB5BbG4WueSvkHlLJT0byzjiOotvd3FdsnP+eLc41Dz4luuQaw9/fJ3twxOb2wsHBkAzhWFvGDut3F0n5u2T0GK224OGBCWz4xZ16Xad2DvXYWGOO0xojPhhqW+q0VeMZtoyeebePwA2Oxpe/us4undtXNQuGWtYYcnh7lY5VypeLiXLakdLAg5g9zZBQFNdZWb4F/Jiwz8ByI00ErYNTBcmmYTvldWSpZbBQQrtI9XAbzIBrujHNYHhPbAoSShhCgaIB3DRDhr01zmoHWKSwV4KuAXHphkfA++qksAUmBKWipTNfk+XLm+5hyXxWwCkv2sD5EbRy93pDr7nqJtdJi6f+5O3X6YVxeJ9Mk/8JOZLM0eoeciUIGCSjbehi+1icExn2uxGFsdIHaiHjjz9sloOOsv6T+bGEYJiEPxiua+k3auFpHDfnJlrZOrXpBh0A2otI=
+    file_glob: true
+    file: dist/bin/sireg*
+    skip_cleanup: true
+    on:
+      repo: FaKeller/sireg
+      tags: true
+  - provider: npm
+    email: contact@fabian-keller.de
+    api_key:
+      secure: j6BbthKTsdTBqFYa+OnXEd22UdSfH7P+/FkUoTYrwbPOI+WAlPMOR55rKwYz3GRI0WzRDE0mWkOvWS428cflTc4tILvEx1U1bshTsw8JY0+FQymfCv5N/p0j0d0YF3JCHLUmIJwGAY0j9vtu3wwdl+vkOa3rIFaFkPSXceCTcHPGX3mIueSwIgVfEUNzU+7zQZvMCEgmSGNMYvM8h2t7v6jhlDtIFyWUr7VMZbYckp9I5kkmDx74jkAQZS6XKFaLAP5/Xukp9sAij/31hGTZLM9ihF56mdTuinvY8LNrv6J6yaElY8LOcK5VGyZJOG857yeOqLpM7G9sa0/VdNTge241ILMhn9odHsRiZgHiW+eCMuxje6ZI8QAiA+iVui1ovp93lkz0c87T86KLP/0Zf0tZUXlrySN+NERDoa7tlgRJwZP/qByuhjjOoib4X7GgbEC+UzGgHwEQhXfF0OS82ccOLE0bhe46kYxHs5FM6cvHVtJtevE+lnptl3wvAeAGv9J8+jigWIOOT8LN3E6kBuxTEHSJQHgPExKraSj1ddeasttWne1NCf/EXGERnvzdXZdynATZ0MsmqFQTXe0s+ZlM5Cm94cauv5+VMp9znCUWVQkXUDk4REdu5VtQ6Oke7WTVPpv+/GHkOpKgT9UZL2Fvo9aP11yMnsQt6NoetkU=
+    on:
+      repo: FaKeller/sireg
+      tags: true

@@ -1,9 +1,7 @@
-# sireg - regression testing for websites
+![sireg - regression testing for websites](/assets/sireg-repo-banner.png)
 
 [![Travis](https://img.shields.io/travis/FaKeller/sireg.svg)](https://travis-ci.org/FaKeller/sireg)
 [![David](https://img.shields.io/david/FaKeller/sireg.svg)](https://david-dm.org/FaKeller/sireg)
-
-Because your website deserves a regression test as well.
 
 This tool helps you regression test your website.
 Never deploy a change to your website that breaks parts of it.
@@ -35,7 +33,7 @@ The tool supports rewriting the loaded URLs so that you can point the tool to a 
 
 The workflow of the tool is straight forward:
 
-:arrow_forward: Load URLS ➔ Filter URLs* ➔ Apply URL replacements ➔ Request URLs ➔ Report Results
+:arrow_forward: Load URLS :arrow_forward: Filter URLs* :arrow_forward: Apply URL replacements :arrow_forward: Request URLs :arrow_forward: Report Results
 
 *yet to be implemented
 
