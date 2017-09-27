@@ -3,7 +3,7 @@ import {LoaderStrategy} from './load/loader-strategy.interface';
 import {FileLoaderStrategy} from './load/file-loader.strategy';
 import {SitemapLoaderStrategy} from './load/sitemap-loader.strategy';
 import {Container, interfaces} from 'inversify';
-import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
+import {TestSuiteFactory} from './regression/test-suite-factory';
 import Symbols from './inversify.symbols';
 import {UrlReplacerStrategy} from './replace/url-replacer-strategy.interface';
 import {StaticReplacerStrategy} from './replace/static-replacer.strategy';
@@ -15,7 +15,7 @@ const container: Container = new Container();
 
 // == REGRESSION
 
-container.bind<SitemapRegressionTestFactory>(SitemapRegressionTestFactory).to(SitemapRegressionTestFactory);
+container.bind<TestSuiteFactory>(TestSuiteFactory).to(TestSuiteFactory);
 
 // == LOADER
 container.bind<LoaderStrategy>(Symbols.LoaderStrategy).to(FileLoaderStrategy).whenTargetNamed('file');

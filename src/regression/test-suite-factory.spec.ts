@@ -1,22 +1,22 @@
-import {SitemapRegressionTestFactory} from './sitemap-regression-test-factory';
+import {TestSuiteFactory} from './test-suite-factory';
 import {LoaderStrategyResolver} from '../load/loader-strategy-resolver';
 import {TestCaseConfig} from './config/test-case-config';
 import {InvalidTestCase} from './config/invalid-test-case';
 import {container} from '../inversify.config';
-import {SitemapRegressionTest} from './sitemap-regression-test';
 import {StaticReplacerStrategy} from '../replace/static-replacer.strategy';
 import {FileLoaderStrategy} from '../load/file-loader.strategy';
+import {TestSuite} from './test-suite';
 import Mock = jest.Mock;
 
-describe('SitemapRegressionTestFactory', () => {
+describe('TestSuiteFactory', () => {
 
     let loaderFactoryMock: Mock<LoaderStrategyResolver>;
-    let sut: SitemapRegressionTestFactory;
-    let t: SitemapRegressionTest;
+    let sut: TestSuiteFactory;
+    let t: TestSuite;
 
     beforeEach(() => {
         loaderFactoryMock = jest.fn();
-        sut = container.get(SitemapRegressionTestFactory);
+        sut = container.get(TestSuiteFactory);
     });
 
     test('Factory fails if no loaders are defined', () => {
@@ -30,7 +30,7 @@ describe('SitemapRegressionTestFactory', () => {
             testCase: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}]
         });
-        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t).toBeInstanceOf(TestSuite);
         expect(t.loaders[0]).toBeInstanceOf(FileLoaderStrategy);
         expect(t.loaders.length).toBe(1);
     });
@@ -44,7 +44,7 @@ describe('SitemapRegressionTestFactory', () => {
                 {'loader': 'file', 'options': {'filePath': 'somePath'}}
             ]
         });
-        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t).toBeInstanceOf(TestSuite);
         expect(t.loaders.length).toBe(3);
     });
 
@@ -65,7 +65,7 @@ describe('SitemapRegressionTestFactory', () => {
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
             replacers: [{'replacer': 'static', options: {replace: 'foo', 'with': 'bar'}}]
         });
-        expect(t).toBeInstanceOf(SitemapRegressionTest);
+        expect(t).toBeInstanceOf(TestSuite);
         expect(t.replacers[0]).toBeInstanceOf(StaticReplacerStrategy);
         expect(t.replacers.length).toBe(1);
     });

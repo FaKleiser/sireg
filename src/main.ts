@@ -6,10 +6,11 @@ import * as http from 'http';
 import * as https from 'https';
 import {TestCaseConfig} from './regression/config/test-case-config';
 import {RegressionResultSet} from './regression/result/regression-result-set';
-import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
+import {TestSuiteFactory} from './regression/test-suite-factory';
 import {defaultsDeep} from 'lodash';
 import strftime = require('strftime');
 import winston = require('winston');
+import {SitemapRegressionTest} from './regression/sitemap-regression-test';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -57,14 +58,14 @@ async function siregExec(configFile: string): Promise<void> {
     });
     http.globalAgent.maxSockets = config.settings.concurrentRequests;
     https.globalAgent.maxSockets = config.settings.concurrentRequests;
-    const testFactory: SitemapRegressionTestFactory = container.get(SitemapRegressionTestFactory);
+    const testFactory: TestSuiteFactory = container.get(TestSuiteFactory);
 
     // find violations
     let resultSet: RegressionResultSet;
     let subscription: Subscription;
     await new Promise((acc, err) => {
-        subscription = testFactory.factory(config)
-            .regressionTest()
+        subscription = new SitemapRegressionTest()
+            .regressionTest(testFactory.factory(config))
             .subscribe(
                 (result: RegressionResultSet) => resultSet = result,
                 (err: any) => winston.error('An error occured:', err),

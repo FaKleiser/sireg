@@ -11,43 +11,13 @@ import {TestCaseConfig} from './config/test-case-config';
 import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
 import winston = require('winston');
 import http = require('http');
+import {TestSuite} from './test-suite';
 
 export class SitemapRegressionTest {
 
-    private _loaders: LoaderStrategy[] = [];
-    private _filters: FilterStrategy[] = [];
-    private _replacers: UrlReplacerStrategy[] = [];
-    private _reporters: ReporterStrategy[] = [];
-
-    private readonly DEFAULT_CONCURRENT_REQUESTS: number = 3;
-    private readonly DEFAULT_REQUEST_TIMEOUT: number = 1500;
-
-    constructor(private config: TestCaseConfig) {
-    }
-
-    public addLoader(loader: LoaderStrategy): this {
-        this._loaders.push(loader);
-        return this;
-    }
-
-    public addFilter(filter: FilterStrategy): this {
-        this._filters.push(filter);
-        return this;
-    }
-
-    public addReplacer(replacer: UrlReplacerStrategy): this {
-        this._replacers.push(replacer);
-        return this;
-    }
-
-    public addReporter(reporter: ReporterStrategy): this {
-        this._reporters.push(reporter);
-        return this;
-    }
-
-    public regressionTest(): Observable<RegressionResultSet> {
+    public regressionTest(suite: TestSuite): Observable<RegressionResultSet> {
         // 1. load
-        let entries: Observable<SiteUrl[]> = Observable.from(this._loaders)
+        let entries: Observable<SiteUrl[]> = Observable.from(suite.loaders)
         // load all
             .flatMap((loader: LoaderStrategy) => loader.load())
             // combine all found SiteUrls to a single array
@@ -55,7 +25,7 @@ export class SitemapRegressionTest {
             .do((all: SiteUrl[]) => winston.info(`Loaded ${all.length} URLs`));
 
         // 2. filter
-        for (const filter of this._filters) {
+        for (const filter of suite.filters) {
             entries = entries.map((all: SiteUrl[]) => filter.filter(all));
         }
         entries = entries.do((all: SiteUrl[]) => winston.info(`About to check ${all.length} filtered URLs`));
@@ -64,7 +34,7 @@ export class SitemapRegressionTest {
         let single: Observable<SiteUrl> = entries.flatMap(entries => entries);
 
         // 4. apply replacements
-        for (const replacer of this._replacers) {
+        for (const replacer of suite.replacers) {
             single = single.map((url: SiteUrl) => replacer.replace(url));
         }
 
@@ -76,7 +46,7 @@ export class SitemapRegressionTest {
                     winston.debug(`About to check ${siteUrl.url}`);
                     const redirectsStack: http.IncomingMessage[] = [];
                     const req: Request = request(siteUrl.url, {
-                        timeout: this.config.settings.requestTimeout,
+                        timeout: suite.config.settings.requestTimeout,
                         followRedirect: (response: http.IncomingMessage): boolean => {
                             if (response.statusCode >= 300 && response.statusCode <= 308) {
                                 redirectsStack.push(response);
@@ -94,30 +64,14 @@ export class SitemapRegressionTest {
                     });
                     return () => req.abort();
                 });
-            }, this.config.settings.concurrentRequests)
+            }, suite.config.settings.concurrentRequests)
             // collect individual regression results
             .reduce<RegressionResult, RegressionResultSet>((set: RegressionResultSet, res: RegressionResult): RegressionResultSet => {
                 return set.addResult(res);
             }, new RegressionResultSet())
             .do((res: RegressionResultSet) => {
-                this._reporters.forEach((reporter: ReporterStrategy) => reporter.report(this.config, res));
+                suite.reporters.forEach((reporter: ReporterStrategy) => reporter.report(suite.config, res));
             });
     }
 
-
-    get loaders(): LoaderStrategy[] {
-        return this._loaders;
-    }
-
-    get filters(): FilterStrategy[] {
-        return this._filters;
-    }
-
-    get replacers(): UrlReplacerStrategy[] {
-        return this._replacers;
-    }
-
-    get reporters(): ReporterStrategy[] {
-        return this._reporters;
-    }
 }

@@ -1,5 +1,4 @@
 import {TestCaseConfig} from './config/test-case-config';
-import {SitemapRegressionTest} from './sitemap-regression-test';
 import {inject, injectable} from 'inversify';
 import {LoaderStrategy} from '../load/loader-strategy.interface';
 import {AllEntriesStrategy} from '../filter/all-entries.strategy';
@@ -8,18 +7,18 @@ import * as winston from 'winston';
 import {InvalidTestCase} from './config/invalid-test-case';
 import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
 import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
-import {ConsoleReporter} from '../reporter/console-reporter.strategy';
+import {TestSuite} from './test-suite';
 
 @injectable()
-export class SitemapRegressionTestFactory {
+export class TestSuiteFactory {
 
     constructor(@inject(Symbols.LoaderStrategyFactory) private loaderFactory: (loader: string) => (options: any) => LoaderStrategy,
                 @inject(Symbols.UrlReplacerStrategyFactory) private replacerFactory: (replacer: string) => (options: any) => UrlReplacerStrategy,
                 @inject(Symbols.ReporterStrategyFactory) private reporterFactory: (reporter: string) => (options: any) => ReporterStrategy) {
     }
 
-    public factory(config: TestCaseConfig): SitemapRegressionTest {
-        const test: SitemapRegressionTest = new SitemapRegressionTest(config);
+    public factory(config: TestCaseConfig): TestSuite {
+        const test: TestSuite = new TestSuite(config);
         winston.info(`Configuring test case: ${config.testCase}`);
 
         // setup loaders
