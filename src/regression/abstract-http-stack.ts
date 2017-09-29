@@ -8,7 +8,7 @@ export abstract class AbstractHttpStack {
 
     constructor(builder: HttpResponseStackBuilder) {
         this._testCase = builder.testCase;
-        this._redirectsStack = [].concat(builder.redirectsStack);
+        this._redirectsStack = builder.redirectsStack || [];
     }
 
     get testCase(): TestCase {
@@ -20,6 +20,13 @@ export abstract class AbstractHttpStack {
      */
     get redirectsStack(): http.IncomingMessage[] {
         return this._redirectsStack;
+    }
+
+    /**
+     * The first incoming HTTP message received by sireg for the requested URL.
+     */
+    get firstResponse(): http.IncomingMessage {
+        return this._redirectsStack[0] || undefined;
     }
 
     /**

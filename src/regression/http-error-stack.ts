@@ -9,4 +9,8 @@ export class HttpErrorStack extends AbstractHttpStack {
         super(builder);
         this._error = builder.error;
     }
+
+    get error(): any {
+        return this._error;
+    }
 }

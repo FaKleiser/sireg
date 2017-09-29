@@ -12,6 +12,12 @@ export class HttpResponseStack extends AbstractHttpStack {
         this._response = builder.response;
     }
 
+
+    get firstResponse(): http.IncomingMessage {
+        // if no redirects occured, the stack is empty and the response is returned instead
+        return super.firstResponse || this._response;
+    }
+
     get lastResponse(): http.IncomingMessage {
         return this._response;
     }

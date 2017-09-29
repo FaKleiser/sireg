@@ -9,7 +9,7 @@ import http = require('http');
 export class HttpResponseStackBuilder {
 
     private _testCase: TestCase;
-    private _redirectsStack: http.IncomingMessage[];
+    private _redirectsStack: http.IncomingMessage[] = [];
     private _response: RequestResponse;
     private _error: any;
 
@@ -33,6 +33,9 @@ export class HttpResponseStackBuilder {
     }
 
     public build(): AbstractHttpStack {
+        if (isEmpty(this._error) && isEmpty(this._response)) {
+            throw new Error('Cannot build HttpResponseStack as neither an error nor a response is set!');
+        }
         if (isEmpty(this._error)) {
             return new HttpResponseStack(this);
         } else {
