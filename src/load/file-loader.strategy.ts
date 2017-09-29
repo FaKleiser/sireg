@@ -2,7 +2,8 @@ import {LoaderStrategy} from './loader-strategy.interface';
 import {Observable} from 'rxjs/Observable';
 import * as fs from 'fs';
 import {injectable} from 'inversify';
-import {SiteUrl} from '../model/site-url.model';
+import {TestCase} from '../regression/test-case';
+import * as winston from 'winston';
 
 export interface FileLoaderOptions {
     filePath: string;
@@ -18,16 +19,17 @@ export class FileLoaderStrategy implements LoaderStrategy {
         return this;
     }
 
-    public load(): Observable<SiteUrl[]> {
+    public load(): Observable<TestCase[]> {
         const fileString: string = fs.readFileSync(this._options.filePath, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => {
-                const entries: SiteUrl[] = fileContent
+                const testCases: TestCase[] = fileContent
                     .split('\n')
                     .map(url => url.replace('\n', '').replace('\r', ''))
                     .filter(url => url != undefined && url.length > 0)
-                    .map(url => new SiteUrl(url));
-                return entries;
+                    .map(url => TestCase.target(url).assertOK());
+                winston.info(`Loaded ${testCases.length} test cases from file ${this._options.filePath}`);
+                return testCases;
             });
     }
 

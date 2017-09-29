@@ -1,6 +1,6 @@
 import {UrlReplacerStrategy} from './url-replacer-strategy.interface';
-import {SiteUrl} from '../model/site-url.model';
 import {injectable} from 'inversify';
+import {TestCase} from '../regression/test-case';
 
 export interface StaticReplacerStrategyOptions {
     'replace': string;
@@ -17,10 +17,10 @@ export class StaticReplacerStrategy implements UrlReplacerStrategy {
         return this;
     }
 
-    public replace(siteUrl: SiteUrl): SiteUrl {
+    public replace(testCase: TestCase): TestCase {
         if (!this.options) {
             throw new Error('No options provided for static replacer!');
         }
-        return new SiteUrl(siteUrl.url.replace(this.options.replace, this.options.with));
+        return testCase.target(testCase.targetUrl.replace(this.options.replace, this.options.with));
     }
 }
