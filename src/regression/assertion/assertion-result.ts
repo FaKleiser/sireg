@@ -1,18 +1,29 @@
-import {Assertion} from './assertion';
-
 export class AssertionResult {
 
-    private message: string;
-    private cause: Assertion;
-
-    private constructor() {
+    private constructor(private _passed: boolean, private _message?: string) {
     }
 
-    public static error(causedBy: Assertion): AssertionResult {
-
+    public static error(msg: string): AssertionResult {
+        return new AssertionResult(false, msg);
     }
 
-    public static ok(causedBy: Assertion): AssertionResult {
+    public static hasPassed(): AssertionResult {
+        return new AssertionResult(true);
+    }
 
+    get hasPassed(): boolean {
+        return this._passed;
+    }
+
+    get hasError(): boolean {
+        return !this.hasPassed;
+    }
+
+    get hasMessage(): boolean {
+        return !!this.message;
+    }
+
+    get message(): string {
+        return this._message;
     }
 }

@@ -2,7 +2,7 @@
  * Represents a test case that is executed and then validated.
  */
 import {Assertion} from './assertion/assertion';
-import {HttpResponseStack} from './http-response-stack';
+import {Assertions} from './assertion/assertions';
 
 export class TestCase {
 
@@ -34,17 +34,17 @@ export class TestCase {
     }
 
     public assertOK(): this {
-        // fixme: implement
+        this.assert(Assertions.assertOK());
         return this;
     }
 
     public assertRedirectStatusCode(statusCode: number): this {
-        // fixme: implement
+        this.assert(Assertions.assertRedirectStatusCode(statusCode));
         return this;
     }
 
-    public assertRedirectTarget(url: string): this {
-        // fixme: implement
+    public assertRedirectTarget(targetUrl: string): this {
+        this.assert(Assertions.assertRedirectTarget(targetUrl));
         return this;
     }
 
