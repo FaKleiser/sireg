@@ -7,7 +7,7 @@ import {Assertions} from './assertion/assertions';
 export class TestCase {
 
     private _targetUrl: string;
-    private _assertions: Assertion[];
+    private _assertions: Assertion[] = [];
 
     private constructor(url: string) {
         this.target(url);

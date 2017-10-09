@@ -18,6 +18,9 @@ export class TestSuite {
     private readonly DEFAULT_REQUEST_TIMEOUT: number = 1500;
 
     constructor(private _config: TestCaseConfig) {
+        if (!this._config) {
+            throw new Error('Cannot create test suite with no TestCaseConfig!');
+        }
     }
 
     public addLoader(loader: LoaderStrategy): this {
