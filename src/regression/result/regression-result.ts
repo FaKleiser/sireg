@@ -12,13 +12,13 @@ export class RegressionResult {
     }
 
     static errorneous(stack: HttpResponseStack): RegressionResult {
-        const result = new RegressionResult(stack);
+        const result: RegressionResult = new RegressionResult(stack);
         result._status = RegressionResultStatus.ERROR;
         return result;
     }
 
     static fromAssertionResults(stack: HttpResponseStack, assertionResults: AssertionResult[]): RegressionResult {
-        const result = new RegressionResult(stack);
+        const result: RegressionResult = new RegressionResult(stack);
         const allAssertionsPassed: boolean = assertionResults.reduce((passed, cur) => passed && cur.hasPassed, true);
         if (allAssertionsPassed) {
             result._status = RegressionResultStatus.SUCCESS;

@@ -47,7 +47,7 @@ export class CsvLoaderStrategy implements LoaderStrategy {
 
                 // convert to site urls
                 for (const row of parseResult.data || []) {
-                    const testCase = TestCase.target(row[CsvLoaderStrategy.HEADER_URL]).assertOK();
+                    const testCase: TestCase = TestCase.target(row[CsvLoaderStrategy.HEADER_URL]).assertOK();
                     if (row[CsvLoaderStrategy.HEADER_EXPECTED_URL]) {
                         testCase.assertRedirectTarget(row[CsvLoaderStrategy.HEADER_EXPECTED_URL]);
                     }

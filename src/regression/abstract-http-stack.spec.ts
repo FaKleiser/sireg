@@ -28,7 +28,7 @@ describe('AbstractHttpStack', () => {
         expect(sut.testCase).toBe(testCase);
         expect(sut.firstResponse).toBe(responseMock);
         expect(sut.lastResponse).toBe(responseMock);
-        expect(sut.redirectsStack).toEqual([])
+        expect(sut.redirectsStack).toEqual([]);
     });
 
     test('Can create from redirect stack', () => {
@@ -43,7 +43,7 @@ describe('AbstractHttpStack', () => {
         expect(sut.testCase).toBe(testCase);
         expect(sut.firstResponse).toBe(redirect1Mock);
         expect(sut.lastResponse).toBe(responseMock);
-        expect(sut.redirectsStack).toEqual([redirect1Mock, redirect2Mock])
+        expect(sut.redirectsStack).toEqual([redirect1Mock, redirect2Mock]);
     });
 
     test('Can create from HTTP error', () => {
@@ -54,5 +54,5 @@ describe('AbstractHttpStack', () => {
         expect(sut.redirectsStack).toEqual([]);
         expect(sut.firstResponse).toBeUndefined();
         expect(sut.lastResponse).toBeUndefined();
-    })
+    });
 });
