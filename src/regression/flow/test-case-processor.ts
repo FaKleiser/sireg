@@ -1,15 +1,14 @@
 import {Observable} from 'rxjs/Observable';
-import {TestCase} from '../test-case';
+import {TestCase} from '../suite/test-case';
 import {HttpResponseStack} from '../http-response-stack';
 import * as winston from 'winston';
 import {HttpResponseStackBuilder} from '../http-response-stack-builder';
-import {TestSuite} from '../test-suite';
+import {TestSuite} from '../suite/test-suite';
 import * as request from 'request';
 import {Request, RequestResponse} from 'request';
 import {AbstractHttpStack} from '../abstract-http-stack';
 import {get} from 'lodash';
 import http = require('http');
-import {TestCaseConfig} from '../config/test-case-config';
 
 /**
  * Executes the HTTP requests of a test case and returns a {@link HttpResponseStack} for evaluation.

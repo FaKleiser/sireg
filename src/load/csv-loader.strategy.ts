@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import {injectable} from 'inversify';
 import {parse} from 'papaparse';
 import * as winston from 'winston';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 export interface CsvLoaderOptions {
     filePath: string;

@@ -1,5 +1,5 @@
 import {StaticReplacerStrategy} from './static-replacer.strategy';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 describe('StaticReplacerStrategy', () => {
 

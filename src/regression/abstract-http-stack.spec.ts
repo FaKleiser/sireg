@@ -1,4 +1,4 @@
-import {TestCase} from '../regression/test-case';
+import {TestCase} from './suite/test-case';
 import {HttpResponseStackBuilder} from './http-response-stack-builder';
 import {mock} from 'ts-mockito';
 import {AbstractHttpStack} from './abstract-http-stack';

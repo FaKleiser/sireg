@@ -4,9 +4,9 @@ import {Subscription} from 'rxjs/Subscription';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import {TestCaseConfig} from './regression/config/test-case-config';
+import {TestSuiteConfig} from './regression/suite/config/test-suite-config';
 import {RegressionResultSet} from './regression/result/regression-result-set';
-import {TestSuiteFactory} from './regression/test-suite-factory';
+import {TestSuiteFactory} from './regression/suite/test-suite-factory';
 import {defaultsDeep} from 'lodash';
 import strftime = require('strftime');
 import winston = require('winston');
@@ -50,7 +50,7 @@ async function siregExec(configFile: string): Promise<void> {
     winston.info('Starting sireg');
 
     // load config
-    const config: TestCaseConfig = defaultsDeep(JSON.parse(fs.readFileSync(configFile, 'utf8')), {
+    const config: TestSuiteConfig = defaultsDeep(JSON.parse(fs.readFileSync(configFile, 'utf8')), {
         settings: {
             concurrentRequests: 3,
             requestTimeout: 3000

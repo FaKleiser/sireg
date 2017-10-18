@@ -1,5 +1,5 @@
 import {FilterStrategy} from './filter-strategy.interface';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 /**
  * A strategy to regression test all test cases loaded by the loaders.

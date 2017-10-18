@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 /**
  * Loads a bunch of sitemap entries.

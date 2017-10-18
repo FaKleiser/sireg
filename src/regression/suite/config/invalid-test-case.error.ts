@@ -1,8 +1,8 @@
-import {TestCaseConfig} from './test-case-config';
+import {TestSuiteConfig} from './test-suite-config';
 
 export class InvalidTestCaseError extends Error {
 
-    constructor(public testCase: TestCaseConfig, message: string) {
+    constructor(public testCase: TestSuiteConfig, message: string) {
         super(`Invalid test case '${testCase.testCase}': ${message}`);
     }
 

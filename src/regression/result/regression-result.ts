@@ -4,7 +4,7 @@ import {RegressionResultStatus} from './regression-result-status.enum';
 import * as _ from 'lodash';
 import {HttpErrorStack} from '../http-error-stack';
 import {AbstractHttpStack} from '../abstract-http-stack';
-import {TestCase} from '../test-case';
+import {TestCase} from '../suite/test-case';
 
 export class RegressionResult {
 

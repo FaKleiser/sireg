@@ -1,4 +1,4 @@
-import {TestCase} from './test-case';
+import {TestCase} from './suite/test-case';
 import {HttpResponseStackBuilder} from './http-response-stack-builder';
 import http = require('http');
 

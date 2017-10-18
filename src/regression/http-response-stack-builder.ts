@@ -1,4 +1,4 @@
-import {TestCase} from './test-case';
+import {TestCase} from './suite/test-case';
 import {RequestResponse} from 'request';
 import {HttpResponseStack} from './http-response-stack';
 import {isEmpty} from 'lodash';

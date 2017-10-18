@@ -3,7 +3,7 @@ import {LoaderStrategy} from './load/loader-strategy.interface';
 import {FileLoaderStrategy} from './load/file-loader.strategy';
 import {SitemapLoaderStrategy} from './load/sitemap-loader.strategy';
 import {Container, interfaces} from 'inversify';
-import {TestSuiteFactory} from './regression/test-suite-factory';
+import {TestSuiteFactory} from './regression/suite/test-suite-factory';
 import Symbols from './inversify.symbols';
 import {UrlReplacerStrategy} from './replace/url-replacer-strategy.interface';
 import {StaticReplacerStrategy} from './replace/static-replacer.strategy';

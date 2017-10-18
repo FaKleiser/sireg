@@ -1,6 +1,6 @@
 import {UrlReplacerStrategy} from './url-replacer-strategy.interface';
 import {injectable} from 'inversify';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 export interface StaticReplacerStrategyOptions {
     'replace': string;

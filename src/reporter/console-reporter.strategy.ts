@@ -1,5 +1,5 @@
 import {ReporterStrategy} from './reporter-strategy.interface';
-import {TestCaseConfig} from '../regression/config/test-case-config';
+import {TestSuiteConfig} from 'test-suite-config.ts';
 import {RegressionResultSet} from '../regression/result/regression-result-set';
 import {injectable} from 'inversify';
 import * as c from 'colors/safe';
@@ -14,7 +14,7 @@ export class ConsoleReporter implements ReporterStrategy {
         return this;
     }
 
-    async report(testCase: TestCaseConfig, result: RegressionResultSet): Promise<void> {
+    async report(testCase: TestSuiteConfig, result: RegressionResultSet): Promise<void> {
         console.log(Array(80).join('='));
         console.log(c.bold(`== ${testCase.testCase} ==`));
 

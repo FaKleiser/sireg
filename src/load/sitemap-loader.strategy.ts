@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Rx';
 import {inject, injectable} from 'inversify';
 import Symbols from '../inversify.symbols';
 import * as winston from 'winston';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 export interface SitemapLoaderOptions {
     sitemap: string;

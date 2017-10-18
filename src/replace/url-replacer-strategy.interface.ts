@@ -1,4 +1,4 @@
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 
 /**
  * Interface used to modify site urls to change URL targets during the regression testing.

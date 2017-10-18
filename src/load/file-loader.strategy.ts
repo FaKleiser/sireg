@@ -2,7 +2,7 @@ import {LoaderStrategy} from './loader-strategy.interface';
 import {Observable} from 'rxjs/Observable';
 import * as fs from 'fs';
 import {injectable} from 'inversify';
-import {TestCase} from '../regression/test-case';
+import {TestCase} from '../regression/suite/test-case';
 import * as winston from 'winston';
 
 export interface FileLoaderOptions {
