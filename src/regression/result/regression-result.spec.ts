@@ -1,7 +1,7 @@
 import {RegressionResult} from '../result/regression-result';
 import {RegressionResultStatus} from '../result/regression-result-status.enum';
-import {HttpErrorStack} from '../http-error-stack';
-import {HttpResponseStack} from '../http-response-stack';
+import {HttpErrorStack} from '../stack/http-error-stack';
+import {HttpResponseStack} from '../stack/http-response-stack';
 import {AssertionResult} from '../assertion/assertion-result';
 import Mock = jest.Mock;
 

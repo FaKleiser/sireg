@@ -1,9 +1,9 @@
-import {HttpResponseStack} from '../http-response-stack';
+import {HttpResponseStack} from '../stack/http-response-stack';
 import {AssertionResult} from '../assertion/assertion-result';
 import {RegressionResultStatus} from './regression-result-status.enum';
 import * as _ from 'lodash';
-import {HttpErrorStack} from '../http-error-stack';
-import {AbstractHttpStack} from '../abstract-http-stack';
+import {HttpErrorStack} from '../stack/http-error-stack';
+import {AbstractHttpStack} from '../stack/abstract-http-stack';
 import {TestCase} from '../suite/test-case';
 
 export class RegressionResult {

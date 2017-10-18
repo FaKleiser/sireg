@@ -1,9 +1,9 @@
 import Mock = jest.Mock;
 import {TestCaseEvaluator} from './test-case-evaluator';
-import {AbstractHttpStack} from '../abstract-http-stack';
+import {AbstractHttpStack} from '../stack/abstract-http-stack';
 import {TestCase} from '../suite/test-case';
 import {RegressionResult} from '../result/regression-result';
-import {HttpResponseStackBuilder} from '../http-response-stack-builder';
+import {HttpStackBuilder} from '../stack/http-stack-builder';
 import {RegressionResultStatus} from '../result/regression-result-status.enum';
 import {RequestResponse} from 'request';
 import {AssertionResult} from '../assertion/assertion-result';
@@ -15,14 +15,14 @@ describe('TestCaseEvaluator', () => {
     let stack: AbstractHttpStack;
     let testCase: TestCase;
     let result: RegressionResult;
-    let stackBuilder: HttpResponseStackBuilder;
+    let stackBuilder: HttpStackBuilder;
     let RequestResponseMock: Mock<RequestResponse>;
     let MockAssertion: Mock<Assertion>;
 
     beforeEach(() => {
         sut = new TestCaseEvaluator;
         testCase = TestCase.target('http://localhost/example');
-        stackBuilder = new HttpResponseStackBuilder(testCase);
+        stackBuilder = new HttpStackBuilder(testCase);
         RequestResponseMock = jest.fn<RequestResponse>(() => ({
             statusCode: jest.fn()
         }));

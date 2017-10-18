@@ -1,8 +1,8 @@
-import {HttpResponseStack} from '../http-response-stack';
+import {HttpResponseStack} from '../stack/http-response-stack';
 import {RegressionResult} from '../result/regression-result';
 import {AssertionResult} from '../assertion/assertion-result';
-import {HttpErrorStack} from '../http-error-stack';
-import {AbstractHttpStack} from '../abstract-http-stack';
+import {HttpErrorStack} from '../stack/http-error-stack';
+import {AbstractHttpStack} from '../stack/abstract-http-stack';
 
 export class TestCaseEvaluator {
 

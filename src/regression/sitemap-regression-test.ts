@@ -7,7 +7,7 @@ import {TestSuite} from './suite/test-suite';
 import {TestCase} from './suite/test-case';
 import {TestCaseProcessor} from './flow/test-case-processor';
 import {TestCaseEvaluator} from './flow/test-case-evaluator';
-import {HttpResponseStack} from './http-response-stack';
+import {HttpResponseStack} from './stack/http-response-stack';
 import winston = require('winston');
 
 export class SitemapRegressionTest {

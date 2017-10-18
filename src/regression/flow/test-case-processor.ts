@@ -1,12 +1,12 @@
 import {Observable} from 'rxjs/Observable';
 import {TestCase} from '../suite/test-case';
-import {HttpResponseStack} from '../http-response-stack';
+import {HttpResponseStack} from '../stack/http-response-stack';
 import * as winston from 'winston';
-import {HttpResponseStackBuilder} from '../http-response-stack-builder';
+import {HttpStackBuilder} from '../stack/http-stack-builder';
 import {TestSuite} from '../suite/test-suite';
 import * as request from 'request';
 import {Request, RequestResponse} from 'request';
-import {AbstractHttpStack} from '../abstract-http-stack';
+import {AbstractHttpStack} from '../stack/abstract-http-stack';
 import {get} from 'lodash';
 import http = require('http');
 
@@ -23,7 +23,7 @@ export class TestCaseProcessor {
     public process(testCase: TestCase): Observable<AbstractHttpStack> {
         return new Observable(observer => {
             winston.debug(`About to check ${testCase.targetUrl}`);
-            const builder: HttpResponseStackBuilder = new HttpResponseStackBuilder(testCase);
+            const builder: HttpStackBuilder = new HttpStackBuilder(testCase);
             const req: Request = request(testCase.targetUrl, {
                 timeout: get(this.suite.config, 'settings.requestTimeout', TestCaseProcessor.DEFAULT_TEST_CASE_REQUEST_TIMEOUT_MS),
                 followRedirect: (response: http.IncomingMessage): boolean => {
