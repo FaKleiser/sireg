@@ -4,7 +4,7 @@ import {LoaderStrategy} from '../load/loader-strategy.interface';
 import {AllEntriesStrategy} from '../filter/all-entries.strategy';
 import Symbols from '../inversify.symbols';
 import * as winston from 'winston';
-import {InvalidTestCase} from './config/invalid-test-case';
+import {InvalidTestCaseError} from './config/invalid-test-case.error';
 import {UrlReplacerStrategy} from '../replace/url-replacer-strategy.interface';
 import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
 import {TestSuite} from './test-suite';
@@ -23,7 +23,7 @@ export class TestSuiteFactory {
 
         // setup loaders
         if (!config.loaders || config.loaders.length < 1) {
-            throw new InvalidTestCase(config, 'Test case needs to define at least one loader.');
+            throw new InvalidTestCaseError(config, 'Test case needs to define at least one loader.');
         }
         for (const loaderCfg of config.loaders) {
             try {
@@ -31,7 +31,7 @@ export class TestSuiteFactory {
                 test.addLoader(factory(loaderCfg.options));
             } catch (e) {
                 winston.error(e);
-                throw new InvalidTestCase(config, `An error occured while trying to setup loader ${loaderCfg.loader} with config ${JSON.stringify(loaderCfg.options)}.`);
+                throw new InvalidTestCaseError(config, `An error occured while trying to setup loader ${loaderCfg.loader} with config ${JSON.stringify(loaderCfg.options)}.`);
             }
         }
 
@@ -45,7 +45,7 @@ export class TestSuiteFactory {
                 test.addReplacer(factory(replacerCfg.options));
             } catch (e) {
                 winston.error(e);
-                throw new InvalidTestCase(config, `An error occured while trying to setup replacer ${replacerCfg.replacer} with config ${JSON.stringify(replacerCfg.options)}.`);
+                throw new InvalidTestCaseError(config, `An error occured while trying to setup replacer ${replacerCfg.replacer} with config ${JSON.stringify(replacerCfg.options)}.`);
             }
         }
 
@@ -59,7 +59,7 @@ export class TestSuiteFactory {
                 test.addReporter(factory(reporterCfg.options));
             } catch (e) {
                 winston.error(e);
-                throw new InvalidTestCase(config, `An error occured while trying to setup reporter ${reporterCfg.reporter} with config ${JSON.stringify(reporterCfg.options)}.`);
+                throw new InvalidTestCaseError(config, `An error occured while trying to setup reporter ${reporterCfg.reporter} with config ${JSON.stringify(reporterCfg.options)}.`);
             }
         }
 

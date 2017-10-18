@@ -1,7 +1,7 @@
 import {TestSuiteFactory} from './test-suite-factory';
 import {LoaderStrategyResolver} from '../load/loader-strategy-resolver';
 import {TestCaseConfig} from './config/test-case-config';
-import {InvalidTestCase} from './config/invalid-test-case';
+import {InvalidTestCaseError} from './config/invalid-test-case.error';
 import {container} from '../inversify.config';
 import {StaticReplacerStrategy} from '../replace/static-replacer.strategy';
 import {FileLoaderStrategy} from '../load/file-loader.strategy';
@@ -20,9 +20,9 @@ describe('TestSuiteFactory', () => {
     });
 
     test('Factory fails if no loaders are defined', () => {
-        expect(() => sut.factory({} as TestCaseConfig)).toThrow(InvalidTestCase);
-        expect(() => sut.factory({loaders: undefined} as TestCaseConfig)).toThrow(InvalidTestCase);
-        expect(() => sut.factory({loaders: []} as TestCaseConfig)).toThrow(InvalidTestCase);
+        expect(() => sut.factory({} as TestCaseConfig)).toThrow(InvalidTestCaseError);
+        expect(() => sut.factory({loaders: undefined} as TestCaseConfig)).toThrow(InvalidTestCaseError);
+        expect(() => sut.factory({loaders: []} as TestCaseConfig)).toThrow(InvalidTestCaseError);
     });
 
     test('Can factory test with single loader', () => {
@@ -55,7 +55,7 @@ describe('TestSuiteFactory', () => {
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
                 {'loader': 'unknown', 'options': {'filePath': 'somePath'}}
             ]
-        })).toThrow(InvalidTestCase);
+        })).toThrow(InvalidTestCaseError);
     });
 
 
@@ -75,6 +75,6 @@ describe('TestSuiteFactory', () => {
             testCase: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
             replacers: [{'replacer': 'unknown', options: {}}]
-        })).toThrow(InvalidTestCase);
+        })).toThrow(InvalidTestCaseError);
     });
 });
