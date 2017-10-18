@@ -10,7 +10,7 @@ import {TestSuiteFactory} from './regression/suite/test-suite-factory';
 import {defaultsDeep} from 'lodash';
 import strftime = require('strftime');
 import winston = require('winston');
-import {SitemapRegressionTest} from './regression/sitemap-regression-test';
+import {SiregExecutor} from './regression/flow/sireg-executor';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -64,7 +64,7 @@ async function siregExec(configFile: string): Promise<void> {
     let resultSet: RegressionResultSet;
     let subscription: Subscription;
     await new Promise((acc, err) => {
-        subscription = new SitemapRegressionTest()
+        subscription = new SiregExecutor()
             .regressionTest(testFactory.factory(config))
             .subscribe(
                 (result: RegressionResultSet) => resultSet = result,

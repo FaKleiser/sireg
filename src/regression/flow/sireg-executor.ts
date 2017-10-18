@@ -1,16 +1,20 @@
-import {LoaderStrategy} from '../load/loader-strategy.interface';
+import {LoaderStrategy} from '../../load/loader-strategy.interface';
 import {Observable} from 'rxjs/Observable';
-import {RegressionResultSet} from './result/regression-result-set';
-import {RegressionResult} from './result/regression-result';
-import {ReporterStrategy} from '../reporter/reporter-strategy.interface';
-import {TestSuite} from './suite/test-suite';
-import {TestCase} from './suite/test-case';
-import {TestCaseProcessor} from './flow/test-case-processor';
-import {TestCaseEvaluator} from './flow/test-case-evaluator';
-import {HttpResponseStack} from './stack/http-response-stack';
+import {RegressionResultSet} from '../result/regression-result-set';
+import {RegressionResult} from '../result/regression-result';
+import {ReporterStrategy} from '../../reporter/reporter-strategy.interface';
+import {TestSuite} from '../suite/test-suite';
+import {TestCase} from '../suite/test-case';
+import {TestCaseProcessor} from './test-case-processor';
+import {TestCaseEvaluator} from './test-case-evaluator';
+import {HttpResponseStack} from '../stack/http-response-stack';
 import winston = require('winston');
 
-export class SitemapRegressionTest {
+/**
+ * The SiregExecutor defines the flow of turning a single TestSuite definition into a RegressionResultSet and is thus
+ * the main point of entry to execute a sireg test suite.
+ */
+export class SiregExecutor {
 
     public regressionTest(suite: TestSuite): Observable<RegressionResultSet> {
         // 1. load
