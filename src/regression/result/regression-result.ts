@@ -47,20 +47,26 @@ export class RegressionResult {
 
     get errorMessages(): string[] {
         const error: any = this.errorStack.error;
-        return _(_.isArray(error) ? error: [error])
-            // filter empty messages
+        return _(_.isArray(error) ? error : [error])
+        // filter empty messages
             .filter((msg: any) => !!msg)
             // turn each element to a string
-            .map((err: any) => _.toString(err))
+            .map((err: any) => JSON.stringify(err))
             .value();
     }
 
     get errorStack(): HttpErrorStack {
-        return this._stack as HttpErrorStack;
+        if (this._status === RegressionResultStatus.ERROR) {
+            return this._stack as HttpErrorStack;
+        }
+        return undefined;
     }
 
     get responseStack(): HttpResponseStack {
-        return this._stack as HttpResponseStack;
+        if (this._status === RegressionResultStatus.SUCCESS || this._status === RegressionResultStatus.VIOLATION) {
+            return this._stack as HttpResponseStack;
+        }
+        return undefined;
     }
 
     get status(): RegressionResultStatus {
