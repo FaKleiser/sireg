@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Changed
+- Refactoring: all internal classes have been completely refactored to improve the overall architecture.
+
 
 ## v0.2.2 - 2017-09-13
 

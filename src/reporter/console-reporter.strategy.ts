@@ -1,8 +1,8 @@
 import {ReporterStrategy} from './reporter-strategy.interface';
-import {TestSuiteConfig} from 'test-suite-config.ts';
 import {RegressionResultSet} from '../regression/result/regression-result-set';
 import {injectable} from 'inversify';
 import * as c from 'colors/safe';
+import {TestSuiteConfig} from '../regression/suite/config/test-suite-config';
 
 process.stdout.isTTY = true;
 

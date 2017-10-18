@@ -1,5 +1,5 @@
-import {TestSuiteConfig} from 'test-suite-config.ts';
 import {RegressionResultSet} from '../regression/result/regression-result-set';
+import {TestSuiteConfig} from '../regression/suite/config/test-suite-config';
 
 export interface ReporterStrategy {
 
