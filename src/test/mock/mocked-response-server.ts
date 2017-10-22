@@ -9,7 +9,7 @@ export class MockedResponseServer {
 
     constructor(config: MockServerConfig) {
         console.log('Constructing mock server');
-        for (let path in config) {
+        for (const path in config) {
             if (!config.hasOwnProperty(path)) continue;
             this.config[this.normalizeUrlPath(path)] = config[path];
         }

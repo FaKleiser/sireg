@@ -14,7 +14,7 @@ describe('MockedResponseServer', () => {
         return new Promise((resolve: any, reject: any) => {
             request.get(server.url(url), {
                 followRedirect: false,
-            },function (error: any, response: any, body: any) {
+            }, (error: any, response: any, body: any) => {
                 expect(error).toBeNull();
                 assertion(response);
                 resolve();
