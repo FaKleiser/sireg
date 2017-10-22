@@ -16,7 +16,7 @@ export class ConsoleReporter implements ReporterStrategy {
 
     async report(testCase: TestSuiteConfig, result: RegressionResultSet): Promise<void> {
         console.log(Array(80).join('='));
-        console.log(c.bold(`== ${testCase.testCase} ==`));
+        console.log(c.bold(`== ${testCase.testSuite} ==`));
 
         if (result.hasErrors) {
             console.log('Errors:');

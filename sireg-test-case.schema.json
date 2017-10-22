@@ -4,7 +4,7 @@
   "description": "A test case definition that is understood by https://github.com/FaKeller/sireg",
   "type": "object",
   "properties": {
-    "testCase": {
+    "testSuite": {
       "type": "string"
     },
     "loaders": {
@@ -41,7 +41,7 @@
     }
   },
   "additionalProperties": false,
-  "required": ["testCase"],
+  "required": ["testSuite"],
   "definitions": {
     "FileLoader": {
       "type": "object",

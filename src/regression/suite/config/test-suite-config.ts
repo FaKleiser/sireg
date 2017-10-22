@@ -1,6 +1,6 @@
 export interface TestSuiteConfig {
     /** The title of the test case */
-    testCase: string;
+    testSuite: string;
     /** sireg settings */
     settings?: {
         /** maximum number of http requests to run in parallel */

@@ -27,7 +27,7 @@ describe('TestSuiteFactory', () => {
 
     test('Can factory test with single loader', () => {
         t = sut.factory({
-            testCase: 'IntegrationTest',
+            testSuite: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}]
         });
         expect(t).toBeInstanceOf(TestSuite);
@@ -37,7 +37,7 @@ describe('TestSuiteFactory', () => {
 
     test('Can factory test with multiple loaders', () => {
         t = sut.factory({
-            testCase: 'IntegrationTest',
+            testSuite: 'IntegrationTest',
             loaders: [
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
@@ -50,7 +50,7 @@ describe('TestSuiteFactory', () => {
 
     test('An unknown loader cause the factory to fail', () => {
         expect(() => sut.factory({
-            testCase: 'IntegrationTest',
+            testSuite: 'IntegrationTest',
             loaders: [
                 {'loader': 'file', 'options': {'filePath': 'somePath'}},
                 {'loader': 'unknown', 'options': {'filePath': 'somePath'}}
@@ -61,7 +61,7 @@ describe('TestSuiteFactory', () => {
 
     test('Can factory test with a replacer', () => {
         t = sut.factory({
-            testCase: 'IntegrationTest',
+            testSuite: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
             replacers: [{'replacer': 'static', options: {replace: 'foo', 'with': 'bar'}}]
         });
@@ -72,7 +72,7 @@ describe('TestSuiteFactory', () => {
 
     test('An unknown url replacer causes the factory to fail', () => {
         expect(() => sut.factory({
-            testCase: 'IntegrationTest',
+            testSuite: 'IntegrationTest',
             loaders: [{'loader': 'file', 'options': {'filePath': 'somePath'}}],
             replacers: [{'replacer': 'unknown', options: {}}]
         })).toThrow(InvalidTestCaseError);

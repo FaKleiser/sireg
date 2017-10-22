@@ -9,6 +9,7 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ### Changed
 - Refactoring: all internal classes have been completely refactored to improve the overall architecture.
+- BC: config setting `testCase` is renamed to `testSuite`.
 
 
 ## v0.2.2 - 2017-09-13

@@ -19,7 +19,7 @@ export class TestSuiteFactory {
 
     public factory(config: TestSuiteConfig): TestSuite {
         const test: TestSuite = new TestSuite(config);
-        winston.info(`Configuring test case: ${config.testCase}`);
+        winston.info(`Configuring test case: ${config.testSuite}`);
 
         // setup loaders
         if (!config.loaders || config.loaders.length < 1) {
