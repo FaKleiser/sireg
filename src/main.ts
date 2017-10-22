@@ -11,6 +11,7 @@ import {defaultsDeep} from 'lodash';
 import strftime = require('strftime');
 import winston = require('winston');
 import {SiregExecutor} from './regression/flow/sireg-executor';
+import {TestSuiteConfigFactory} from './regression/suite/config/test-suite-config-factory';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -50,12 +51,7 @@ async function siregExec(configFile: string): Promise<void> {
     winston.info('Starting sireg');
 
     // load config
-    const config: TestSuiteConfig = defaultsDeep(JSON.parse(fs.readFileSync(configFile, 'utf8')), {
-        settings: {
-            concurrentRequests: 3,
-            requestTimeout: 3000
-        }
-    });
+    const config: TestSuiteConfig = TestSuiteConfigFactory.fromFile(configFile);
     http.globalAgent.maxSockets = config.settings.concurrentRequests;
     https.globalAgent.maxSockets = config.settings.concurrentRequests;
     const testFactory: TestSuiteFactory = container.get(TestSuiteFactory);
