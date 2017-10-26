@@ -77,12 +77,26 @@ export class TestSuiteConfigFactory {
      * Applies sound defaults to the given config.
      */
     private static defaultSettings(testSuiteConfig: TestSuiteConfig): TestSuiteConfig {
-        return defaultsDeep(testSuiteConfig, {
+        // define default config structure and default sireg settings
+        const configWithDefaults: TestSuiteConfig = defaultsDeep(testSuiteConfig, {
+            loaders: [],
+            replacers: [],
+            filters: [],
+            reporters: [],
             settings: {
                 concurrentRequests: 3,
                 requestTimeout: 3000
             }
         });
+
+        // add console reporter if no reporter is defined
+        if (0 === configWithDefaults.reporters.length) {
+            configWithDefaults.reporters.push({
+                reporter: 'console'
+            });
+        }
+
+        return configWithDefaults;
     }
 
 }

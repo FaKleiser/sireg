@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Feature
+- sireg can now be invoked with `sireg exec [--opts]` by specifying all relevant test suite config settings as CLI options.
+
 ### Changed
 - Refactoring: all internal classes have been completely refactored to improve the overall architecture.
 - BC: config setting `testCase` is renamed to `testSuite`.
