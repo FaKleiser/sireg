@@ -52,11 +52,11 @@
         "options": {
           "type": "object",
           "properties": {
-            "filePath": {
+            "path": {
               "type": "string"
             }
           },
-          "required": ["filePath"],
+          "required": ["path"],
           "additionalProperties": false
         }
       },
@@ -72,11 +72,11 @@
         "options": {
           "type": "object",
           "properties": {
-            "filePath": {
+            "path": {
               "type": "string"
             }
           },
-          "required": ["filePath"],
+          "required": ["path"],
           "additionalProperties": false
         }
       },

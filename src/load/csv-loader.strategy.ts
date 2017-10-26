@@ -7,7 +7,7 @@ import * as winston from 'winston';
 import {TestCase} from '../regression/suite/test-case';
 
 export interface CsvLoaderOptions {
-    filePath: string;
+    path: string;
 }
 
 @injectable()
@@ -25,7 +25,7 @@ export class CsvLoaderStrategy implements LoaderStrategy {
     }
 
     public load(): Observable<TestCase[]> {
-        const fileString: string = fs.readFileSync(this._options.filePath, 'utf-8');
+        const fileString: string = fs.readFileSync(this._options.path, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => parse(fileContent, {
                 header: true,
@@ -41,7 +41,7 @@ export class CsvLoaderStrategy implements LoaderStrategy {
 
                 // check required fields
                 if (parseResult.data.length > 0 && !parseResult.data[0][CsvLoaderStrategy.HEADER_URL]) {
-                    winston.error(`Loaded CSV file ${this._options.filePath} misses column with name ${CsvLoaderStrategy.HEADER_URL}`);
+                    winston.error(`Loaded CSV file ${this._options.path} misses column with name ${CsvLoaderStrategy.HEADER_URL}`);
                     return urls;
                 }
 

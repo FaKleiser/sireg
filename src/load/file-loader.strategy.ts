@@ -6,7 +6,7 @@ import {TestCase} from '../regression/suite/test-case';
 import * as winston from 'winston';
 
 export interface FileLoaderOptions {
-    filePath: string;
+    path: string;
 }
 
 @injectable()
@@ -20,7 +20,10 @@ export class FileLoaderStrategy implements LoaderStrategy {
     }
 
     public load(): Observable<TestCase[]> {
-        const fileString: string = fs.readFileSync(this._options.filePath, 'utf-8');
+        if (!this._options.path || !fs.existsSync(this._options.path)) {
+            throw new Error(`File path to load from empty or not readable: '${this._options.path}'`);
+        }
+        const fileString: string = fs.readFileSync(this._options.path, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => {
                 const testCases: TestCase[] = fileContent
@@ -28,7 +31,7 @@ export class FileLoaderStrategy implements LoaderStrategy {
                     .map(url => url.replace('\n', '').replace('\r', ''))
                     .filter(url => url != undefined && url.length > 0)
                     .map(url => TestCase.target(url).assertOK());
-                winston.info(`Loaded ${testCases.length} test cases from file ${this._options.filePath}`);
+                winston.info(`Loaded ${testCases.length} test cases from file ${this._options.path}`);
                 return testCases;
             });
     }
