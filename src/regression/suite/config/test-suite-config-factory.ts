@@ -1,8 +1,11 @@
 import {TestSuiteConfig} from './test-suite-config';
 import {defaultsDeep, indexOf, kebabCase, map, set} from 'lodash';
 import * as fs from 'fs';
+import {SiregError} from '../../../exception/sireg-error';
 
 export class TestSuiteConfigFactory {
+
+    private static validTypes: string[] = ['loader', 'replacer', 'filter', 'reporter'];
 
     public static fromFile(configFile: string): TestSuiteConfig {
         const testSuiteConfig: TestSuiteConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
@@ -21,13 +24,14 @@ export class TestSuiteConfigFactory {
             const value: any = options[option];
             const parts: string[] = kebabCase(option).split('-');
             if (parts.length < 2) {
-                throw new Error(`Expected given option to at least define type and strategy, but found: ${option}`);
+                throw new SiregError(`Expected given option to at least define type and strategy, but found: ${option}`);
             }
 
             // get type
             const type: string = parts[0];
-            if (-1 === indexOf(['loader', 'replacer', 'filter', 'reporter'], type.toLowerCase())) {
-                throw new Error(`Unknown type: ${type}`);
+
+            if (-1 === indexOf(TestSuiteConfigFactory.validTypes, type.toLowerCase())) {
+                throw new Error(`Unknown type: ${type}. Valid types are: ${TestSuiteConfigFactory.validTypes.join(', ')}`);
             }
             // suffix with 's' as the config keys are plural
             const configType: string = `${type}s`;

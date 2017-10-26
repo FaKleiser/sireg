@@ -10,6 +10,7 @@ import {SiregExecutor} from './regression/flow/sireg-executor';
 import {TestSuiteConfigFactory} from './regression/suite/config/test-suite-config-factory';
 import strftime = require('strftime');
 import winston = require('winston');
+import {SiregError} from './exception/sireg-error';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -31,7 +32,7 @@ sireg
 sireg.command('test <config>')
     .description('Execute the given test suite JSON file')
     .action(async (configFile: string) => {
-        const config = TestSuiteConfigFactory.fromFile(configFile);
+        const config: TestSuiteConfig = TestSuiteConfigFactory.fromFile(configFile);
         await handleCommand(config);
     });
 
@@ -67,7 +68,11 @@ async function handleCommand(config: TestSuiteConfig): Promise<void> {
     try {
         await siregExec(config);
     } catch (e) {
-        winston.error(`Critical error occucured. Exiting application. Error was:\n ${e.stack}`);
+        if (e instanceof SiregError) {
+            winston.error(`${e.message}`);
+        } else {
+            winston.error(`Unexpected critical error occucured. Stack trace:\n ${e.stack}`);
+        }
         process.exit(1);
     }
 }
@@ -88,7 +93,7 @@ async function siregExec(config: TestSuiteConfig): Promise<void> {
             .regressionTest(testFactory.factory(config))
             .subscribe(
                 (result: RegressionResultSet) => resultSet = result,
-                (err: any) => winston.error('An error occured:', err),
+                (err: any) => { throw err; },
                 () => acc()
             );
     });

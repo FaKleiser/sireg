@@ -5,6 +5,7 @@ import {injectable} from 'inversify';
 import {parse} from 'papaparse';
 import * as winston from 'winston';
 import {TestCase} from '../regression/suite/test-case';
+import {SiregError} from '../exception/sireg-error';
 
 export interface CsvLoaderOptions {
     path: string;
@@ -25,6 +26,9 @@ export class CsvLoaderStrategy implements LoaderStrategy {
     }
 
     public load(): Observable<TestCase[]> {
+        if (!this._options.path || !fs.existsSync(this._options.path)) {
+            throw new SiregError(`File path to load from empty or not readable: '${this._options.path}'`);
+        }
         const fileString: string = fs.readFileSync(this._options.path, 'utf-8');
         return Observable.of(fileString)
             .map((fileContent: string) => parse(fileContent, {
