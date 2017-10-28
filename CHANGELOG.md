@@ -7,6 +7,8 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+## v0.3.0 - 2017-10-28
+
 ### Feature
 - sireg can now be invoked with `sireg exec [--opts]` by specifying all relevant test suite config settings as CLI options.
 
