@@ -1,0 +1,11 @@
+{
+  "testSuite": "[test] simple test suite",
+  "loaders": [
+    {
+      "loader": "file",
+      "options": {
+        "path": "src/test/simple-test-suite/simple-test-suite.urls.txt"
+      }
+    }
+  ]
+}

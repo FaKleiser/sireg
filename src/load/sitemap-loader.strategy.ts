@@ -1,9 +1,9 @@
 import {LoaderStrategy} from './loader-strategy.interface';
-import {SiteUrl} from '../model/site-url.model';
 import {Observable} from 'rxjs/Rx';
 import {inject, injectable} from 'inversify';
 import Symbols from '../inversify.symbols';
 import * as winston from 'winston';
+import {TestCase} from '../regression/suite/test-case';
 
 export interface SitemapLoaderOptions {
     sitemap: string;
@@ -22,15 +22,15 @@ export class SitemapLoaderStrategy implements LoaderStrategy {
         return this;
     }
 
-    load(): Observable<SiteUrl[]> {
+    load(): Observable<TestCase[]> {
         return Observable.fromPromise(this.sitemapper.fetch(this._options.sitemap))
             .map((sitemap: any) => {
-                const entries: SiteUrl[] = [];
+                const testCases: TestCase[] = [];
                 for (const site of sitemap.sites) {
-                    entries.push(new SiteUrl(site));
+                    testCases.push(TestCase.target(site).assertOK());
                 }
-                winston.info(`Loaded ${entries.length} entries from sitemap ${this._options.sitemap}`);
-                return entries;
+                winston.info(`Loaded ${testCases.length} test cases from sitemap ${this._options.sitemap}`);
+                return testCases;
             });
     }
 }

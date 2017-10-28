@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs/Observable';
-import {SiteUrl} from '../model/site-url.model';
+import {TestCase} from '../regression/suite/test-case';
 
 /**
  * Loads a bunch of sitemap entries.
@@ -7,5 +7,5 @@ import {SiteUrl} from '../model/site-url.model';
 export interface LoaderStrategy {
     setOptions(options: any): this;
 
-    load(): Observable<SiteUrl[]>;
+    load(): Observable<TestCase[]>;
 }

@@ -1,78 +1,75 @@
-import {SiteUrl} from '../../model/site-url.model';
-import {RequestResponse} from 'request';
-import {get} from 'lodash';
-import http = require('http');
+import {HttpResponseStack} from '../stack/http-response-stack';
+import {AssertionResult} from '../assertion/assertion-result';
+import {RegressionResultStatus} from './regression-result-status.enum';
+import * as _ from 'lodash';
+import {HttpErrorStack} from '../stack/http-error-stack';
+import {AbstractHttpStack} from '../stack/abstract-http-stack';
+import {TestCase} from '../suite/test-case';
 
 export class RegressionResult {
 
-    private _affectedUrl: SiteUrl;
-    private _httpResponse: RequestResponse;
-    private _error: any;
-    private _redirectsStack: http.IncomingMessage[];
-    private _customErrorMessage: string;
+    private _status: RegressionResultStatus;
+    private _stack: AbstractHttpStack;
+    private assertionResults: AssertionResult[];
 
-    private constructor(affectedUrl: SiteUrl, redirectsStack: http.IncomingMessage[] = []) {
-        this._affectedUrl = affectedUrl;
-        this._redirectsStack = redirectsStack;
+    private constructor(responseStack: AbstractHttpStack) {
+        this._stack = responseStack;
     }
 
-    public static httpResponse(affectedUrl: SiteUrl, response: RequestResponse, redirectsStack: http.IncomingMessage[] = []): RegressionResult {
-        const res: RegressionResult = new RegressionResult(affectedUrl, redirectsStack);
-        res._httpResponse = response;
-        return res;
+    static errorneous(stack: HttpErrorStack): RegressionResult {
+        const result: RegressionResult = new RegressionResult(stack);
+        result._status = RegressionResultStatus.ERROR;
+        return result;
     }
 
-    public static httpError(affectedUrl: SiteUrl, error: any, redirectsStack: http.IncomingMessage[] = []): RegressionResult {
-        const res: RegressionResult = new RegressionResult(affectedUrl, redirectsStack);
-        res._error = error;
-        return res;
+    static fromAssertionResults(stack: HttpResponseStack, assertionResults: AssertionResult[]): RegressionResult {
+        const result: RegressionResult = new RegressionResult(stack);
+        result.assertionResults = assertionResults;
+        const allAssertionsPassed: boolean = assertionResults.reduce((passed, cur) => passed && cur.hasPassed, true);
+        if (allAssertionsPassed) {
+            result._status = RegressionResultStatus.SUCCESS;
+        } else {
+            result._status = RegressionResultStatus.VIOLATION;
+        }
+        return result;
     }
 
-    public toString(): string {
-        return `[${this.statusCode}] ${this._affectedUrl.url}`;
+    get testCase(): TestCase {
+        return this._stack.testCase;
     }
 
-    get affectedUrl(): SiteUrl {
-        return this._affectedUrl;
+    get violationMessages(): string[] {
+        return _(this.assertionResults || [])
+            .map((ar: AssertionResult) => ar.message)
+            .filter((e: string) => !!e)
+            .value();
     }
 
-    /**
-     * Returns the URL that was actually requested after potentially following all redirects.
-     */
-    get actualUrl(): string {
-        const url: string = this._httpResponse.url || (this._httpResponse.request as any)['href'];
-        return url;
+    get errorMessages(): string[] {
+        const error: any = this.errorStack.error;
+        return _(_.isArray(error) ? error : [error])
+        // filter empty messages
+            .filter((msg: any) => !!msg)
+            // turn each element to a string
+            .map((err: any) => JSON.stringify(err))
+            .value();
     }
 
-    public set customErrorMessage(value: string) {
-        this._customErrorMessage = value;
+    get errorStack(): HttpErrorStack {
+        if (this._status === RegressionResultStatus.ERROR) {
+            return this._stack as HttpErrorStack;
+        }
+        return undefined;
     }
 
-    get hasError(): boolean {
-        return undefined != this._error || undefined != this._customErrorMessage;
+    get responseStack(): HttpResponseStack {
+        if (this._status === RegressionResultStatus.SUCCESS || this._status === RegressionResultStatus.VIOLATION) {
+            return this._stack as HttpResponseStack;
+        }
+        return undefined;
     }
 
-    get errorCode(): string {
-        return get(this._error, 'code') || 'UNKNOWN';
-    }
-
-    get errorMessage(): string {
-        return this._customErrorMessage || JSON.stringify(this._error);
-    }
-
-    get error(): any {
-        return this._error;
-    }
-
-    get statusCode(): number {
-        return this._httpResponse.statusCode;
-    }
-
-    get hasFollowedRedirects(): boolean {
-        return this._redirectsStack.length > 0;
-    }
-
-    public get redirectsStack(): http.IncomingMessage[] {
-        return this._redirectsStack;
+    get status(): RegressionResultStatus {
+        return this._status;
     }
 }

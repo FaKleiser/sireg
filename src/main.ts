@@ -1,15 +1,16 @@
 import {container} from './inversify.config';
 import {CommanderStatic} from 'commander';
 import {Subscription} from 'rxjs/Subscription';
-import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
-import {TestCaseConfig} from './regression/config/test-case-config';
+import {TestSuiteConfig} from './regression/suite/config/test-suite-config';
 import {RegressionResultSet} from './regression/result/regression-result-set';
-import {SitemapRegressionTestFactory} from './regression/sitemap-regression-test-factory';
-import {defaultsDeep} from 'lodash';
+import {TestSuiteFactory} from './regression/suite/test-suite-factory';
+import {SiregExecutor} from './regression/flow/sireg-executor';
+import {TestSuiteConfigFactory} from './regression/suite/config/test-suite-config-factory';
 import strftime = require('strftime');
 import winston = require('winston');
+import {SiregError} from './exception/sireg-error';
 
 // == configure logger
 winston.remove(winston.transports.Console);
@@ -29,45 +30,70 @@ sireg
     .version('0.2.2');
 
 sireg.command('test <config>')
-    .description('Execute the given test case')
-    .action((configFile: string) => {
-        try {
-            siregExec(configFile);
-        } catch (e) {
-            winston.error(`Critical error occucured. Exiting application. Error was:\n ${e.stack}`);
-            process.exit(1);
-        }
+    .description('Execute the given test suite JSON file')
+    .action(async (configFile: string) => {
+        const config: TestSuiteConfig = TestSuiteConfigFactory.fromFile(configFile);
+        await handleCommand(config);
     });
 
+const execCmd: any = sireg.command('exec');
+execCmd
+    .description('Define a simple test suite through CLI options')
+
+    // loaders
+    .option('--loader-sitemap', '[Loader/Sitemap] Enable the sitemap loader')
+    .option('--loader-sitemap-sitemap <sitemap>', '[Loader/Sitemap] The URL to the sitemap')
+    .option('--loader-file', '[Loader/File] Enable the file loader')
+    .option('--loader-file-path <path>', '[Loader/File] The path to the file containing the URLs to be tested')
+    .option('--loader-csv', '[Loader/CSV] Enable the CSV loader')
+    .option('--loader-csv-path <path>', '[Loader/CSV] The path to the CSV file containing the URLs to be tested')
+
+    // replacers
+    .option('--replacer-static', '[Replacer/Static] Enable the static replacer')
+    .option('--replacer-static-replace <replace>', '[Replacer/Static] The string to replace in each URL being tested')
+    .option('--replacer-static-with <with>', '[Replacer/Static] The value to replace each match of the URLs being tested')
+
+    .action(async () => {
+        const config: TestSuiteConfig = TestSuiteConfigFactory.fromCommanderOptions(execCmd.opts()) as any;
+        await handleCommand(config);
+
+    });
 
 if (!process.argv.slice(2).length) {
     sireg.outputHelp();
 }
 sireg.parse(process.argv);
 
-async function siregExec(configFile: string): Promise<void> {
+async function handleCommand(config: TestSuiteConfig): Promise<void> {
+    try {
+        await siregExec(config);
+    } catch (e) {
+        if (e instanceof SiregError) {
+            winston.error(`${e.message}`);
+        } else {
+            winston.error(`Unexpected critical error occucured. Stack trace:\n ${e.stack}`);
+        }
+        process.exit(1);
+    }
+}
+
+async function siregExec(config: TestSuiteConfig): Promise<void> {
     winston.info('Starting sireg');
 
     // load config
-    const config: TestCaseConfig = defaultsDeep(JSON.parse(fs.readFileSync(configFile, 'utf8')), {
-        settings: {
-            concurrentRequests: 3,
-            requestTimeout: 3000
-        }
-    });
     http.globalAgent.maxSockets = config.settings.concurrentRequests;
     https.globalAgent.maxSockets = config.settings.concurrentRequests;
-    const testFactory: SitemapRegressionTestFactory = container.get(SitemapRegressionTestFactory);
+    const testFactory: TestSuiteFactory = container.get(TestSuiteFactory);
 
     // find violations
     let resultSet: RegressionResultSet;
     let subscription: Subscription;
     await new Promise((acc, err) => {
-        subscription = testFactory.factory(config)
-            .regressionTest()
+        subscription = new SiregExecutor()
+            .regressionTest(testFactory.factory(config))
             .subscribe(
                 (result: RegressionResultSet) => resultSet = result,
-                (err: any) => winston.error('An error occured:', err),
+                (err: any) => { throw err; },
                 () => acc()
             );
     });

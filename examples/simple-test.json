@@ -1,10 +1,10 @@
 {
-  "testCase": "SimpleTest: demonstrate basic sireg functionality",
+  "testSuite": "SimpleTest: demonstrate basic sireg functionality",
   "loaders": [
     {
       "loader": "file",
       "options": {
-        "filePath": "examples/simple-test-urls.txt"
+        "path": "examples/simple-test-urls.txt"
       }
     }
   ]

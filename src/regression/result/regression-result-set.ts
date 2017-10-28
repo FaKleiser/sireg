@@ -1,13 +1,13 @@
 import {RegressionResult} from './regression-result';
-import {SiteUrl} from '../../model/site-url.model';
+import {RegressionResultStatus} from './regression-result-status.enum';
 
 export class RegressionResultSet {
 
     private static DEFAULT_SUCCESS_STATUS_CODE: number = 200;
 
-    private _violations: Map<string, RegressionResult> = new Map();
-    private _passed: Map<string, RegressionResult> = new Map();
-    private _errors: Map<string, RegressionResult> = new Map();
+    private _violations: RegressionResult[] = [];
+    private _passed: RegressionResult[] = [];
+    private _errors: RegressionResult[] = [];
 
     public addResults(results: RegressionResult[]): this {
         results.forEach(this.addResult, this);
@@ -15,51 +15,38 @@ export class RegressionResultSet {
     }
 
     public addResult(result: RegressionResult): this {
-        const expected: SiteUrl = result.affectedUrl;
-
-        // HTTP errors lead to failures
-        if (result.hasError) {
-            this._errors.set(expected.url, result);
-            return this;
-        }
-
-        // check expected redirect location
-        if (expected.hasExpectedUrl) {
-            if (result.actualUrl != expected.expectedUrl) {
-                result.customErrorMessage = `Expected redirect target to be ${expected.expectedUrl}, but was redirected to ${result.actualUrl}`;
-                this._violations.set(expected.url, result);
+        switch (result.status) {
+            case RegressionResultStatus.VIOLATION:
+                this._violations.push(result);
                 return this;
-            }
+            case RegressionResultStatus.SUCCESS:
+                this._passed.push(result);
+                return this;
+            case RegressionResultStatus.ERROR:
+                this._errors.push(result);
+                return this;
+            default:
+                throw new Error(`Unknown RegressionResultStatus: ${result.status}`);
         }
-
-        // check expected status code
-        if ((expected.expectedStatusCode || RegressionResultSet.DEFAULT_SUCCESS_STATUS_CODE) != result.statusCode) {
-            this._violations.set(expected.url, result);
-            return this;
-        }
-
-        // no violations so far - looks good
-        this._passed.set(expected.url, result);
-        return this;
     }
 
     get hasViolations(): boolean {
-        return this._violations.size > 0;
+        return this._violations.length > 0;
     }
 
     get violations(): RegressionResult[] {
-        return Array.from(this._violations.values());
+        return this._violations;
     }
 
     get passed(): RegressionResult[] {
-        return Array.from(this._passed.values());
+        return this._passed;
     }
 
     get hasErrors(): boolean {
-        return this._errors.size > 0;
+        return this._errors.length > 0;
     }
 
     get errors(): RegressionResult[] {
-        return Array.from(this._errors.values());
+        return this._errors;
     }
 }

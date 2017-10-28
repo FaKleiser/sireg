@@ -1,12 +1,12 @@
 import {StaticReplacerStrategy} from './static-replacer.strategy';
-import {SiteUrl} from '../model/site-url.model';
+import {TestCase} from '../regression/suite/test-case';
 
 describe('StaticReplacerStrategy', () => {
 
     let sut: StaticReplacerStrategy;
 
-    const π: (url: string) => SiteUrl = (url: string) => {
-        return new SiteUrl(url);
+    const π: (url: string) => TestCase = (url: string) => {
+        return TestCase.target(url);
     };
 
     beforeEach(() => {

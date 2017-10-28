@@ -1,5 +1,7 @@
 /**
  * Represents a site URL that is regression tested.
+ *
+ * @deprecated - to be replaced by {@link TestCase}
  */
 export class SiteUrl {
 

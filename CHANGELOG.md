@@ -7,6 +7,14 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Feature
+- sireg can now be invoked with `sireg exec [--opts]` by specifying all relevant test suite config settings as CLI options.
+
+### Changed
+- Refactoring: all internal classes have been completely refactored to improve the overall architecture.
+- BC: config setting `testCase` is renamed to `testSuite`.
+- BC: renamed `filePath` properties for CSVLoader and FileLoader to `path`. 
+
 
 ## v0.2.2 - 2017-09-13
 
