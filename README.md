@@ -15,116 +15,103 @@ The tool supports rewriting the loaded URLs so that you can point the tool to a 
 - Roll your own: the architecture of the tool makes it easy to adjust it to complex setups.
 - Shipped as a single, self-contained executable for any OS.
 - Easy to add to an existing build pipeline.
-- JSON Schema support to setup regression test cases.
+- JSON Schema support to setup regression test suites.
 
 
 > **Under construction:** The tool is currently being developed, so anything may change anytime. 
 > If you'd like to shape the future of the project, get in touch and open a PR :-)
 
+
 ## Table of Contents
 
 - [Workflow](#workflow)
-- [Usage](#usage)
-- [Available Loaders](#available-loaders)
-- [Available Replacers](#available-replacers)
-- [sireg Test Case Settings](#sireg-test-case-settings)
+- [Getting Started](#getting-started)
+- [sireg Test Suite](#sireg-test-suite)
+- [sireg Test Suite Settings](#sireg-test-suite-settings)
+
 
 ## Workflow
 
-The workflow of the tool is straight forward:
+The workflow of sireg is straight forward:
 
-:arrow_forward: Load URLS :arrow_forward: Filter URLs* :arrow_forward: Apply URL replacements :arrow_forward: Request URLs :arrow_forward: Report Results
+[Load URLS] :arrow_forward: [Filter URLs]* :arrow_forward: [Apply URL replacements] :arrow_forward: [Request URLs] :arrow_forward: [Report Results]
 
 *yet to be implemented
 
+- **Load URLs**: sireg loads a bunch of URLs you want to test. The URLs can be loaded from different locations.
+- **Filter URLs**: Sometimes it is not necessary to test all URLs. Filters help to focus and reduce the testing time.
+- **Apply URL replacements**: In case you want to target different URLs, use replacers to alter the loaded URLs before sireg issues the request.
+- **Request URLs**: sireg requests all URLs and stores the HTTP result with all redirection steps for evaluation.
+- **Report Results**: Different options to report the test results help you make use of the analysis result. 
 
-## Usage
 
-Download a [released binary](/releases) and then use it as follows:
+## Getting Started
+
+Download a [released binary](/releases) of sireg and store it in a location such that you can execute sireg from where you need it.
+
+To get started with sireg, let's verify that all pages you list in your sitemap have a 200 status code:
 
 ```bash
-sireg test my-test-case.json
+$ sireg exec --loader-sitemap-sitemap "https://<DOMAIN>/sitemap.xml"
 ```
 
-You may find example test case definitions in the [/examples directory](/examples).
+Now let's continue and see whether all the pages listed in your sitemap are present on your local development copy running on your computer:
 
-sireg provides a [JSON schema](http://json-schema.org/) file to help you write valid test cases: [sireg-test-case.schema.json](/sireg-test-case.schema.json).
+```bash
+$ sireg exec \
+    --loader-sitemap-sitemap "https://<DOMAIN>/sitemap.xml" \
+    --replacer-static-replace "https://<DOMAIN>/" \
+    --replacer-static-with "http://localhost:8080/"
+``` 
+
+Start to explore sireg and see all available options with:
+
+```bash
+$ sireg exec --help
+```
+
+
+## sireg Test Suite
+
+Tests executed with sireg can be defined in a test suite configuration file.
+In fact, the JSON test suite file is more versatile than the `sireg exec` command.
+Test suites are simple JSON files and can be executed with sireg as follows:
+
+```bash
+sireg test my-test-suite.json
+```
+
+You may find example test suite definitions in the [/examples directory](/examples).
+
+sireg provides a [JSON schema](http://json-schema.org/) file to help you write valid test suites: [sireg-test-suite.schema.json](/sireg-test-suite.schema.json).
 In case you are using IntelliJ, make sure to [setup IDE support for JSON schema](https://www.jetbrains.com/help/idea/json-schema.html).
 
 
-## Available Loaders
+## Loaders & Replacers
 
-Loaders are used to setup your test.
-They provide a collection of URLs to examine.
+sireg currently supports the following loaders and replacers out of the box:
 
-### Sitemap Loader
+### Loaders
 
-The sitemap loader loads all URLs from the supplied sitemap.
+- **SitemapLoader**: Load URLs from a sitemap.
+- **FileLoader**: Load URLs from a text file, line by line.
 
-```json
-{
-  "loaders": [
-    {
-      "loader": "sitemap",
-      "options": {
-        "sitemap": "http://<DOMAIN>/sitemap.xml"
-      }
-    }
-  ]
-}
-```
+View the [documentation for all loaders](docs/loaders.md).
 
-### File Loader
+### Replacers
 
-The file loader loads a set of URLs to analyze from a file.
-Each line of the given file must be a valid URL.
+- **StaticReplacer**: Use Node's String.replace to replace parts of a URL. 
 
-```json
-{
-  "loaders": [
-    {
-      "loader": "file",
-      "options": {
-        "filePath": "path/to/urls.txt"
-      }
-    }
-  ]
-}
-```
+View the [documentation for all replacers](docs/replacers.md).
 
 
-## Available Replacers
+## sireg Test Suite Settings
 
-Replacers are used to modify the URLs loaded by any loader.
-By modifying the URL you have the option to change the target of the HTTP requests being fired.
-
-### Static Replacer
-
-The static replacer replaces the exact string with the replacement provided.
-This is very useful in combination with the sitemap loader!
-
-```json
-{
-  "replacers": [
-    {
-      "replacer": "static",
-      "options": {
-        "replace": "http://<DOMAIN>/",
-        "with": "http://localhost:8080/"
-      }
-    }
-  ]
-}
-```
-
-
-## sireg Test Case Settings
-
-The test case may define settings which affect the execution of the tool.
+The test suite may define settings which affect the execution of the tool.
 
 ```js
 {
-  "testCase": "My test case name",
+  "testSuite": "My test suite name",
   "settings": {
     // sireg settings here
   }
