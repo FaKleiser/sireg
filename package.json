@@ -18,7 +18,7 @@
     "ts:watch": "tsc -w",
     "ts:lint": "tslint -c tslint.json -p tsconfig.json",
     "watch": "yarn run ts:watch",
-    "package": "yarn run build && pkg dist/main.js -t node8-macos,node8-win,node8-linux -o dist/bin/sireg"
+    "package": "yarn run build && pkg dist/src/sireg-cli.js -t node8-macos,node8-win,node8-linux -o dist/bin/sireg"
   },
   "jest": {
     "transform": {
@@ -35,7 +35,7 @@
       "js"
     ],
     "setupFiles": [
-      "./dist/jest-setup.js"
+      "./dist/src/jest-setup.js"
     ]
   },
   "devDependencies": {
