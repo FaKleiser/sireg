@@ -27,7 +27,7 @@ const sireg: CommanderStatic = require('commander');
 
 // == define CLI commands
 sireg
-    .version('0.3.0');
+    .version('0.3.1');
 
 sireg.command('test <config>')
     .description('Execute the given test suite JSON file')

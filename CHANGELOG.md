@@ -7,6 +7,13 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+
+## v0.3.1 - 2017-11-11
+
+### Feature
+- Improve project setup to be able to install sireg with npm: `npm install sireg` or `yarn add sireg`.
+
+
 ## v0.3.0 - 2017-10-28
 
 ### Feature
