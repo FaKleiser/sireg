@@ -1,6 +1,27 @@
 {
   "forbidden": [
     {
+      "name": "plugins-to-workflow",
+      "comment": "Plugins should only use workflow features. They should not use each other.",
+      "severity": "error",
+      "from": {
+        "path": "^src/(load|filter|replace|reporter)"
+      },
+      "to": {
+        "pathNot": "^src/regression|^src/exception|^src/inversify*|^node_modules|^fs$|$1"
+      }
+    },
+    {
+      "name": "model-to-anything",
+      "comment": "The model layer should have no dependencies at all",
+      "severity": "error",
+      "from": {
+        "path": "^src/model"
+      },
+      "to": {
+      }
+    },
+    {
       "name": "not-to-test",
       "comment": "Don't allow dependencies from outside the test folder to test",
       "severity": "error",
