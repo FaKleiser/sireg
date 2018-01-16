@@ -18,7 +18,8 @@
     "ts:watch": "tsc -w",
     "ts:lint": "tslint -c tslint.json -p tsconfig.json",
     "watch": "yarn run ts:watch",
-    "package": "yarn run build && pkg dist/src/sireg-cli.js -t node8-macos,node8-win,node8-linux -o dist/bin/sireg"
+    "package": "yarn run build && pkg dist/src/sireg-cli.js -t node8-macos,node8-win,node8-linux -o dist/bin/sireg",
+    "depcruise": "depcruise --validate .dependency-cruiser.json src"
   },
   "jest": {
     "transform": {
@@ -49,6 +50,7 @@
     "@types/strftime": "0.9.2",
     "@types/winston": "2.3.6",
     "ajv-cli": "2.1.0",
+    "dependency-cruiser": "2.11.0-beta-1",
     "jest": "21.2.1",
     "pkg": "4.2.5",
     "rimraf": "2.6.2",
