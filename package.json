@@ -44,7 +44,7 @@
     "@types/jest": "21.1.4",
     "@types/lodash": "4.14.78",
     "@types/node": "8.0.47",
-    "@types/papaparse": "4.1.31",
+    "@types/papaparse": "4.5.9",
     "@types/request": "2.0.6",
     "@types/strftime": "0.9.2",
     "@types/winston": "2.3.6",
