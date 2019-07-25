@@ -2137,9 +2137,9 @@ p-locate@^2.0.0:
   dependencies:
     p-limit "^1.1.0"
 
-papaparse@4.3.6:
-  version "4.3.6"
-  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-4.3.6.tgz#9566eda0ecab13afcb740a62381c699f486cb145"
+papaparse@5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.0.1.tgz#5243710e5468e659e23c77db0e0b010912960c15"
 
 parse-glob@^3.0.4:
   version "3.0.4"
