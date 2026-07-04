@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+
+## v1.0.0 - 2026-07-04
+
 ### Added
 - Add a modern `sireg check` CLI for sitemap-driven website regression testing.
 - Add hosted sitemap, local sitemap file, nested sitemap index, `.xml.gz`, URL file, and direct URL inputs.
