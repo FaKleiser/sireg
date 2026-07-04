@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+
+## v1.0.1 - 2026-07-04
+
 ### Fixed
 - Publish releases through npm trusted publishing without requiring an `NPM_TOKEN` secret.
 - Align package repository metadata with the trusted GitHub publisher repository.
