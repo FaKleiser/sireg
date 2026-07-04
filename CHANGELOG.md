@@ -8,11 +8,23 @@ This file keeps track of all changes to this project. This project follows [sema
 ## [UNRELEASED]
 
 ### Added
-- Add a tag-driven GitHub Release and npm publishing workflow with release validation.
-- Add `npm run release:prepare -- major|minor|patch` to finalize changelog entries, bump versions, commit, tag, and push releases.
-- Add an agent release command so future agents consistently prepare changelog-backed releases.
+- Add a modern `sireg check` CLI for sitemap-driven website regression testing.
+- Add hosted sitemap, local sitemap file, nested sitemap index, `.xml.gz`, URL file, and direct URL inputs.
+- Add URL transforms so production sitemap URLs can be checked against local, preview, or staging hosts.
+- Add full, first, deterministic random, and percent-based URL selection for large sites.
+- Add status expectations for `2xx`, `30x`, exact codes, ranges, comma-separated lists, and arrays.
+- Add redirect expectation checks for retired URLs, including validation that the final target is healthy.
+- Add CLI, JSON, Markdown, and polished HTML reports suitable for CI artifacts.
 - Add interactive CLI progress with a spinner, progress bar, elapsed time, and live pass/fail stats.
-- Add progress events to the typed runner API for custom integrations.
+- Add a typed npm package API with progress events for custom integrations.
+- Add GitHub Actions CI, tag-driven GitHub Releases, npm publishing with provenance, and release validation.
+- Add `npm run release:prepare -- major|minor|patch` to finalize changelog entries, bump versions, commit, tag, and push releases.
+- Add project memory and an agent release command so future agents consistently preserve the project goals and release process.
+
+### Changed
+- Rewrite the legacy Node 8 TypeScript implementation as a modern TypeScript ESM package for Node.js 20 and newer.
+- Replace the old dependency-heavy request, RxJS, Inversify, TSLint, Travis, and Yarn stack with native platform APIs, `node:test`, GitHub Actions, and npm lockfiles.
+- Redesign the public configuration around `sireg.schema.json`, focused docs, and examples for local development, preview environments, staging checks, and GitHub Actions.
 
 
 ## v0.3.1 - 2017-11-11
