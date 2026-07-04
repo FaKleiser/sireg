@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FaKeller/sireg/main/sireg.schema.json",
+  "title": "sireg configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sources"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "sitemap"
+              },
+              "url": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "maxDepth": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "anyOf": [
+              {
+                "required": ["url"]
+              },
+              {
+                "required": ["path"]
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "path"],
+            "properties": {
+              "type": {
+                "const": "file"
+              },
+              "path": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "url"],
+            "properties": {
+              "type": {
+                "const": "url"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["origin"],
+            "properties": {
+              "origin": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to"],
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "once": {
+                "type": "boolean"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["pattern"],
+            "properties": {
+              "pattern": {
+                "type": "string"
+              },
+              "replacement": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "flags": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "select": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "enum": ["all", "first", "random", "percent"]
+        },
+        "limit": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "const": "all"
+            }
+          ]
+        },
+        "percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "seed": {
+          "type": "string"
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expectedStatus": {
+          "$ref": "#/$defs/statusExpectation"
+        },
+        "maxRedirects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "userAgent": {
+          "type": "string"
+        }
+      }
+    },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from"],
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "toPattern": {
+            "type": "string"
+          },
+          "expectedStatus": {
+            "$ref": "#/$defs/statusExpectation"
+          },
+          "finalStatus": {
+            "$ref": "#/$defs/statusExpectation"
+          },
+          "maxRedirects": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "enum": ["console", "json", "markdown", "html"]
+          },
+          "path": {
+            "type": "string"
+          },
+          "onlyFailures": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "statusExpectation": {
+      "oneOf": [
+        {
+          "type": "string",
+          "examples": ["2xx", "200", "200-204", "2xx,404"]
+        },
+        {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 599
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

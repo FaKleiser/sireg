@@ -1,20 +1,46 @@
 {
-  "testCase": "Test case to be used in a CI pipeline on a staging version of your website",
-  "loaders": [
+  "$schema": "../sireg.schema.json",
+  "name": "Staging sitemap regression",
+  "sources": [
     {
-      "loader": "sitemap",
-      "options": {
-        "sitemap": "http://<DOMAIN>/sitemap.xml"
-      }
+      "type": "sitemap",
+      "url": "https://www.example.com/sitemap.xml"
     }
   ],
-  "replacers": [
+  "transforms": [
     {
-      "replacer": "static",
-      "options": {
-        "replace": "http://<DOMAIN>/",
-        "with": "http://localhost:8080/"
-      }
+      "origin": "http://localhost:8080"
+    }
+  ],
+  "select": {
+    "strategy": "random",
+    "limit": 250,
+    "seed": "github-sha"
+  },
+  "checks": {
+    "expectedStatus": "2xx",
+    "concurrency": 8,
+    "timeout": 10000
+  },
+  "redirects": [
+    {
+      "from": "https://www.example.com/old-page",
+      "to": "https://www.example.com/new-page",
+      "expectedStatus": "30x",
+      "finalStatus": "2xx"
+    }
+  ],
+  "reports": [
+    {
+      "type": "console"
+    },
+    {
+      "type": "markdown",
+      "path": "reports/sireg.md"
+    },
+    {
+      "type": "html",
+      "path": "reports/sireg.html"
     }
   ]
 }

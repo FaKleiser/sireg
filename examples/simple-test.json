@@ -1,11 +1,28 @@
 {
-  "testSuite": "SimpleTest: demonstrate basic sireg functionality",
-  "loaders": [
+  "$schema": "../sireg.schema.json",
+  "name": "Example URL file check",
+  "sources": [
     {
-      "loader": "file",
-      "options": {
-        "path": "examples/simple-test-urls.txt"
-      }
+      "type": "file",
+      "path": "examples/simple-test-urls.txt"
+    }
+  ],
+  "checks": {
+    "expectedStatus": "2xx",
+    "concurrency": 4,
+    "timeout": 10000
+  },
+  "reports": [
+    {
+      "type": "console"
+    },
+    {
+      "type": "markdown",
+      "path": "reports/sireg.md"
+    },
+    {
+      "type": "html",
+      "path": "reports/sireg.html"
     }
   ]
 }
