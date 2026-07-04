@@ -45,6 +45,8 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 - `sireg.schema.json` is the user-facing config schema.
 - `docs/configuration.md`, `docs/reports.md`, and `docs/releasing.md` should stay in sync with README examples.
 - GitHub Actions are included for CI and npm release publishing with provenance. Do not publish without explicit user approval.
+- Releases are tag-driven: `npm run release:prepare -- major|minor|patch` finalizes `CHANGELOG.md`, bumps the package version, commits, tags, and pushes; the pushed `vX.Y.Z` tag creates the GitHub Release and publishes the npm package.
+- `CHANGELOG.md` must be updated under `## [UNRELEASED]` before preparing a release.
 - The old Node 8 stack, TSLint, Travis config, Yarn lockfile, Inversify/RxJS/request code, and legacy schema were intentionally removed.
 
 ## Verification Expectations
@@ -60,6 +62,14 @@ For package/release changes, also run:
 ```bash
 npm --cache /private/tmp/sireg-npm-cache pack --dry-run --ignore-scripts
 ```
+
+For releases, use:
+
+```bash
+npm run release:prepare -- patch
+```
+
+Swap `patch` for `minor` or `major` according to semantic versioning.
 
 The test suite should cover:
 
@@ -82,3 +92,5 @@ Always commit completed work unless the user explicitly says not to. Use gitmoji
 - `🚀 Prepare npm release workflow`
 
 Keep commits focused when possible. If a task spans a complete product slice, one well-described commit is acceptable.
+
+Release commits are created by `npm run release:prepare -- major|minor|patch` and use `🚀 Release vX.Y.Z`.

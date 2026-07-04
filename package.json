@@ -45,8 +45,9 @@
   "scripts": {
     "clean": "node -e \"const fs=require('node:fs'); fs.rmSync('dist',{recursive:true,force:true}); fs.rmSync('dist-test',{recursive:true,force:true})\"",
     "build": "npm run clean && tsc -p tsconfig.json",
-    "test": "npm run build && tsc -p tsconfig.test.json && node --test \"dist-test/test/**/*.test.js\"",
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test \"dist-test/test/**/*.test.js\" \"test/**/*.test.mjs\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "release:prepare": "node scripts/prepare-release.mjs",
     "prepack": "npm test"
   },
   "devDependencies": {

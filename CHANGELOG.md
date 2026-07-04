@@ -7,6 +7,11 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Added
+- Add a tag-driven GitHub Release and npm publishing workflow with release validation.
+- Add `npm run release:prepare -- major|minor|patch` to finalize changelog entries, bump versions, commit, tag, and push releases.
+- Add an agent release command so future agents consistently prepare changelog-backed releases.
+
 
 ## v0.3.1 - 2017-11-11
 

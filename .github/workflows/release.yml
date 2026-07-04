@@ -1,25 +1,37 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - v*
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
           cache: npm
       - run: npm ci
+      - run: node scripts/validate-release.mjs "$GITHUB_REF_NAME" release-notes.md
       - run: npm test
-      - run: npm publish --provenance --access public
+      - run: npm pack --dry-run --ignore-scripts
+      - id: pack
+        run: |
+          tarball="$(npm pack --ignore-scripts)"
+          echo "tarball=${tarball}" >> "$GITHUB_OUTPUT"
+      - run: gh release create "$GITHUB_REF_NAME" "${{ steps.pack.outputs.tarball }}" --title "$GITHUB_REF_NAME" --notes-file release-notes.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: npm publish "${{ steps.pack.outputs.tarball }}" --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
