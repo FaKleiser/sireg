@@ -156,6 +156,9 @@ Useful options:
 - `--limit <number|all>`: Limit selected URLs.
 - `--expect-status <rule>`: Expected final status, such as `2xx`, `200`, or `200-204`.
 - `--markdown <path>` and `--html <path>`: Write report artifacts.
+- `--no-progress`: Disable the interactive spinner, progress bar, and live pass/fail stats.
+
+When run in an interactive terminal, sireg shows live progress while it loads sources and checks URLs. CI and non-TTY environments keep deterministic output.
 
 ## Redirect Checks
 

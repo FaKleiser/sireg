@@ -14,7 +14,7 @@ The tool should be easy to adopt in local development, preview environments, sta
 - Check status expectations such as `2xx`, `30x`, exact status codes, ranges, comma-separated lists, and arrays.
 - Test retired URLs that are no longer present in sitemaps by defining explicit redirect expectations.
 - Redirect checks should verify the first response is a redirect and the final destination returns a healthy status, usually `2xx`.
-- Produce concise CLI output plus Markdown, JSON, and polished HTML reports suitable as CI artifacts.
+- Produce interactive CLI progress for terminals plus concise non-TTY output, Markdown, JSON, and polished HTML reports suitable as CI artifacts.
 - Exit `0` when all checks pass and `1` when any check fails.
 - Provide a typed programmatic API for custom tooling.
 
@@ -34,6 +34,7 @@ The current implementation is TypeScript ESM on modern Node.js.
 - `src/core/http.ts`: manual redirect-following HTTP checks.
 - `src/core/pool.ts`: bounded concurrency helper.
 - `src/reporters/*`: console, Markdown, HTML, JSON report rendering.
+- `src/reporters/live-console.ts`: TTY-only spinner, progress bar, and live pass/fail stats.
 
 The design intent is modular and properly typed, but not over-engineered. Avoid reintroducing DI containers, RxJS, or old request-stack abstractions unless there is a strong reason.
 

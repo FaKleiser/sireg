@@ -120,3 +120,14 @@ export interface SiregReport {
   results: CheckResult[];
   config: NormalizedConfig;
 }
+
+export type RunProgressEvent =
+  | { type: 'phase'; phase: 'loading' | 'selecting' | 'checking' | 'reporting'; message: string }
+  | { type: 'loaded'; urls: number; sitemaps: number }
+  | { type: 'selected'; discovered: number; selected: number; skipped: number; redirects: number; total: number }
+  | { type: 'check-complete'; result: CheckResult; completed: number; total: number; passed: number; failed: number }
+  | { type: 'done'; report: SiregReport };
+
+export interface RunOptions {
+  onProgress?: (event: RunProgressEvent) => void;
+}

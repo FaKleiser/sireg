@@ -4,7 +4,15 @@ import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { loadSources, normalizeConfig, renderReport, runSireg, selectUrls, statusMatches } from '../src/index.js';
+import {
+  LiveConsoleProgress,
+  loadSources,
+  normalizeConfig,
+  renderReport,
+  runSireg,
+  selectUrls,
+  statusMatches,
+} from '../src/index.js';
 
 test('status expectations support ranges, classes, and exact codes', () => {
   assert.equal(statusMatches(200, '2xx'), true);
@@ -79,6 +87,93 @@ test('runs nested sitemap checks with transforms and redirect expectations', asy
   } finally {
     await server.close();
   }
+});
+
+test('emits progress events while checks are running', async () => {
+  const server = await createServer((request, response, baseUrl) => {
+    if (request.url === '/sitemap.xml') {
+      response.writeHead(200, { 'content-type': 'application/xml' });
+      response.end(`
+        <urlset>
+          <url><loc>${baseUrl}/ok</loc></url>
+          <url><loc>${baseUrl}/broken</loc></url>
+        </urlset>
+      `);
+      return;
+    }
+
+    response.writeHead(request.url === '/ok' ? 200 : 500);
+    response.end();
+  });
+
+  try {
+    const events: string[] = [];
+    const report = await runSireg(
+      {
+        sources: [{ type: 'sitemap', url: `${server.url}/sitemap.xml` }],
+        checks: { concurrency: 1, timeout: 2000 },
+      },
+      {
+        onProgress: (event) => {
+          events.push(event.type);
+          if (event.type === 'check-complete') {
+            events.push(`${event.completed}/${event.total}/${event.passed}/${event.failed}`);
+          }
+        },
+      },
+    );
+
+    assert.equal(report.summary.total, 2);
+    assert.equal(report.summary.passed, 1);
+    assert.equal(report.summary.failed, 1);
+    assert.deepEqual(events.filter((event) => event === 'check-complete'), ['check-complete', 'check-complete']);
+    assert.ok(events.includes('loaded'));
+    assert.ok(events.includes('selected'));
+    assert.ok(events.includes('1/2/1/0'));
+    assert.ok(events.includes('2/2/1/1'));
+    assert.equal(events.at(-1), 'done');
+  } finally {
+    await server.close();
+  }
+});
+
+test('live console progress renders check stats to a TTY stream', () => {
+  const writes: string[] = [];
+  const stream = {
+    isTTY: true,
+    columns: 120,
+    write: (value: string) => {
+      writes.push(value);
+      return true;
+    },
+    cursorTo: () => undefined,
+    clearLine: () => undefined,
+  };
+  const progress = new LiveConsoleProgress({ stream: stream as never, enabled: true });
+
+  progress.handle({ type: 'phase', phase: 'checking', message: 'Checking 2 URL(s)' });
+  progress.handle({
+    type: 'check-complete',
+    completed: 1,
+    total: 2,
+    passed: 1,
+    failed: 0,
+    result: {
+      type: 'url',
+      sourceUrl: 'https://example.test/ok',
+      targetUrl: 'https://example.test/ok',
+      expectedStatus: '2xx',
+      finalStatus: 200,
+      redirectChain: [],
+      durationMs: 12,
+      passed: true,
+    },
+  });
+  progress.stop();
+
+  assert.match(writes.join(''), /Checking/);
+  assert.match(writes.join(''), /1\/2/);
+  assert.match(writes.join(''), /ok 1 fail 0/);
 });
 
 test('reports failures in markdown and html artifacts', async () => {

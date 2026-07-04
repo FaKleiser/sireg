@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { parseArgs } from 'node:util';
 import { configFromCliOptions, loadConfigFile } from './core/config.js';
-import { runAndReport } from './run.js';
+import { runSireg } from './run.js';
+import { LiveConsoleProgress } from './reporters/live-console.js';
+import { writeReports } from './reporters/index.js';
 
 const HELP = `sireg - website regression checks from sitemaps and URL lists
 
@@ -35,6 +37,7 @@ Reports:
   --report <type:path>     Write json, markdown, html, or console report
   --markdown <path>        Shortcut for --report markdown:path
   --html <path>            Shortcut for --report html:path
+  --no-progress            Disable the interactive TTY progress UI
 
 Examples:
   sireg check --sitemap https://example.com/sitemap.xml
@@ -50,12 +53,17 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
 
   const command = argv[0];
   const args = command === 'check' || command === 'test' ? argv.slice(1) : argv;
+  const progress = new LiveConsoleProgress({ enabled: !args.includes('--no-progress') });
 
   try {
     const config = await resolveConfig(command, args);
-    const report = await runAndReport(config);
+    progress.start();
+    const report = await runSireg(config, { onProgress: (event) => progress.handle(event) });
+    progress.stop();
+    await writeReports(report, report.config.reports);
     process.exitCode = report.summary.failed > 0 ? 1 : 0;
   } catch (error) {
+    progress.stop();
     const message = error instanceof Error ? error.message : String(error);
     process.stderr.write(`sireg failed: ${message}\n`);
     process.exitCode = 1;
@@ -91,6 +99,7 @@ async function resolveConfig(command: string, args: string[]) {
       report: { type: 'string', multiple: true },
       markdown: { type: 'string' },
       html: { type: 'string' },
+      'no-progress': { type: 'boolean' },
     },
   });
 

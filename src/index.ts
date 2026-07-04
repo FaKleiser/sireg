@@ -6,6 +6,7 @@ export { selectUrls } from './core/select.js';
 export { applyTransform, applyTransforms } from './core/transforms.js';
 export { statusMatches, normalizeStatusExpectation } from './core/status.js';
 export { renderReport } from './reporters/index.js';
+export { LiveConsoleProgress } from './reporters/live-console.js';
 export type {
   CheckConfig,
   CheckResult,
@@ -14,6 +15,8 @@ export type {
   RedirectExpectation,
   ReportConfig,
   RunSummary,
+  RunOptions,
+  RunProgressEvent,
   SelectionConfig,
   SiregConfig,
   SiregReport,

@@ -9,6 +9,8 @@ sireg always produces a process exit code for automation:
 
 Console output is compact and optimized for CI logs. It includes the pass count, success rate, discovered URL count, selected URL count, skipped URL count, redirect checks, and failures.
 
+Interactive terminals also show a live spinner, progress bar, elapsed time, and pass/fail counters while checks are running. Use `--no-progress` to disable the live UI. CI and non-TTY environments automatically use final summary output only.
+
 ```json
 {
   "reports": [{ "type": "console" }]
