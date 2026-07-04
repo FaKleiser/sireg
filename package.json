@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Sitemap-driven website regression testing for CI and releases",
   "author": "Fabian Keller <contact@fabian-keller.de>",
-  "homepage": "https://github.com/FaKeller/sireg",
+  "homepage": "https://github.com/FaKleiser/sireg",
   "license": "MIT",
   "type": "module",
   "bin": {
@@ -31,7 +31,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FaKeller/sireg.git"
+    "url": "git+https://github.com/FaKleiser/sireg.git"
   },
   "keywords": [
     "sitemap",

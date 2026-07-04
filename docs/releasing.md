@@ -18,13 +18,19 @@ The command requires a clean worktree, finalizes the already-committed changelog
 
 ## Publish from GitHub
 
-Pushing a `vX.Y.Z` tag starts the release workflow. The workflow validates that the tag matches `package.json`, extracts the matching `CHANGELOG.md` section, runs tests, builds the npm tarball, creates a GitHub Release with that tarball attached, then publishes the same tarball to npm with provenance.
+Pushing a `vX.Y.Z` tag starts the release workflow. The workflow validates that the tag matches `package.json`, extracts the matching `CHANGELOG.md` section, runs tests, builds the npm tarball, creates a GitHub Release with that tarball attached, then publishes the same tarball to npm through npm trusted publishing.
 
 Repository setup:
 
-- Add an npm automation token as `NPM_TOKEN`.
-- Keep package provenance enabled by using the included workflow.
-- Ensure GitHub Actions has permission to create releases.
+- Configure npm trusted publishing for this package with:
+  - owner or organization: `FaKleiser`
+  - repository: `sireg`
+  - workflow filename: `release.yml`
+  - allowed action: `npm publish`
+- Keep `permissions.id-token: write` enabled in the release workflow.
+- Use GitHub-hosted runners and Node.js 22.14.0 or newer so npm can exchange the OIDC token.
+- Ensure `package.json` `repository.url` matches the trusted GitHub repository.
+- Ensure GitHub Actions has `contents: write` permission to create releases.
 
 ## Manual publishing
 

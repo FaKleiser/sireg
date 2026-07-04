@@ -45,8 +45,9 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 - Package output is compiled to `dist/`; tests compile separately to `dist-test/` and must not be published.
 - `sireg.schema.json` is the user-facing config schema.
 - `docs/configuration.md`, `docs/reports.md`, and `docs/releasing.md` should stay in sync with README examples.
-- GitHub Actions are included for CI and npm release publishing with provenance. Do not publish without explicit user approval.
-- Releases are tag-driven: `npm run release:prepare -- major|minor|patch` finalizes `CHANGELOG.md`, bumps the package version, commits, tags, and pushes; the pushed `vX.Y.Z` tag creates the GitHub Release and publishes the npm package.
+- GitHub Actions are included for CI and npm release publishing through npm trusted publishing. Do not publish without explicit user approval.
+- Releases are tag-driven: `npm run release:prepare -- major|minor|patch` finalizes `CHANGELOG.md`, bumps the package version, commits, tags, and pushes; the pushed `vX.Y.Z` tag creates the GitHub Release and publishes the npm package through OIDC trusted publishing.
+- The npm trusted publisher must match `.github/workflows/release.yml` and the package `repository.url`; do not reintroduce `NPM_TOKEN` publishing unless the user explicitly changes the release strategy.
 - `CHANGELOG.md` must be updated under `## [UNRELEASED]` before preparing a release.
 - The old Node 8 stack, TSLint, Travis config, Yarn lockfile, Inversify/RxJS/request code, and legacy schema were intentionally removed.
 

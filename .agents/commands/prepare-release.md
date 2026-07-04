@@ -18,10 +18,11 @@ npm run release:prepare -- <major|minor|patch>
 ```
 
 5. Confirm the command commits `🚀 Release vX.Y.Z`, creates annotated tag `vX.Y.Z`, and pushes both the branch and tag.
-6. Do not publish npm manually. The pushed tag triggers GitHub Actions to create the GitHub Release, attach the tarball, and publish to npm with provenance.
+6. Do not publish npm manually. The pushed tag triggers GitHub Actions to create the GitHub Release, attach the tarball, and publish to npm through npm trusted publishing.
 
 ## Notes
 
 - If `CHANGELOG.md` has an empty `## [UNRELEASED]` section, the release command must fail.
 - If tests or the pack dry run fail, fix the issue before retrying.
 - If the repository is in detached HEAD state, do not release from that state.
+- The release workflow uses npm trusted publishing, not an `NPM_TOKEN` secret.
