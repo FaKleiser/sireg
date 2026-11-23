@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+
+## v1.1.0 - 2026-11-23
+
 ### Added
 - Preview a live sitemap from the docs homepage and copy a command that checks its routes against a local build.
 - Add a GitHub Pages documentation site with guides for local checks, smoke tests, Hugo pull requests, and redirect migrations.
