@@ -2,14 +2,27 @@ const maxChildFiles = 6;
 const maxFileBytes = 5 * 1024 * 1024;
 const previewTimeoutMs = 8000;
 const number = new Intl.NumberFormat();
-const form = document.querySelector('.sitemap-form');
+const controls = document.querySelector('.builder-controls');
+const form = controls.querySelector('.sitemap-form');
 const source = form.elements.source;
 const submit = form.querySelector('button');
 const status = form.querySelector('.sitemap-status');
+const samples = controls.querySelector('.sample-options');
 const command = document.querySelector('#sitemap-command');
+const commandError = document.querySelector('.command-error');
+const commandTools = document.querySelector('.terminal-tools');
+let preview;
 
-form.hidden = false;
-source.addEventListener('input', () => source.setCustomValidity(''));
+controls.hidden = false;
+controls.addEventListener('input', updateCommand);
+source.addEventListener('input', () => {
+  source.setCustomValidity('');
+  preview?.abort();
+  preview = undefined;
+  submit.disabled = false;
+  status.textContent = '';
+});
+updateCommand();
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -23,51 +36,129 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  command.textContent = localCommand(sitemap);
   if (sitemap.protocol === 'http:' && location.protocol === 'https:') {
-    status.textContent = 'This HTTPS page cannot preview an HTTP sitemap. Use the command below to check it.';
+    status.textContent = 'This HTTPS page cannot preview an HTTP sitemap. You can still run sireg from your terminal.';
     return;
   }
 
   submit.disabled = true;
   status.textContent = 'Reading sitemap…';
   const controller = new AbortController();
+  preview = controller;
   const timer = setTimeout(() => controller.abort(), previewTimeoutMs);
   try {
     const { pages, files, partial } = await previewSitemap(sitemap, controller.signal);
+    if (preview !== controller) return;
     const stats = number.format(pages) + (pages === 1 ? ' page URL' : ' page URLs') +
       ' in ' + number.format(files) + (files === 1 ? ' sitemap file' : ' sitemap files');
     status.textContent = partial
-      ? 'Partial preview: ' + stats + ' read. Some entries or child sitemaps were skipped or unavailable. The CLI checks the full sitemap.'
+      ? 'Partial preview: ' + stats + ' read. The CLI attempts to load the full sitemap.'
       : 'Found ' + stats + '.';
   } catch (error) {
+    if (preview !== controller) return;
     const reason = controller.signal.aborted ? 'The preview timed out.' : error.message;
-    status.textContent = reason + ' You can still try the command below.';
+    status.textContent = reason + ' You can still run sireg from your terminal.';
   } finally {
     clearTimeout(timer);
-    submit.disabled = false;
+    if (preview === controller) {
+      preview = undefined;
+      submit.disabled = false;
+    }
   }
 });
 
-function sitemapUrl(value) {
+function webUrl(value, protocol) {
   const input = value.trim();
-  const url = new URL(input.includes('://') ? input : 'https://' + input);
+  const url = new URL(input.includes('://') ? input : protocol + '://' + input);
   if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) {
-    throw new Error('Expected a public web URL.');
+    throw new Error('Expected an HTTP(S) URL without credentials.');
   }
+  return url;
+}
+
+function sitemapUrl(value) {
+  const url = webUrl(value, 'https');
   if (url.pathname === '/') url.pathname = '/sitemap.xml';
   url.hash = '';
   return url;
 }
 
-function localCommand(sitemap) {
-  // Quote the complete argument, including query parameters, for POSIX shells.
-  const escaped = "'" + sitemap.href.replaceAll("'", "'\"'\"'") + "'";
-  return [
+function updateCommand() {
+  const strategy = controls.querySelector('[name="strategy"]:checked').value;
+  samples.hidden = strategy === 'all';
+  for (const field of samples.querySelectorAll('[data-strategy]')) {
+    field.hidden = field.dataset.strategy !== strategy;
+  }
+
+  const invalid = controls.querySelector('[aria-invalid="true"]');
+  invalid?.removeAttribute('aria-invalid');
+  invalid?.removeAttribute('aria-errormessage');
+
+  let error = '';
+  try {
+    const next = localCommand(strategy);
+    if (command.textContent !== next) {
+      command.textContent = next;
+      command.dispatchEvent(new Event('commandchange'));
+    }
+  } catch (problem) {
+    error = problem.message;
+    problem.cause?.setAttribute('aria-invalid', 'true');
+    problem.cause?.setAttribute('aria-errormessage', commandError.id);
+  }
+  command.parentElement.hidden = Boolean(error);
+  commandTools.hidden = Boolean(error);
+  commandError.hidden = !error;
+  commandError.textContent = error;
+}
+
+function localCommand(strategy) {
+  const originField = controls.querySelector('[name="origin"]');
+  let sitemap;
+  let target;
+  try {
+    sitemap = sitemapUrl(source.value.trim() || source.placeholder);
+  } catch {
+    throw new Error('Enter a valid domain or sitemap URL.', { cause: source });
+  }
+  try {
+    target = webUrl(originField.value, 'http');
+    if (target.href !== target.origin + '/') throw new Error('Expected an origin.');
+  } catch {
+    throw new Error('Enter a target origin such as http://127.0.0.1:8000, without a path or query.', { cause: originField });
+  }
+
+  const expectedStatus = controls.querySelector('[name="expected-status"]').value;
+  const lines = [
     'npx --yes sireg@1.1.0 check',
-    '  --sitemap ' + escaped,
-    '  --origin http://127.0.0.1:8000 --expect-status 200',
-  ].join(' \\\n');
+    '  --sitemap ' + shellQuote(sitemap.href),
+    '  --origin ' + shellQuote(target.origin),
+    '  --expect-status ' + expectedStatus,
+  ];
+
+  if (strategy === 'random') {
+    const limitField = controls.querySelector('[name="limit"]');
+    const limit = limitField.valueAsNumber;
+    if (!Number.isSafeInteger(limit) || limit < 1) {
+      throw new Error('Enter a whole number of URLs, at least 1.', { cause: limitField });
+    }
+    lines.push('  --strategy random --limit ' + limit);
+  } else if (strategy === 'percent') {
+    const percentField = controls.querySelector('[name="percent"]');
+    const percent = percentField.valueAsNumber;
+    if (!(percent > 0 && percent <= 100)) {
+      throw new Error('Enter a percentage greater than 0 and up to 100.', { cause: percentField });
+    }
+    lines.push('  --strategy percent --percent ' + percent);
+  }
+
+  const seed = controls.querySelector('[name="seed"]').value.trim();
+  if (strategy !== 'all' && seed) lines.push('  --seed ' + shellQuote(seed));
+  return lines.join(' \\\n');
+}
+
+function shellQuote(value) {
+  return "'" + value.replaceAll("'", "'\"'\"'") + "'";
 }
 
 async function previewSitemap(sitemap, signal) {

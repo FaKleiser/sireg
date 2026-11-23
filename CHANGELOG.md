@@ -7,6 +7,9 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Changed
+- Redesign the homepage command builder with full, randomized, and percentage runs, plus editable target and status options.
+
 
 ## v1.1.0 - 2026-11-23
 
