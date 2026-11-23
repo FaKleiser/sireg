@@ -11,10 +11,11 @@ hugo --destination public
 python3 -m http.server 8000 --bind 127.0.0.1 --directory public
 ~~~
 
-In another terminal, use Node.js 20 or newer. Replace the example sitemap URL with your own.
+In another terminal, use Node.js 20 or newer. Install sireg in the site directory and replace the example sitemap URL with your own. Version 1.0.1 can silently skip execution through the npm launcher, so these examples invoke the JavaScript entry point directly.
 
 ~~~bash
-npx sireg@1.0.1 check \
+npm install --no-save --package-lock=false sireg@1.0.1
+node ./node_modules/sireg/dist/cli.js check --no-progress \
   --sitemap https://example.com/sitemap.xml \
   --origin http://127.0.0.1:8000 \
   --expect-status 200

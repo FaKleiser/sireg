@@ -14,6 +14,8 @@ The source supplies the route list. It does not supply production status codes. 
 
 The original README's GitHub Actions seed example puts a workflow expression inside a JSON config, where GitHub Actions cannot evaluate it. Pass the SHA as `--seed "$GITHUB_SHA"` in a direct CLI invocation. In v1.0.1, config mode accepts report overrides and takes the selection settings from the config.
 
+The v1.0.1 npm launcher can silently skip execution on platforms where npm links the executable. The CLI and non-interactive progress fixes are committed for the next release. Until then, install v1.0.1 and use `node ./node_modules/sireg/dist/cli.js check --no-progress`. The docs site uses that invocation.
+
 ## Capability plan
 
 1. **Sample by path.** Add a config-first selection strategy with named pathname globs, a count for each group, and a shared seed. Define segment-aware `*` and `**` matching on the transformed URL pathname, independent of the query string. Match `/about/**` against the section landing page and descendants, but not `/about-us/`. Deduplicate target requests globally and let a selected URL count toward every group it matches. Report matched and selected counts per group. Fail explicitly when a required quota cannot be met, including an empty match, so a missing section cannot quietly pass. Cover overlap, insufficient matches, reproducibility, normalization, and the CLI exit code. Update the public types, schema, and reports together.

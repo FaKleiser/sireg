@@ -12,7 +12,8 @@
     </div>
     <figure class="terminal">
       <figcaption><span aria-hidden="true">●</span> Terminal · local build</figcaption>
-      <pre><code><span class="prompt">$</span> npx sireg check \
+      <pre><code><span class="prompt">$</span> node ./node_modules/sireg/dist/cli.js \
+  check --no-progress \
   --sitemap https://example.com/sitemap.xml \
   --origin http://127.0.0.1:8000 \
   --expect-status 200</code></pre>
