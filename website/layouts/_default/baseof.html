@@ -6,9 +6,10 @@
   <meta name="description" content="{{ .Description | default "Sitemap-driven website regression checks for local builds, previews, and CI." }}">
   <title>{{ if not .IsHome }}{{ .Title }} · {{ end }}sireg</title>
   <link rel="stylesheet" href="{{ "site.css" | relURL }}">
+  {{ if .IsHome }}<link rel="stylesheet" href="{{ "home.css" | relURL }}">{{ end }}
   <script src="{{ "site.js" | relURL }}" defer></script>
 </head>
-<body>
+<body{{ if .IsHome }} class="home-page"{{ end }}>
   <a class="skip" href="#main">Skip to content</a>
   <header class="header">
     <div class="shell header-inner">

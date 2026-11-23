@@ -1,41 +1,78 @@
 {{ define "main" }}
-<section class="hero">
-  <div class="hero-intro">
-    <p class="section-label">Sitemap regression testing</p>
-    <h1>Catch broken routes <em>before you ship.</em></h1>
-    <p class="lede">Use your live sitemap to check routes on a local build, preview, or staging site.</p>
-    <div class="actions">
-      <a class="button" href="{{ "guides/local/" | relURL }}">Test a local build <span aria-hidden="true">→</span></a>
-      <a class="text-link" href="{{ "guides/github-actions/" | relURL }}">Set up CI <span aria-hidden="true">↗</span></a>
-    </div>
-  </div>
-  <div class="sitemap-demo">
-    <form class="sitemap-form" hidden>
-      <label for="sitemap-source">Try it with your sitemap</label>
+<header class="home-intro">
+  <p class="section-label">Sitemap regression testing</p>
+  <h1>Catch broken routes<br class="hero-break"> before you ship.</h1>
+  <p class="lede">Check routes from your live sitemap against a local build, preview, or staging site.</p>
+</header>
+
+<section class="command-builder" aria-labelledby="builder-title">
+  <div class="builder-controls" hidden>
+    <h2 id="builder-title">Build your command</h2>
+    <form class="sitemap-form">
+      <label for="sitemap-source">Sitemap or domain</label>
       <div class="sitemap-input">
         <input id="sitemap-source" name="source" type="text" placeholder="example.com" required
           autocapitalize="none" spellcheck="false" inputmode="url" aria-describedby="sitemap-hint">
-        <button class="button" type="submit">Check sitemap</button>
+        <button class="button" type="submit">Preview sitemap</button>
       </div>
-      <p id="sitemap-hint">Enter a domain or a full sitemap URL. The browser needs permission from the sitemap server.</p>
+      <p id="sitemap-hint" class="field-hint">A domain uses <code>/sitemap.xml</code>. Preview availability depends on the site's CORS policy.</p>
       <p class="sitemap-status" role="status" aria-atomic="true"></p>
     </form>
+
+    <fieldset class="coverage">
+      <legend>Coverage</legend>
+      <div class="coverage-options">
+        <label><input type="radio" name="strategy" value="all" checked><span>Full site</span></label>
+        <label><input type="radio" name="strategy" value="random"><span>Random sample</span></label>
+        <label><input type="radio" name="strategy" value="percent"><span>Percentage</span></label>
+      </div>
+    </fieldset>
+    <div class="builder-fields sample-options" hidden>
+      <label data-strategy="random" hidden>URL count
+        <input name="limit" type="number" min="1" step="1" value="25">
+      </label>
+      <label data-strategy="percent" hidden>Percentage of URLs
+        <input name="percent" type="number" min="0" max="100" step="any" value="10">
+      </label>
+      <label>Seed <span class="optional">optional</span>
+        <input name="seed" type="text" placeholder="sireg" autocapitalize="none" spellcheck="false"
+          aria-describedby="seed-hint">
+      </label>
+      <p id="seed-hint" class="field-hint">Use the same seed and sitemap to repeat a sample.</p>
+    </div>
+    <div class="builder-fields">
+      <label>Target origin
+        <input name="origin" type="text" value="http://127.0.0.1:8000" inputmode="url" autocapitalize="none" spellcheck="false">
+      </label>
+      <label>Final status
+        <select name="expected-status">
+          <option value="200">200 OK</option>
+          <option value="2xx">Any 2xx</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="command-output">
+    <h2>Run it locally</h2>
+    <p>Start your site, then run this in a terminal with Node.js 20 or newer.</p>
     <figure class="terminal">
       <figcaption>
-        <span><i aria-hidden="true"></i> Run from your site directory</span>
+        <span>CLI command</span>
         <div class="terminal-tools" data-copy></div>
       </figcaption>
       <pre><code id="sitemap-command">npx --yes sireg@1.1.0 check \
   --sitemap 'https://example.com/sitemap.xml' \
-  --origin http://127.0.0.1:8000 --expect-status 200</code></pre>
-      <div class="terminal-flow">
-        <span>Live sitemap</span><i aria-hidden="true">→</i><span>Local server on port 8000</span>
-      </div>
+  --origin 'http://127.0.0.1:8000' \
+  --expect-status 200</code></pre>
+      <p id="command-error" class="command-error" role="status" hidden></p>
     </figure>
+    <a class="text-link" href="{{ "guides/local/" | relURL }}">How to serve a local build <span aria-hidden="true">→</span></a>
   </div>
 </section>
+
 <section class="collection">
-  <h2>Find your workflow</h2>
+  <h2>Guides</h2>
   {{ partial "cards.html" (.Site.GetPage "/guides").RegularPages.ByWeight }}
 </section>
 <script type="module" src="{{ "sitemap-demo.js" | relURL }}"></script>

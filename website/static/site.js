@@ -10,6 +10,13 @@ function addCopyButton(container, code) {
   container.append(button, feedback);
 
   let resetLabel;
+  function resetCopyFeedback() {
+    clearTimeout(resetLabel);
+    button.textContent = 'Copy';
+    feedback.textContent = '';
+  }
+
+  code.addEventListener('commandchange', resetCopyFeedback);
   button.addEventListener('click', async () => {
     clearTimeout(resetLabel);
     try {
@@ -20,10 +27,7 @@ function addCopyButton(container, code) {
       button.textContent = 'Copy failed';
       feedback.textContent = 'Could not copy. Select the code to copy it.';
     }
-    resetLabel = setTimeout(() => {
-      button.textContent = 'Copy';
-      feedback.textContent = '';
-    }, 2400);
+    resetLabel = setTimeout(resetCopyFeedback, 2400);
   });
 }
 
