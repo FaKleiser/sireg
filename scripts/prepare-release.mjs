@@ -13,6 +13,13 @@ const releaseType = process.argv[2];
 
 try {
   assertReleaseType(releaseType);
+  const branch = capture('git', ['rev-parse', '--abbrev-ref', 'HEAD']).trim();
+  if (!branch || branch === 'HEAD') {
+    throw new Error('Cannot push release from a detached HEAD.');
+  }
+  if (branch === 'main' || branch === 'master') {
+    throw new Error('Prepare releases on a topic branch and open a pull request.');
+  }
   assertCleanWorktree(capture('git', ['status', '--porcelain']));
 
   const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
@@ -30,11 +37,6 @@ try {
   run('git', ['add', 'CHANGELOG.md', 'package.json', 'package-lock.json']);
   run('git', ['commit', '-m', `🚀 Release ${tagName}`]);
   run('git', ['tag', '-a', tagName, '-m', `Release ${tagName}`]);
-
-  const branch = capture('git', ['rev-parse', '--abbrev-ref', 'HEAD']).trim();
-  if (!branch || branch === 'HEAD') {
-    throw new Error('Cannot push release from a detached HEAD.');
-  }
 
   run('git', ['push', 'origin', branch]);
   run('git', ['push', 'origin', tagName]);

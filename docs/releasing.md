@@ -8,7 +8,7 @@ sireg is published as an npm package with the `sireg` CLI entry.
 
 ## Prepare a release
 
-1. Inspect commits since the previous release tag.
+1. Create a release branch and inspect commits since the previous release tag.
 2. Ensure proper release notes are committed under `## [UNRELEASED]` in `CHANGELOG.md`.
 3. Run one of:
 
@@ -18,7 +18,7 @@ npm run release:prepare -- minor
 npm run release:prepare -- major
 ```
 
-The command requires a clean worktree, finalizes the already-committed changelog notes, bumps `package.json` and `package-lock.json`, runs `npm test`, runs the npm pack dry run, commits with `🚀 Release vX.Y.Z`, creates an annotated `vX.Y.Z` tag, and pushes the branch and tag to GitHub.
+The command requires a clean worktree, finalizes the already-committed changelog notes, bumps `package.json` and `package-lock.json`, runs `npm test`, runs the npm pack dry run, commits with `🚀 Release vX.Y.Z`, creates an annotated `vX.Y.Z` tag, and pushes the release branch and tag to GitHub. Open a pull request for the release commit.
 
 ## Publish from GitHub
 
