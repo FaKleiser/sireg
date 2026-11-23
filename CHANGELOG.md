@@ -7,15 +7,19 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
-### Changed
-- Redesign the documentation site with direct guide and reference navigation, article outlines, and a refreshed sireg mark.
-\n### Added
+
+## v1.1.0 - 2026-11-23
+
+### Added
+- Preview a live sitemap from the docs homepage and copy a command that checks its routes against a local build.
 - Add a GitHub Pages documentation site with guides for local checks, smoke tests, Hugo pull requests, and redirect migrations.
 
+### Changed
+- Redesign the documentation site with direct guide and reference navigation, article outlines, and a refreshed sireg mark.
 
 ### Fixed
 - Require a topic branch for release preparation so it cannot push directly to `main` or `master`.
-- Run the CLI correctly through npm executable symlinks and use plain output by default in CI and non-interactive terminals.
+- Make `npx sireg check` run through npm executable symlinks and use plain output by default in CI and non-interactive terminals.
 
 
 ## v1.0.1 - 2026-07-04

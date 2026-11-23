@@ -311,3 +311,37 @@ code { font-family: var(--mono); }
   .terminal { animation: none; }
   .card { transition: none; }
 }
+
+.sitemap-demo { min-width: 0; width: min(100%, 34rem); }
+.sitemap-form {
+  padding: 1rem;
+  margin-bottom: .8rem;
+  border: 1px solid #c0d9cb;
+  border-radius: .85rem;
+  background: #f9fffae8;
+}
+.sitemap-form label { display: block; margin-bottom: .48rem; font-weight: 700; }
+.sitemap-input { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .4rem; }
+.sitemap-input input {
+  width: 100%;
+  min-width: 0;
+  padding: .5rem .65rem;
+  border: 1px solid #9cb9a9;
+  border-radius: .55rem;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.sitemap-input input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.sitemap-input .button { border: 0; cursor: pointer; font-size: .89rem; }
+.sitemap-input .button:disabled { opacity: .7; cursor: wait; }
+.sitemap-form p { margin: .55rem 0 0; font-size: .83rem; line-height: 1.45; color: var(--muted); }
+.sitemap-form .sitemap-status { color: var(--ink); font-weight: 600; }
+.sitemap-status:empty { margin: 0; }
+.sitemap-demo .terminal { font-size: clamp(.72rem, .92vw, .86rem); }
+.sitemap-demo .terminal pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+@media (max-width: 370px) {
+  .sitemap-input { grid-template-columns: 1fr; }
+  .sitemap-input .button { justify-content: center; }
+}
