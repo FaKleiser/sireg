@@ -10,6 +10,7 @@ This file keeps track of all changes to this project. This project follows [sema
 ### Changed
 - Redesign the documentation site with direct guide and reference navigation, article outlines, and a refreshed sireg mark.
 \n### Added
+- Preview a live sitemap from the docs homepage and copy a command that checks its routes against a local build.
 - Add a GitHub Pages documentation site with guides for local checks, smoke tests, Hugo pull requests, and redirect migrations.
 
 

@@ -26,3 +26,10 @@ For example, a sitemap entry of `https://example.com/blog/hello/` is requested a
 sireg follows redirects and checks the final status against your rule. Redirects can lead to production or another host, so inspect the redirect chain if you're verifying where a page is served. Serve the static output without an app-shell fallback if you want a missing route to return 404. A status check cannot distinguish a fallback page that returns 200 from the intended page.
 
 Use [a smoke test]({{< relref "smoke-tests" >}}) to check fewer URLs while iterating. For a deployed preview, set `--origin` to the preview's origin.
+
+
+## Run with npx
+
+Node.js 20 or newer with npm provides `npx`. Once a patch release includes the executable launcher fix, `npx sireg check` will download the published package on demand and run it without a global install. Use `npx --yes sireg@VERSION check` to pin the release in CI and skip the install prompt. With the currently published v1.0.1, use the direct entry point shown above.
+
+The homepage preview runs in your browser and can read only sitemaps that allow its origin through CORS. It previews up to six same-origin child files for an index. The CLI fetches sitemaps from Node.js and does not have the browser's CORS restriction.

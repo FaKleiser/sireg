@@ -9,23 +9,37 @@
       <a class="text-link" href="{{ "guides/github-actions/" | relURL }}">Set up CI <span aria-hidden="true">↗</span></a>
     </div>
   </div>
-  <figure class="terminal">
-    <figcaption>
-      <span><i aria-hidden="true"></i> Local build</span>
-      <div class="terminal-tools" data-copy></div>
-    </figcaption>
-    <pre><code>node ./node_modules/sireg/dist/cli.js \
+  <div class="sitemap-demo">
+    <form class="sitemap-form" hidden>
+      <label for="sitemap-source">Try it with your sitemap</label>
+      <div class="sitemap-input">
+        <input id="sitemap-source" name="source" type="text" placeholder="example.com" required
+          autocapitalize="none" spellcheck="false" inputmode="url" aria-describedby="sitemap-hint">
+        <button class="button" type="submit">Check sitemap</button>
+      </div>
+      <p id="sitemap-hint">Enter a domain or a full sitemap URL. The browser needs permission from the sitemap server.</p>
+      <p class="sitemap-status" role="status" aria-atomic="true"></p>
+    </form>
+    <figure class="terminal">
+      <figcaption>
+        <span><i aria-hidden="true"></i> Run from your site directory</span>
+        <div class="terminal-tools" data-copy></div>
+      </figcaption>
+      <pre><code id="sitemap-command">npm install --no-save --package-lock=false \
+  sireg@1.0.1 &amp;&amp; \
+node ./node_modules/sireg/dist/cli.js \
   check --no-progress \
-  --sitemap https://example.com/sitemap.xml \
-  --origin http://127.0.0.1:8000 \
-  --expect-status 200</code></pre>
-    <div class="terminal-flow">
-      <span>Production sitemap</span><i aria-hidden="true">→</i><span>Local server</span>
-    </div>
-  </figure>
+  --sitemap 'https://example.com/sitemap.xml' \
+  --origin http://127.0.0.1:8000 --expect-status 200</code></pre>
+      <div class="terminal-flow">
+        <span>Live sitemap</span><i aria-hidden="true">→</i><span>Local server on port 8000</span>
+      </div>
+    </figure>
+  </div>
 </section>
 <section class="collection">
   <h2>Find your workflow</h2>
   {{ partial "cards.html" (.Site.GetPage "/guides").RegularPages.ByWeight }}
 </section>
+<script type="module" src="{{ "sitemap-demo.js" | relURL }}"></script>
 {{ end }}
