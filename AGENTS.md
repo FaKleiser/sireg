@@ -14,6 +14,7 @@ Before making changes, read [.agents/project-memory.md](.agents/project-memory.m
 - Verify docs workflow examples against the release they name. For site changes, build Hugo and run `sh website/verify.sh` after `npm run build`.
 - Always update `CHANGELOG.md` for user-visible changes.
 - Always commit completed work unless the user explicitly asks not to commit.
+- Open a pull request for repository changes. Push topic branches only. Never push directly to `main` or `master`.
 - Commit messages must use useful gitmoji style, for example `✨ Add sitemap regression CLI` or `📝 Document GitHub Actions usage`.
 - Do not publish to npm unless the user explicitly asks.
 - To prepare a release, follow [.agents/commands/prepare-release.md](.agents/commands/prepare-release.md) and run `npm run release:prepare -- major|minor|patch`.

@@ -11,6 +11,7 @@ This file keeps track of all changes to this project. This project follows [sema
 
 
 ### Fixed
+- Require a topic branch for release preparation so it cannot push directly to `main` or `master`.
 - Run the CLI correctly through npm executable symlinks and use plain output by default in CI and non-interactive terminals.
 
 
