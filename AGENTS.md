@@ -11,6 +11,7 @@ Before making changes, read [.agents/project-memory.md](.agents/project-memory.m
 - Keep the architecture modular without adding ceremony: config, source loading, transforms, selection, HTTP checks, reports, and CLI should remain separable.
 - Treat user experience as a product requirement. CLI output, docs, examples, and reports matter as much as internals.
 - Always run relevant verification before finishing. For broad changes, run `npm test`.
+- Verify docs workflow examples against the release they name. For site changes, build Hugo and run `sh website/verify.sh` after `npm run build`.
 - Always update `CHANGELOG.md` for user-visible changes.
 - Always commit completed work unless the user explicitly asks not to commit.
 - Commit messages must use useful gitmoji style, for example `✨ Add sitemap regression CLI` or `📝 Document GitHub Actions usage`.
@@ -22,6 +23,8 @@ Before making changes, read [.agents/project-memory.md](.agents/project-memory.m
 ```bash
 npm test
 npm run build
+hugo --source website --panicOnWarning --cleanDestinationDir
+sh website/verify.sh
 npm --cache /private/tmp/sireg-npm-cache pack --dry-run --ignore-scripts
 node dist/cli.js --help
 npm run release:prepare -- patch
