@@ -1,0 +1,7 @@
+{{ define "main" }}
+<section class="shell collection">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ partial "cards.html" .RegularPages.ByWeight }}
+</section>
+{{ end }}

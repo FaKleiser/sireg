@@ -1,4 +1,8 @@
-# Reports
++++
+title = "Reports"
+description = "Read results in the terminal and retain reports in CI."
+weight = 20
++++
 
 sireg always produces a process exit code for automation:
 

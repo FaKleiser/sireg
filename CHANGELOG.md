@@ -6,6 +6,8 @@ This file keeps track of all changes to this project. This project follows [sema
 
 
 ## [UNRELEASED]
+\n### Added
+- Add a GitHub Pages documentation site with guides for local checks, smoke tests, Hugo pull requests, and redirect migrations.
 
 
 ## v1.0.1 - 2026-07-04

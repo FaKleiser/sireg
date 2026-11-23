@@ -1,4 +1,8 @@
-# Releasing
++++
+title = "Releasing"
+description = "Prepare and publish a sireg release."
+weight = 30
++++
 
 sireg is published as an npm package with the `sireg` CLI entry.
 

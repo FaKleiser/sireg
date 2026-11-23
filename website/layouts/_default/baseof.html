@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ .Description | default "Sitemap-driven regression checks for local builds, previews, and CI." }}">
+  <title>{{ if not .IsHome }}{{ .Title }} · {{ end }}sireg</title>
+  <link rel="stylesheet" href="{{ "site.css" | relURL }}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="shell bar">
+    <a class="brand" href="{{ .Site.Home.RelPermalink }}"><span aria-hidden="true">✓</span> sireg</a>
+    <nav aria-label="Main navigation">
+      <a href="{{ "guides/" | relURL }}">Guides</a>
+      <a href="{{ "reference/" | relURL }}">Reference</a>
+      <a href="https://github.com/FaKleiser/sireg">GitHub ↗</a>
+    </nav>
+  </header>
+  <main id="main">{{ block "main" . }}{{ end }}</main>
+  <footer class="shell bar footer">
+    <a class="brand" href="{{ .Site.Home.RelPermalink }}">sireg</a>
+    <nav aria-label="Project links">
+      <a href="https://www.npmjs.com/package/sireg">npm ↗</a>
+      <a href="https://github.com/FaKleiser/sireg/blob/master/LICENSE">MIT license ↗</a>
+    </nav>
+  </footer>
+</body>
+</html>

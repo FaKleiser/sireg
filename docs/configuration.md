@@ -1,4 +1,8 @@
-# Configuration
++++
+title = "Configuration"
+description = "Define sources, URL transforms, selection, and status expectations."
+weight = 10
++++
 
 sireg configuration is JSON so it can be checked into a repository and reused locally and in CI.
 

@@ -1,0 +1,17 @@
+{{ define "main" }}
+<div class="shell docs">
+  <aside>
+    <nav aria-label="{{ .CurrentSection.Title }}">
+      <a class="section" href="{{ .CurrentSection.RelPermalink }}">{{ .CurrentSection.Title }}</a>
+      {{ $current := . }}
+      {{ range .CurrentSection.RegularPages.ByWeight }}
+        <a href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
+      {{ end }}
+    </nav>
+  </aside>
+  <article class="prose">
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+  </article>
+</div>
+{{ end }}

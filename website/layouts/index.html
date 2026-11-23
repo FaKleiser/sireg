@@ -1,0 +1,27 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="shell hero-grid">
+    <div>
+      <p class="eyebrow">Sitemap-driven regression testing</p>
+      <h1>Catch broken routes before you ship.</h1>
+      <p class="lede">Take the URLs from your live sitemap and check them against a local build, a preview deployment, or staging.</p>
+      <div class="actions">
+        <a class="button" href="{{ "guides/local/" | relURL }}">Test a local build →</a>
+        <a href="{{ "guides/github-actions/" | relURL }}">Set up CI →</a>
+      </div>
+    </div>
+    <figure class="terminal">
+      <figcaption><span aria-hidden="true">●</span> Terminal · local build</figcaption>
+      <pre><code><span class="prompt">$</span> npx sireg check \
+  --sitemap https://example.com/sitemap.xml \
+  --origin http://127.0.0.1:8000 \
+  --expect-status 200</code></pre>
+      <p>Source <strong>Production sitemap</strong><br>Target <strong>Local build</strong></p>
+    </figure>
+  </div>
+</section>
+<section class="shell collection">
+  <h2>Choose what to check</h2>
+  {{ partial "cards.html" (.Site.GetPage "/guides").RegularPages.ByWeight }}
+</section>
+{{ end }}

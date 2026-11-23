@@ -1,0 +1,8 @@
+<div class="cards">
+  {{ range . }}
+    <a class="card" href="{{ .RelPermalink }}">
+      <strong>{{ .LinkTitle }} <span aria-hidden="true">↗</span></strong>
+      <p>{{ .Description }}</p>
+    </a>
+  {{ end }}
+</div>

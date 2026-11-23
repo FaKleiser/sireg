@@ -1,0 +1,15 @@
+baseURL = "https://fakleiser.github.io/sireg/"
+languageCode = "en-us"
+title = "sireg"
+disableKinds = ["taxonomy", "term", "RSS"]
+
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "../docs"
+    target = "content/reference"
+
+[markup.highlight]
+  style = "dracula"
