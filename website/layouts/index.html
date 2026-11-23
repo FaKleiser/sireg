@@ -1,28 +1,31 @@
 {{ define "main" }}
 <section class="hero">
-  <div class="shell hero-grid">
-    <div>
-      <p class="eyebrow">Sitemap-driven regression testing</p>
-      <h1>Catch broken routes before you ship.</h1>
-      <p class="lede">Take the URLs from your live sitemap and check them against a local build, a preview deployment, or staging.</p>
-      <div class="actions">
-        <a class="button" href="{{ "guides/local/" | relURL }}">Test a local build →</a>
-        <a href="{{ "guides/github-actions/" | relURL }}">Set up CI →</a>
-      </div>
+  <div class="hero-intro">
+    <p class="section-label">Sitemap regression testing</p>
+    <h1>Catch broken routes <em>before you ship.</em></h1>
+    <p class="lede">Use your live sitemap to check routes on a local build, preview, or staging site.</p>
+    <div class="actions">
+      <a class="button" href="{{ "guides/local/" | relURL }}">Test a local build <span aria-hidden="true">→</span></a>
+      <a class="text-link" href="{{ "guides/github-actions/" | relURL }}">Set up CI <span aria-hidden="true">↗</span></a>
     </div>
-    <figure class="terminal">
-      <figcaption><span aria-hidden="true">●</span> Terminal · local build</figcaption>
-      <pre><code><span class="prompt">$</span> node ./node_modules/sireg/dist/cli.js \
+  </div>
+  <figure class="terminal">
+    <figcaption>
+      <span><i aria-hidden="true"></i> Local build</span>
+      <div class="terminal-tools" data-copy></div>
+    </figcaption>
+    <pre><code>node ./node_modules/sireg/dist/cli.js \
   check --no-progress \
   --sitemap https://example.com/sitemap.xml \
   --origin http://127.0.0.1:8000 \
   --expect-status 200</code></pre>
-      <p>Source <strong>Production sitemap</strong><br>Target <strong>Local build</strong></p>
-    </figure>
-  </div>
+    <div class="terminal-flow">
+      <span>Production sitemap</span><i aria-hidden="true">→</i><span>Local server</span>
+    </div>
+  </figure>
 </section>
-<section class="shell collection">
-  <h2>Choose what to check</h2>
+<section class="collection">
+  <h2>Find your workflow</h2>
   {{ partial "cards.html" (.Site.GetPage "/guides").RegularPages.ByWeight }}
 </section>
 {{ end }}
