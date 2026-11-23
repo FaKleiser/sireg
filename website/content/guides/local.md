@@ -11,11 +11,10 @@ hugo --destination public
 python3 -m http.server 8000 --bind 127.0.0.1 --directory public
 ~~~
 
-In another terminal, use Node.js 20 or newer. Install sireg in the site directory and replace the example sitemap URL with your own. Version 1.0.1 can silently skip execution through the npm launcher, so these examples invoke the JavaScript entry point directly.
+In another terminal, use Node.js 20 or newer. Replace the example sitemap URL with your own.
 
 ~~~bash
-npm install --no-save --package-lock=false sireg@1.0.1
-node ./node_modules/sireg/dist/cli.js check --no-progress \
+npx --yes sireg@1.1.0 check \
   --sitemap https://example.com/sitemap.xml \
   --origin http://127.0.0.1:8000 \
   --expect-status 200
@@ -30,6 +29,6 @@ Use [a smoke test]({{< relref "smoke-tests" >}}) to check fewer URLs while itera
 
 ## Run with npx
 
-Node.js 20 or newer with npm provides `npx`. Once a patch release includes the executable launcher fix, `npx sireg check` will download the published package on demand and run it without a global install. Use `npx --yes sireg@VERSION check` to pin the release in CI and skip the install prompt. With the currently published v1.0.1, use the direct entry point shown above.
+Node.js 20 or newer with npm provides `npx`. `npx sireg check` runs the published package without a global install. Use `npx --yes sireg@1.1.0 check` to pin the release and skip the install prompt.
 
 The homepage preview runs in your browser and can read only sitemaps that allow its origin through CORS. It previews up to six same-origin child files for an index. The CLI fetches sitemaps from Node.js and does not have the browser's CORS restriction.

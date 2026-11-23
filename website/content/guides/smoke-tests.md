@@ -4,14 +4,12 @@ description = "Sample a large sitemap or check a curated set of routes from ever
 weight = 20
 +++
 
-Use the [sireg installation from the local guide]({{< relref "local" >}}).
-
 ## Sample the sitemap
 
 Use a limit and seed to get a repeatable sample from the same ordered URL list.
 
 ~~~bash
-node ./node_modules/sireg/dist/cli.js check --no-progress \
+npx --yes sireg@1.1.0 check \
   --sitemap https://example.com/sitemap.xml \
   --origin http://127.0.0.1:8000 \
   --strategy random --limit 25 --seed local-smoke
@@ -33,7 +31,7 @@ https://example.com/about/team/
 ~~~
 
 ~~~bash
-node ./node_modules/sireg/dist/cli.js check --no-progress --file critical-urls.txt \
+npx --yes sireg@1.1.0 check --file critical-urls.txt \
   --origin http://127.0.0.1:8000 --expect-status 200
 ~~~
 

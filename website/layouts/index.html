@@ -25,10 +25,7 @@
         <span><i aria-hidden="true"></i> Run from your site directory</span>
         <div class="terminal-tools" data-copy></div>
       </figcaption>
-      <pre><code id="sitemap-command">npm install --no-save --package-lock=false \
-  sireg@1.0.1 &amp;&amp; \
-node ./node_modules/sireg/dist/cli.js \
-  check --no-progress \
+      <pre><code id="sitemap-command">npx --yes sireg@1.1.0 check \
   --sitemap 'https://example.com/sitemap.xml' \
   --origin http://127.0.0.1:8000 --expect-status 200</code></pre>
       <div class="terminal-flow">

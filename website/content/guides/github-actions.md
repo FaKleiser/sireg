@@ -30,19 +30,17 @@ jobs:
           curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" \
             | tar -xz -C "$RUNNER_TEMP" hugo
           "$RUNNER_TEMP/hugo" --destination public
-      - name: Install sireg
-        run: npm install --no-save --package-lock=false sireg@1.0.1
       - name: Serve the build and check routes
         run: |
           python3 -m http.server 8000 --bind 127.0.0.1 --directory public > "$RUNNER_TEMP/site.log" 2>&1 &
           trap 'kill "$!"' EXIT
           curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused \
             http://127.0.0.1:8000/ > /dev/null
-          node ./node_modules/sireg/dist/cli.js check \
+          npx --yes sireg@1.1.0 check \
             --sitemap "$PRODUCTION_SITEMAP" \
             --origin http://127.0.0.1:8000 \
             --strategy random --limit 25 --seed "$GITHUB_SHA" \
-            --expect-status 200 --no-progress \
+            --expect-status 200 \
             --report console --html reports/sireg.html
       - uses: actions/upload-artifact@v4
         if: always()

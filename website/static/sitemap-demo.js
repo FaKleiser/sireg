@@ -64,10 +64,7 @@ function localCommand(sitemap) {
   // Quote the complete argument, including query parameters, for POSIX shells.
   const escaped = "'" + sitemap.href.replaceAll("'", "'\"'\"'") + "'";
   return [
-    'npm install --no-save --package-lock=false',
-    '  sireg@1.0.1 &&',
-    'node ./node_modules/sireg/dist/cli.js',
-    '  check --no-progress',
+    'npx --yes sireg@1.1.0 check',
     '  --sitemap ' + escaped,
     '  --origin http://127.0.0.1:8000 --expect-status 200',
   ].join(' \\\n');
