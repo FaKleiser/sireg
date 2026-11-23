@@ -25,7 +25,7 @@ fi
 node dist/cli.js check \
   --sitemap http://127.0.0.1:8765/sireg/sitemap.xml \
   --origin http://127.0.0.1:8765 \
-  --expect-status 200 --no-progress \
+  --expect-status 200 \
   --report console --html "$preview/report.html"
 
 test -s "$preview/report.html"

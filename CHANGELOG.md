@@ -10,6 +10,10 @@ This file keeps track of all changes to this project. This project follows [sema
 - Add a GitHub Pages documentation site with guides for local checks, smoke tests, Hugo pull requests, and redirect migrations.
 
 
+### Fixed
+- Run the CLI correctly through npm executable symlinks and use plain output by default in CI and non-interactive terminals.
+
+
 ## v1.0.1 - 2026-07-04
 
 ### Fixed

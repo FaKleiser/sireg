@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { existsSync, realpathSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { configFromCliOptions, loadConfigFile } from './core/config.js';
 import { runSireg } from './run.js';
@@ -53,7 +55,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
 
   const command = argv[0];
   const args = command === 'check' || command === 'test' ? argv.slice(1) : argv;
-  const progress = new LiveConsoleProgress({ enabled: !args.includes('--no-progress') });
+  const progress = new LiveConsoleProgress({ enabled: args.includes('--no-progress') ? false : undefined });
 
   try {
     const config = await resolveConfig(command, args);
@@ -145,6 +147,7 @@ function parseReportOverride(value: string) {
   return { type: type as never, path: rest.join(':') || undefined };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const entry = process.argv[1];
+if (entry && existsSync(entry) && import.meta.url === pathToFileURL(realpathSync(entry)).href) {
   await main();
 }
