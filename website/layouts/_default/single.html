@@ -1,17 +1,26 @@
 {{ define "main" }}
-<div class="shell docs">
-  <aside>
-    <nav aria-label="{{ .CurrentSection.Title }}">
-      <a class="section" href="{{ .CurrentSection.RelPermalink }}">{{ .CurrentSection.Title }}</a>
-      {{ $current := . }}
-      {{ range .CurrentSection.RegularPages.ByWeight }}
-        <a href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a>
+<div class="article-layout{{ if not .Fragments.Identifiers }} no-outline{{ end }}">
+  {{ if .Fragments.Identifiers }}
+    <aside class="outline">
+      <p>On this page</p>
+      {{ .TableOfContents }}
+    </aside>
+  {{ end }}
+  <article class="prose">
+    <header class="article-header">
+      <p class="section-label">{{ .CurrentSection.Title }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="lede">{{ . }}</p>{{ end }}
+    </header>
+    {{ .Content }}
+    <nav class="article-pagination" aria-label="More in {{ .CurrentSection.Title }}">
+      {{ with .NextInSection }}
+        <a href="{{ .RelPermalink }}"><span>← Previous</span>{{ .LinkTitle }}</a>
+      {{ end }}
+      {{ with .PrevInSection }}
+        <a href="{{ .RelPermalink }}"><span>Next →</span>{{ .LinkTitle }}</a>
       {{ end }}
     </nav>
-  </aside>
-  <article class="prose">
-    <h1>{{ .Title }}</h1>
-    {{ .Content }}
   </article>
 </div>
 {{ end }}
