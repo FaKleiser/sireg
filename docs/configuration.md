@@ -1,85 +1,55 @@
 +++
 title = "Configuration"
-description = "Define sources, URL transforms, selection, and status expectations."
+description = "Find every top-level property, what it controls, and where it is used in a run."
 weight = 10
 +++
 
-sireg configuration is JSON so it can be checked into a repository and reused locally and in CI.
+## Properties at a glance
 
-```json
+| Property | Use it to | Default |
+| --- | --- | --- |
+| [`sources`](sources.md) | Load sitemap entries, a URL list, or individual URLs | None |
+| [`transforms`](transforms.md) | Rewrite source URLs for the environment you want to test | None |
+| [`select`](selection.md) | Check every target or sample the set to fit a run budget | All targets |
+| [`checks`](checks.md) | Set the expected final status and control how requests run | Final `2xx`, six concurrent checks |
+| [`redirects`](redirects.md) | Verify old URLs and where they land | None |
+| [`reports`](reports.md) | Choose console, JSON, Markdown, or HTML output | Console |
+| [`name`](#suite-name) | Identify the suite in reports and CI logs | `sireg website regression` |
+| [`cwd`](#path-resolution) | Resolve local inputs and outputs from a directory you choose | Directory containing the config |
+| [`$schema`](#editor-validation) | Enable JSON editor suggestions and validation | None |
+
+## How properties work together
+
+sireg loads `sources`, applies `transforms` in order, and removes duplicate target URLs before `select` chooses which ones to request. It runs explicit `redirects` alongside the selected page checks. Redirect entries use their own URLs and run on every invocation, even when page selection is limited. `reports` controls how the results are written.
+
+## Run a suite
+
+Save the configuration as a JSON file and pass its path explicitly. The filename can be anything.
+
+~~~bash
+npx --yes sireg@1.1.0 check --config sireg.config.json
+~~~
+
+A suite needs at least one source or explicit redirect expectation. A minimal source-based suite fetches every discovered URL and expects a final `2xx` response.
+
+~~~json
 {
-  "$schema": "../sireg.schema.json",
-  "name": "Production sitemap check",
-  "sources": [
-    { "type": "sitemap", "url": "https://example.com/sitemap.xml" }
-  ],
-  "transforms": [
-    { "origin": "http://localhost:3000" }
-  ],
-  "select": {
-    "strategy": "all"
-  },
-  "checks": {
-    "expectedStatus": "2xx",
-    "concurrency": 6,
-    "timeout": 10000,
-    "maxRedirects": 8
-  },
-  "redirects": [
-    {
-      "from": "https://example.com/old-page",
-      "to": "https://example.com/new-page",
-      "expectedStatus": "30x",
-      "finalStatus": "2xx"
-    }
-  ],
-  "reports": [
-    { "type": "console" },
-    { "type": "markdown", "path": "reports/sireg.md" },
-    { "type": "html", "path": "reports/sireg.html" }
-  ]
+  "sources": [{ "type": "url", "url": "https://example.com/" }]
 }
-```
+~~~
 
-## Sources
+## Suite name
 
-Sources define where URLs come from.
+Set `name` to a short label such as `Preview smoke test` so reports identify which suite produced them. A name helps distinguish a pull request sample from a scheduled full run.
 
-- `sitemap`: Loads URLs from a sitemap URL or local sitemap file. Sitemap indexes are followed recursively, including nested sitemap indexes.
-- `file`: Loads newline-delimited URLs from a file. Blank lines and lines starting with `#` are ignored.
-- `url`: Adds a single URL directly.
+## Path resolution
 
-## Transforms
+Local input paths and report output paths are relative to the config file's directory. For example, with `--config ci/sireg.json`, a report at `reports/sireg.html` lands at `ci/reports/sireg.html`. Set `"cwd": ".."` in that config to resolve both inputs and outputs from the repository root. An absolute `cwd` selects that directory directly. When using CLI flags without a config, relative paths start in the shell's working directory.
 
-Transforms rewrite loaded URLs before requests are made. They are applied in order.
+## Editor validation
 
-- `{ "origin": "http://localhost:3000" }` keeps the path and query but swaps protocol, host, and port.
-- `{ "from": "https://example.com", "to": "http://localhost:3000" }` replaces text globally.
-- `{ "pattern": "^https://www\\.", "replacement": "https://preview." }` uses a regular expression.
+Set `$schema` to a local copy of `sireg.schema.json` or the [repository schema](https://raw.githubusercontent.com/FaKleiser/sireg/master/sireg.schema.json). JSON editors can use it for completion and validation. The v1.1.0 bundled schema omits `cwd` and requires sources in a redirect-only suite, even though the CLI supports both cases.
 
-## Selection
+## CLI overrides
 
-Large sites may have too many URLs for every pull request. Selection lets you choose the amount of coverage you want.
-
-- `all`: Test every discovered URL.
-- `first`: Test the first `limit` URLs.
-- `random`: Test `limit` URLs using a stable `seed`.
-- `percent`: Test a percentage of URLs using a stable `seed`.
-
-Use a deterministic seed such as a release number or Git commit SHA when you want repeatable samples.
-
-## Checks
-
-The default check follows redirects and expects the final response to be `2xx`.
-
-Status expectations support exact values (`200`), classes (`2xx`), redirect shorthand (`30x`), ranges (`200-204`), comma-separated strings (`2xx,404`), or arrays (`["2xx", 404]`).
-
-## Redirects
-
-Redirect expectations are for retired URLs that are no longer in the sitemap. A good SEO migration should return a redirect from the old URL and land on a healthy final page.
-
-Each redirect check verifies:
-
-- The first response matches `expectedStatus`, usually `30x`.
-- The final URL matches `to` or `toPattern`, if provided.
-- The final response matches `finalStatus`, usually `2xx`.
+With `check --config`, configure sources, transforms, selection, and checks in the file. Use `--no-progress` to disable interactive progress. Report flags replace the report list for that run, so include `--report console` if you also want a terminal summary.

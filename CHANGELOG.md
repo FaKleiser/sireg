@@ -7,8 +7,15 @@ This file keeps track of all changes to this project. This project follows [sema
 
 ## [UNRELEASED]
 
+### Added
+- Add a step-by-step guide for defining a reusable test suite.
+
 ### Changed
+- Split configuration into topic-specific reference pages and move releasing under Development.
 - Redesign the homepage command builder with full, randomized, and percentage runs, plus editable target and status options.
+
+### Fixed
+- Recognize redirect-only suites and the `cwd` property in the configuration schema.
 
 
 ## v1.1.0 - 2026-11-23

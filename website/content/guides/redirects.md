@@ -25,4 +25,4 @@ npx --yes sireg@1.1.0 check --config sireg.redirects.json
 
 sireg checks the first redirect status, follows the chain, and checks the final URL and status. Run this against a server that applies the redirect rules used in production. A static file server cannot exercise redirects configured only at the CDN.
 
-See the [configuration reference]({{< relref "/reference/configuration#redirects" >}}) for redirect patterns and status rules.
+See the [redirects reference]({{< relref "/reference/redirects" >}}) for redirect patterns and status rules.

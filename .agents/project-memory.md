@@ -44,7 +44,7 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 - Node engine is `>=20` to rely on native `fetch`, `node:test`, ESM, and modern TypeScript output.
 - Package output is compiled to `dist/`; tests compile separately to `dist-test/` and must not be published.
 - `sireg.schema.json` is the user-facing config schema.
-- `docs/configuration.md`, `docs/reports.md`, and `docs/releasing.md` should stay in sync with README examples.
+- The configuration reference in `docs/` should stay in sync with the schema, code defaults, and guide examples.
 - GitHub Actions are included for CI and npm release publishing through npm trusted publishing. Do not publish without explicit user approval.
 - Releases are tag-driven: `npm run release:prepare -- major|minor|patch` finalizes `CHANGELOG.md`, bumps the package version, commits, tags, and pushes; the pushed `vX.Y.Z` tag creates the GitHub Release and publishes the npm package through OIDC trusted publishing.
 - The npm trusted publisher must match `.github/workflows/release.yml` and the package `repository.url`; do not reintroduce `NPM_TOKEN` publishing unless the user explicitly changes the release strategy.
@@ -54,7 +54,7 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 ## Documentation Site
 
 - The capability assessment and README plan live in [plans/use-cases-and-readme.md](plans/use-cases-and-readme.md). Update the plan when CLI capabilities ship or the documented behavior changes.
-- The Hugo site lives in `website/`. Workflow guides live in `website/content/guides/`. Hugo mounts `docs/` under the site reference section so the repository and website share the same reference text.
+- The Hugo site lives in `website/`. Workflow guides live in `website/content/guides/`. Hugo mounts the shared configuration reference from `docs/` and the maintainer pages from `docs/development/`.
 - Preview with `hugo server --source website`. Use Hugo 0.131.0 to match CI. The [Pages workflow](../.github/workflows/pages.yml) builds and verifies pull requests and deploys verified builds from `master`.
 - Enable **GitHub Actions** under the repository's **Settings → Pages → Build and deployment → Source** when publishing the site for the first time. Merge site changes through a pull request. If deployment returns 404, confirm the Pages source is set to GitHub Actions and rerun the Documentation workflow on `master`.
 - The public project path is `/sireg/`. The verification script serves the generated site at that path, runs the built sireg CLI against its sitemap, checks for an HTML report, and validates internal links, anchors, and assets. Keep deployment and preview paths in sync.
