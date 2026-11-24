@@ -10,6 +10,10 @@ disableKinds = ["taxonomy", "term", "RSS"]
   [[module.mounts]]
     source = "../docs"
     target = "content/reference"
+    excludeFiles = ["development/**"]
+  [[module.mounts]]
+    source = "../docs/development"
+    target = "content/development"
 
 [markup.highlight]
   style = "dracula"

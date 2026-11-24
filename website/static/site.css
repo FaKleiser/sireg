@@ -187,6 +187,22 @@ code { font-family: var(--mono); }
 }
 .code-sample .copy:hover { background: #404452; }
 .prose :not(pre) > code { padding: .1em .3em; border-radius: .25rem; background: #e9edf7; overflow-wrap: anywhere; font-size: .88em; }
+.prose table {
+  width: 100%;
+  margin: 1.2rem 0 1.6rem;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: .94rem;
+  line-height: 1.5;
+}
+.prose :is(th, td) {
+  padding: .65rem .8rem;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.prose th { background: #e9edf7; }
 .outline { grid-column: 2; grid-row: 1; position: sticky; top: 1.25rem; border-left: 1px solid var(--line); padding-left: 1rem; font-size: .88rem; }
 .outline p { margin-bottom: .35rem; font-weight: 700; }
 .outline ul { padding: 0; margin: 0; list-style: none; }
@@ -216,6 +232,8 @@ code { font-family: var(--mono); }
   .article-layout { padding-block: 1.5rem 3rem; gap: 1.15rem; }
 }
 @media (max-width: 510px) {
+  .prose table { font-size: .87rem; }
+  .prose :is(th, td) { padding: .4rem .48rem; }
   .cards { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,10 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/FaKeller/sireg/main/sireg.schema.json",
+  "$id": "https://raw.githubusercontent.com/FaKleiser/sireg/master/sireg.schema.json",
   "title": "sireg configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["sources"],
+  "anyOf": [
+    { "required": ["sources"], "properties": { "sources": { "type": "array", "minItems": 1 } } },
+    { "required": ["redirects"], "properties": { "redirects": { "type": "array", "minItems": 1 } } }
+  ],
   "properties": {
     "$schema": {
       "type": "string"
@@ -12,9 +15,11 @@
     "name": {
       "type": "string"
     },
+    "cwd": {
+      "type": "string"
+    },
     "sources": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "oneOf": [
           {

@@ -43,99 +43,30 @@ sireg exits with `0` when every check passes and `1` when any URL or redirect ex
 
 ## Configuration
 
-For CI and teams, commit a config file:
+Commit a JSON config when you want local runs and CI to use the same routes and pass conditions. Save this as `sireg.config.json`, replace the sitemap URL, and start your local site on port 8000.
 
 ```json
 {
-  "$schema": "./sireg.schema.json",
-  "name": "Website regression check",
-  "sources": [
-    {
-      "type": "sitemap",
-      "url": "https://example.com/sitemap.xml"
-    }
-  ],
-  "transforms": [
-    {
-      "origin": "http://localhost:3000"
-    }
-  ],
-  "select": {
-    "strategy": "random",
-    "limit": 250,
-    "seed": "pull-request"
-  },
-  "checks": {
-    "expectedStatus": "2xx",
-    "concurrency": 8,
-    "timeout": 10000
-  },
-  "redirects": [
-    {
-      "from": "https://example.com/old-page",
-      "to": "https://example.com/new-page",
-      "expectedStatus": "30x",
-      "finalStatus": "2xx"
-    }
-  ],
+  "$schema": "https://raw.githubusercontent.com/FaKleiser/sireg/v1.1.0/sireg.schema.json",
+  "name": "Local website check",
+  "sources": [{ "type": "sitemap", "url": "https://example.com/sitemap.xml" }],
+  "transforms": [{ "origin": "http://127.0.0.1:8000" }],
   "reports": [
     { "type": "console" },
-    { "type": "markdown", "path": "reports/sireg.md" },
     { "type": "html", "path": "reports/sireg.html" }
   ]
 }
 ```
 
-Run it:
-
 ```bash
 npx sireg check --config sireg.config.json
 ```
 
-See [configuration](docs/configuration.md) and [reports](docs/reports.md) for the full model.
+Follow [Define a test suite](https://fakleiser.github.io/sireg/guides/define-a-test-suite/) to add sampling and set a pass condition. See the [configuration reference](docs/configuration.md) for every property.
 
 ## GitHub Actions
 
-This example starts a local app, checks the production sitemap against that local app, and uploads Markdown/HTML reports as artifacts.
-
-```yaml
-name: Website regression
-
-on: [pull_request]
-
-jobs:
-  sireg:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npm run start &
-      - run: npx sireg check --config sireg.config.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: sireg-report
-          path: reports/
-```
-
-If your site is too large for every pull request, use a deterministic sample:
-
-```json
-{
-  "select": {
-    "strategy": "random",
-    "limit": 500,
-    "seed": "${{ github.sha }}"
-  }
-}
-```
-
-For nightly builds, switch back to `"strategy": "all"`.
+Build and serve the pull request's site, wait for it to respond, then run sireg and upload its HTML report even if the checks fail. The [Hugo pull request guide](https://fakleiser.github.io/sireg/guides/github-actions/) shows the workflow, including how to seed a smoke test with the commit SHA.
 
 ## CLI
 
@@ -204,7 +135,7 @@ npm test
 
 The project is written in TypeScript, uses native Node.js APIs, and has no runtime dependencies.
 
-See [releasing](docs/releasing.md) for the npm publish flow.
+See [releasing](docs/development/releasing.md) for the npm publish flow.
 
 ## Contributing
 
