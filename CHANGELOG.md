@@ -8,6 +8,7 @@ This file keeps track of all changes to this project. This project follows [sema
 ## [UNRELEASED]
 
 ### Added
+- Add seven copyable CI/CD workflows for static builds, hosted PR previews, and WordPress staging.
 - Add a step-by-step guide for defining a reusable test suite.
 
 ### Changed

@@ -1,7 +1,7 @@
 {{ define "main" }}
 <section class="collection section-index">
   <h1>{{ .Title }}</h1>
-  {{ .Content }}
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
   {{ partial "cards.html" .RegularPages.ByWeight }}
 </section>
 {{ end }}

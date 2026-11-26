@@ -54,7 +54,7 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 ## Documentation Site
 
 - The capability assessment and README plan live in [plans/use-cases-and-readme.md](plans/use-cases-and-readme.md). Update the plan when CLI capabilities ship or the documented behavior changes.
-- The Hugo site lives in `website/`. Workflow guides live in `website/content/guides/`. Hugo mounts the shared configuration reference from `docs/` and the maintainer pages from `docs/development/`.
+- The Hugo site lives in `website/`. General guides live in `website/content/guides/`. CI/CD guides live in `website/content/ci-cd/` and embed their downloadable examples from `website/static/workflows/`. Hugo mounts the shared configuration reference from `docs/` and the maintainer pages from `docs/development/`.
 - Preview with `hugo server --source website`. Use Hugo 0.131.0 to match CI. The [Pages workflow](../.github/workflows/pages.yml) builds and verifies pull requests and deploys verified builds from `master`.
 - Enable **GitHub Actions** under the repository's **Settings → Pages → Build and deployment → Source** when publishing the site for the first time. Merge site changes through a pull request. If deployment returns 404, confirm the Pages source is set to GitHub Actions and rerun the Documentation workflow on `master`.
 - The public project path is `/sireg/`. The verification script serves the generated site at that path, runs the built sireg CLI against its sitemap, checks for an HTML report, and validates internal links, anchors, and assets. Keep deployment and preview paths in sync.

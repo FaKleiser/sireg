@@ -1,0 +1,9 @@
+{{- $name := .Get 0 -}}
+{{- $path := printf "workflows/%s.yml" $name -}}
+{{- $source := printf "static/%s" $path -}}
+{{- if not (fileExists $source) -}}
+  {{- errorf "Missing workflow %q at %s" $source .Position -}}
+{{- end }}
+<p><a href="{{ $path | relURL }}" download>Download {{ $name }}.yml</a></p>
+{{/* The YAML lexer in Hugo 0.131.0 adds trailing spaces to block scalars. */}}
+{{ highlight (readFile $source) "text" "" }}

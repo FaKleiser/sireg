@@ -125,6 +125,7 @@ code { font-family: var(--mono); }
 .docs-nav a:focus-visible { outline-offset: -2px; }
 .nav-group { margin-top: 1.45rem; }
 .nav-group p { padding-inline: .75rem; margin-bottom: .25rem; font-weight: 700; }
+.docs-nav .nav-heading { font-weight: 700; }
 .mobile-nav { display: none; }
 
 .section-label {
