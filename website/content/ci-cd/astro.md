@@ -4,7 +4,7 @@ description = "Install from the npm lockfile and check Astro’s static output i
 weight = 20
 +++
 
-Save the workflow as `.github/workflows/website-regression.yml` and set `PRODUCTION_SITEMAP` to your live sitemap. Commit `package-lock.json` and provide an npm `build` script that runs `astro build`. The workflow serves Astro's default static output, `dist/`. Set `BUILD_DIR` if your project uses a different output directory.
+Save the workflow as `.github/workflows/website-regression.yml` and set the `sitemap` input to your live sitemap. Commit `package-lock.json` and provide an npm `build` script that runs `astro build`. The workflow serves Astro's default static output, `dist/`. Change the artifact upload’s `path` if your project uses a different output directory.
 
 If your Astro config sets a `base` such as `/docs/`, set `SITE_PREFIX` to `/docs` without the trailing slash. Keep `/` at the domain root. If your routes use directory URLs, use their canonical trailing slashes in the sitemap.
 

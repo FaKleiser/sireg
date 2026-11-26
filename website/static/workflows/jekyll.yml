@@ -6,17 +6,15 @@ permissions:
   contents: read
 
 env:
-  PRODUCTION_SITEMAP: https://example.com/sitemap.xml
   SITE_PREFIX: /
 
 jobs:
-  check:
+  build:
+    outputs:
+      site-prefix: ${{ env.SITE_PREFIX }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
@@ -24,34 +22,16 @@ jobs:
       - name: Build the website
         run: |
           bundle exec jekyll build --baseurl "${SITE_PREFIX%/}"
-      - name: Serve the build and check routes
-        env:
-          BUILD_DIR: _site
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          SITE_ORIGIN=http://127.0.0.1:8000
-          serve_dir="$BUILD_DIR"
-          if [[ "$SITE_PREFIX" != "/" ]]; then
-            serve_dir="$(mktemp -d "$RUNNER_TEMP/sireg-site.XXXXXX")"
-            mkdir -p "$(dirname "$serve_dir$SITE_PREFIX")"
-            ln -s "$PWD/$BUILD_DIR" "$serve_dir$SITE_PREFIX"
-          fi
-
-          python3 -m http.server 8000 --bind 127.0.0.1 --directory "$serve_dir" > "$RUNNER_TEMP/site.log" 2>&1 &
-          server=$!
-          trap 'kill "$server" 2>/dev/null || true' EXIT
-          curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused \
-            "$SITE_ORIGIN${SITE_PREFIX%/}/" > /dev/null
-
-          npx --yes sireg@1.1.0 check \
-            --sitemap "$PRODUCTION_SITEMAP" \
-            --origin "$SITE_ORIGIN" \
-            --strategy random --limit 25 --seed "$PR_HEAD_SHA" \
-            --expect-status 200 --max-redirects 0 \
-            --report console --html reports/sireg.html
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: sireg-report
-          path: reports/sireg.html
-          if-no-files-found: ignore
+          name: built-site
+          path: _site
+          if-no-files-found: error
+
+  check:
+    needs: build
+    uses: FaKleiser/sireg/.github/workflows/sireg.yml@master
+    with:
+      sitemap: https://example.com/sitemap.xml
+      site-artifact: built-site
+      site-prefix: ${{ needs.build.outputs.site-prefix }}

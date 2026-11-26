@@ -4,7 +4,7 @@ description = "Build a static export and check the generated Next.js site inside
 weight = 40
 +++
 
-Save the workflow as `.github/workflows/website-regression.yml` and set `PRODUCTION_SITEMAP` to your live sitemap. Commit `package-lock.json` and provide an npm `build` script that runs `next build`. In `next.config.mjs`, enable the static export and directory-style URLs:
+Save the workflow as `.github/workflows/website-regression.yml` and set the `sitemap` input to your live sitemap. Commit `package-lock.json` and provide an npm `build` script that runs `next build`. In `next.config.mjs`, enable the static export and directory-style URLs:
 
 ~~~js
 export default {

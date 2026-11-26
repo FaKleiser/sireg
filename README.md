@@ -66,7 +66,7 @@ Follow [Define a test suite](https://fakleiser.github.io/sireg/guides/define-a-t
 
 ## GitHub Actions
 
-Check a hosted preview or build and serve your site inside Actions. The [CI/CD guides](https://fakleiser.github.io/sireg/ci-cd/) help you choose and provide seven downloadable workflows, including a manual check for WordPress staging.
+Check a hosted preview or build and serve your site inside Actions. The [CI/CD guides](https://fakleiser.github.io/sireg/ci-cd/) help you choose and provide seven downloadable examples that call sireg’s reusable GitHub Actions workflows.
 
 ## CLI
 

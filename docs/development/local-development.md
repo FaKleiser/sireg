@@ -18,12 +18,10 @@ The tests build the distributable CLI in `dist/` and compile the test files to `
 
 ## Preview the documentation
 
-Use the Hugo version pinned in the Pages workflow. Run `hugo server --source website` and open the local URL it prints. Before opening a pull request, build the site and verify the generated routes and internal links.
+Install Hugo Extended at the version pinned in the Pages workflow, plus Python 3. From the repository root, use `hugo server --source website` for live editing. Build the site and run the same route and link checks used in CI with this command.
 
 ~~~bash
-npm run build
-hugo --source website --panicOnWarning --cleanDestinationDir
-sh website/verify.sh
+npm run docs:check
 ~~~
 
-The verifier serves the site under `/sireg/`, the GitHub Pages project path. sireg checks the generated sitemap against that local server.
+The command builds the CLI from this checkout, serves the generated site under the `/sireg/` project path, and runs sireg against its sitemap. It also checks internal links, anchors, and assets, then stops the temporary server.

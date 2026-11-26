@@ -1,0 +1,100 @@
+name: Check website routes with sireg
+
+on:
+  workflow_call:
+    inputs:
+      sitemap:
+        description: HTTP(S) sitemap URL containing the routes to check
+        required: true
+        type: string
+      origin:
+        description: Target origin for a hosted site
+        type: string
+      site-artifact:
+        description: Name of the static build artifact uploaded by an earlier job in this run
+        type: string
+      site-prefix:
+        description: Path where the static build is served, such as /docs
+        type: string
+        default: /
+      limit:
+        description: Maximum routes to sample, or 0 to check the entire sitemap
+        type: number
+        default: 25
+      seed:
+        description: Sampling seed, defaulting to the PR head SHA or run commit SHA
+        type: string
+      report-name:
+        description: Name of the HTML report artifact
+        type: string
+        default: sireg-report
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Download static build
+        if: inputs.site-artifact != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.site-artifact }}
+          path: ${{ runner.temp }}/sireg-site
+      - name: Check routes
+        shell: bash
+        env:
+          SITEMAP: ${{ inputs.sitemap }}
+          SITE_ORIGIN: ${{ inputs.origin }}
+          SITE_ARTIFACT: ${{ inputs.site-artifact }}
+          SITE_PREFIX: ${{ inputs.site-prefix }}
+          LIMIT: ${{ inputs.limit }}
+          SEED: ${{ inputs.seed || github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if [[ -n "$SITE_ORIGIN" && -n "$SITE_ARTIFACT" || -z "$SITE_ORIGIN" && -z "$SITE_ARTIFACT" ]]; then
+            echo 'Set exactly one of origin or site-artifact.' >&2
+            exit 1
+          fi
+
+          if [[ -n "$SITE_ARTIFACT" ]]; then
+            SITE_ORIGIN=http://127.0.0.1:8000
+            build_dir="$RUNNER_TEMP/sireg-site"
+            serve_dir="$build_dir"
+            if [[ "$SITE_PREFIX" != / ]]; then
+              if [[ ! "$SITE_PREFIX" =~ ^(/[a-zA-Z0-9._~-]+)+$ || "$SITE_PREFIX/" == */../* || "$SITE_PREFIX/" == */./* ]]; then
+                echo 'Use / or a site-prefix such as /docs without a trailing slash.' >&2
+                exit 1
+              fi
+              serve_dir="$(mktemp -d "$RUNNER_TEMP/sireg-serve.XXXXXX")"
+              mkdir -p "$(dirname "$serve_dir$SITE_PREFIX")"
+              ln -s "$build_dir" "$serve_dir$SITE_PREFIX"
+            fi
+
+            python3 -m http.server 8000 --bind 127.0.0.1 --directory "$serve_dir" > "$RUNNER_TEMP/sireg-site.log" 2>&1 &
+            server=$!
+            trap 'kill "$server" 2>/dev/null || true' EXIT
+            if ! curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused \
+              "$SITE_ORIGIN${SITE_PREFIX%/}/" > /dev/null; then
+              cat "$RUNNER_TEMP/sireg-site.log"
+              exit 1
+            fi
+          fi
+
+          selection=()
+          if [[ "$LIMIT" != 0 ]]; then
+            selection=(--strategy random --limit "$LIMIT" --seed "$SEED")
+          fi
+          npx --yes sireg@1.1.0 check \
+            --sitemap "$SITEMAP" --origin "$SITE_ORIGIN" "${selection[@]}" \
+            --expect-status 200 --max-redirects 0 \
+            --report console --html reports/sireg.html
+      - uses: actions/upload-artifact@v4
+        if: '!cancelled()'
+        with:
+          name: ${{ inputs.report-name }}
+          path: reports/sireg.html
+          if-no-files-found: ignore
