@@ -5,7 +5,7 @@ weight = 10
 aliases = ["/guides/github-actions/"]
 +++
 
-Save the workflow as `.github/workflows/website-regression.yml` and set `PRODUCTION_SITEMAP` to your live sitemap.
+Save the workflow as `.github/workflows/website-regression.yml` and set the `sitemap` input to your live sitemap.
 
 The workflow builds with Hugo Extended 0.131.0 on an x64 Ubuntu runner and serves `public/`. Match `HUGO_VERSION` to production. Add any theme or asset dependency installation your build needs before **Build the website**.
 

@@ -8,6 +8,8 @@ This file keeps track of all changes to this project. This project follows [sema
 ## [UNRELEASED]
 
 ### Added
+- Add reusable GitHub Actions workflows for static builds, hosted sites, and Netlify and Vercel previews.
+- Add `npm run docs:check` to build and regression-test the docs locally with sireg.
 - Add seven copyable CI/CD workflows for static builds, hosted PR previews, and WordPress staging.
 - Add a step-by-step guide for defining a reusable test suite.
 

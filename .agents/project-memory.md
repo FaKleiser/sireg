@@ -58,6 +58,7 @@ The design intent is modular and properly typed, but not over-engineered. Avoid 
 - Preview with `hugo server --source website`. Use Hugo 0.131.0 to match CI. The [Pages workflow](../.github/workflows/pages.yml) builds and verifies pull requests and deploys verified builds from `master`.
 - Enable **GitHub Actions** under the repository's **Settings → Pages → Build and deployment → Source** when publishing the site for the first time. Merge site changes through a pull request. If deployment returns 404, confirm the Pages source is set to GitHub Actions and rerun the Documentation workflow on `master`.
 - The public project path is `/sireg/`. The verification script serves the generated site at that path, runs the built sireg CLI against its sitemap, checks for an HTML report, and validates internal links, anchors, and assets. Keep deployment and preview paths in sync.
+- Run `npm run docs:check` for a local build and route check. The downloadable CI/CD examples call reusable workflows in `.github/workflows/`. Keep their inputs and the guide text in sync.
 
 ## Verification Expectations
 

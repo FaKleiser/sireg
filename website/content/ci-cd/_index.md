@@ -10,43 +10,25 @@ Choose where to run sireg based on how your site is built and deployed.
 | Your site builds to static files, or you need a required check that can run on fork PRs without provider secrets | Build and serve the site inside GitHub Actions | [Hugo]({{< relref "/ci-cd/hugo" >}}), [Astro]({{< relref "/ci-cd/astro" >}}), [Jekyll]({{< relref "/ci-cd/jekyll" >}}), or [Next.js static export]({{< relref "/ci-cd/nextjs" >}}) |
 | Your host refreshes or deploys a shared WordPress staging site | On staging after the host finishes the refresh | [WordPress staging]({{< relref "/ci-cd/wordpress" >}}) |
 
+## Use the reusable workflows
+
+The examples call workflows from the sireg repository. Copy the example for your platform and set its `sitemap` input. The example references `@master`. You can pin the workflow to a commit SHA for repeatable runs.
+
+- Use `FaKleiser/sireg/.github/workflows/sireg.yml@master` for a site with a known `origin` or for a static build. For static builds, upload the output directory as an artifact from a build job in the same run, then pass its name as `site-artifact`. Set `site-prefix` to the deployment path, such as `/docs`, when the site lives below the domain root.
+- Use `sireg-netlify.yml` or `sireg-vercel.yml` for same-repository PRs when the origin needs to be discovered. The reusable workflow waits for the deployment for the exact head commit and calls the shared route check. See the provider guide for inputs and API credentials.
+
 ## Choose coverage and require the check
 
-Each workflow uses sireg 1.1.0, samples up to 25 routes, and requires each selected route to return a direct HTTP `200`. This catches a preview that sends visitors back to production, even when the production page works. PR workflows seed the sample with the PR head SHA. Remove `--strategy random --limit 25 --seed ...` to check every route. The job prints a console summary and uploads the HTML report when checks fail. Find it under **Artifacts** on the workflow run.
+Each workflow runs sireg 1.1.0 and expects a direct HTTP `200` for each selected route. By default, it samples up to 25 routes using the PR head SHA or the workflow run’s commit SHA. Set `limit: 0` under `with` to check the entire sitemap. The job prints a console summary and uploads an HTML report whenever one is generated, including after failed route checks. Find it under **Artifacts** on the workflow run.
 
-Once the job has run, add its status check to your GitHub branch protection rule or ruleset. For repositories that accept fork PRs, use a runner-local workflow as the required check. Hosted workflows use provider secrets and run only for PRs from branches in the same repository.
+Once the job has run, add its status check to your GitHub branch protection rule or ruleset. Use a runner-local workflow as the required check for repositories that accept fork PRs. Provider API credentials are available to the preview discovery job for PRs from the same repository.
 
 ## Run a committed test suite
 
-Start with the [test suite guide]({{< relref "/guides/define-a-test-suite" >}}). In the config, set `"expectedStatus": 200` and `"maxRedirects": 0` under `checks` to keep the same page requirements. Include both console and HTML reports and match the artifact path to the generated report. Put the coverage you want under `select`, or omit it for a full run.
-
-For a fixed target, set the origin in the config and replace the workflow's sireg command with:
+Use a custom job for a [committed test suite]({{< relref "/guides/define-a-test-suite" >}}) with explicit redirects, route selection rules, or multiple sources. Check out the repository, set up Node.js, and run the suite against the target configured in the file.
 
 ~~~bash
-npx --yes sireg@1.1.0 check --config sireg.config.json
+npx --yes sireg@1.1.0 check --config sireg.config.json --report console --html reports/sireg.html
 ~~~
 
-For hosted previews, add an `actions/checkout@v4` step so the job has the committed config. In **Check preview routes**, replace the sireg command with the following block. It assumes the config has one origin transform and uses the workflow's `SITE_ORIGIN` and `PR_HEAD_SHA`. The temporary config lives beside the original so relative sources, `cwd`, and report paths resolve in the same place.
-
-~~~bash
-config=ci/sireg.config.json
-preview_config="$(mktemp "$(dirname "$config")/.sireg-preview.XXXXXX.json")"
-trap 'rm -f "$preview_config"' EXIT
-
-node --input-type=commonjs - "$config" "$preview_config" <<'NODE'
-const { readFileSync, writeFileSync } = require('node:fs');
-const [source, target] = process.argv.slice(2);
-const config = JSON.parse(readFileSync(source, 'utf8'));
-const transform = config.transforms?.find((entry) => 'origin' in entry);
-if (!transform) throw new Error('Add an origin transform to the test suite.');
-transform.origin = process.env.SITE_ORIGIN;
-if (config.select?.strategy === 'random') {
-  config.select.seed = process.env.PR_HEAD_SHA;
-}
-writeFileSync(target, JSON.stringify(config, null, 2));
-NODE
-
-npx --yes sireg@1.1.0 check --config "$preview_config"
-~~~
-
-Explicit [redirect expectations]({{< relref "/reference/redirects" >}}) use their own URLs. Update their `from` and any `to` or `toPattern` values in the temporary config to match the preview. Set a positive `maxRedirects` on each redirect expectation that needs to follow a hop. For a fixed suite, put the target URLs directly in the committed config. Add checkout to the WordPress job if you use a committed suite there.
+Use the [origin transform]({{< relref "/reference/transforms" >}}) to replay sitemap routes against that target. Explicit [redirect expectations]({{< relref "/reference/redirects" >}}) use their own URLs, so configure their `from` and destination values for the environment being tested.

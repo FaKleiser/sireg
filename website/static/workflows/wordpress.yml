@@ -5,28 +5,10 @@ on: [workflow_dispatch]
 permissions:
   contents: read
 
-env:
-  STAGING_SITEMAP: https://staging.example.com/wp-sitemap.xml
-  STAGING_ORIGIN: https://staging.example.com
-
 jobs:
   check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Check staging routes
-        run: |
-          npx --yes sireg@1.1.0 check \
-            --sitemap "$STAGING_SITEMAP" \
-            --origin "$STAGING_ORIGIN" \
-            --strategy random --limit 25 --seed "wordpress-staging" \
-            --expect-status 200 --max-redirects 0 \
-            --report console --html reports/sireg.html
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: sireg-report
-          path: reports/sireg.html
-          if-no-files-found: ignore
+    uses: FaKleiser/sireg/.github/workflows/sireg.yml@master
+    with:
+      sitemap: https://staging.example.com/wp-sitemap.xml
+      origin: https://staging.example.com
+      seed: wordpress-staging

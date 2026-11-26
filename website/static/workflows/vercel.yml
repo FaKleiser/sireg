@@ -5,139 +5,16 @@ on: [pull_request]
 permissions:
   contents: read
 
-env:
-  PRODUCTION_SITEMAP: https://example.com/sitemap.xml
-  PREVIEW_PROBE_PATH: /
-  VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
-  VERCEL_TEAM_ID: ${{ vars.VERCEL_TEAM_ID }}
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   check:
-    if: github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Wait for the deployment for this commit
-        id: preview
-        env:
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          node --input-type=commonjs <<'NODE'
-          const { appendFileSync } = require('node:fs');
-          const { performance } = require('node:perf_hooks');
-          const { setTimeout: sleep } = require('node:timers/promises');
-
-          const { PR_HEAD_SHA, PREVIEW_PROBE_PATH, GITHUB_OUTPUT } = process.env;
-          const { VERCEL_PROJECT_ID, VERCEL_TEAM_ID, VERCEL_TOKEN } = process.env;
-          if (!VERCEL_PROJECT_ID || !VERCEL_TOKEN) {
-            throw new Error('Set the VERCEL_PROJECT_ID variable and VERCEL_TOKEN secret.');
-          }
-          const api = new URL('https://api.vercel.com/v7/deployments');
-          api.searchParams.set('projectId', VERCEL_PROJECT_ID);
-          api.searchParams.set('limit', '50');
-          if (VERCEL_TEAM_ID) api.searchParams.set('teamId', VERCEL_TEAM_ID);
-
-          const deadline = performance.now() + 300_000;
-
-          async function fetchBeforeDeadline(url, headers) {
-            const remaining = deadline - performance.now();
-            if (remaining < 1) return;
-            try {
-              return await fetch(url, {
-                headers,
-                redirect: 'manual',
-                signal: AbortSignal.timeout(Math.min(10_000, Math.floor(remaining))),
-              });
-            } catch (error) {
-              console.warn(`Request to ${url.hostname} failed (${error.message}); retrying.`);
-            }
-          }
-
-          async function findDeployment() {
-            api.searchParams.delete('until');
-            while (performance.now() < deadline) {
-              const response = await fetchBeforeDeadline(api, { Authorization: `Bearer ${VERCEL_TOKEN}` });
-              if (!response) return;
-              if (!response.ok) {
-                await response.body?.cancel();
-                if (response.status === 429 || response.status >= 500) {
-                  console.warn(`Vercel API returned HTTP ${response.status}; retrying.`);
-                  return;
-                }
-                throw new Error(`Vercel API returned HTTP ${response.status}. Check the configured IDs and API token.`);
-              }
-              const { deployments, pagination } = await response.json();
-              const match = deployments.find((deploy) =>
-                deploy.projectId === VERCEL_PROJECT_ID &&
-                deploy.target == null && !deploy.customEnvironment &&
-                deploy.meta?.githubCommitSha === PR_HEAD_SHA
-              );
-              if (match || !pagination.next) return match;
-              api.searchParams.set('until', pagination.next);
-            }
-          }
-
-          async function waitForPreview() {
-            while (performance.now() < deadline) {
-              const deployment = await findDeployment();
-              if (deployment) {
-                const state = deployment.readyState;
-                if (['ERROR', 'CANCELED', 'DELETED', 'BLOCKED'].includes(state)) {
-                  throw new Error(`Vercel deployment for ${PR_HEAD_SHA} failed (${state}).`);
-                }
-                if (state === 'READY' && deployment.url) {
-                  const preview = new URL(`https://${deployment.url}`);
-                  const probe = new URL(PREVIEW_PROBE_PATH, preview);
-                  if (preview.protocol !== 'https:' || preview.href !== `${preview.origin}/` ||
-                      probe.origin !== preview.origin) {
-                    throw new Error('Expected an HTTPS deployment origin and a probe path on that origin.');
-                  }
-                  const response = await fetchBeforeDeadline(probe);
-                  await response?.body?.cancel();
-                  if (response?.status === 200 && performance.now() < deadline) {
-                    appendFileSync(GITHUB_OUTPUT, `origin=${preview.origin}\n`);
-                    return;
-                  }
-                  if (response?.status >= 300 && response.status < 400) {
-                    throw new Error(`Preview probe redirected (HTTP ${response.status}). Use a canonical preview path.`);
-                  }
-                  if ([401, 403].includes(response?.status)) {
-                    throw new Error(`Preview probe returned HTTP ${response.status}. Check deployment protection.`);
-                  }
-                  if (response) console.warn(`Preview probe returned HTTP ${response.status}; retrying.`);
-                }
-              }
-              await sleep(Math.max(0, Math.min(5_000, deadline - performance.now())));
-            }
-            throw new Error(`Timed out after 5 minutes waiting for a reachable Vercel preview for ${PR_HEAD_SHA}.`);
-          }
-
-          waitForPreview().catch((error) => {
-            console.error(error.message);
-            process.exitCode = 1;
-          });
-          NODE
-      - name: Check preview routes
-        env:
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          SITE_ORIGIN: ${{ steps.preview.outputs.origin }}
-        run: |
-          npx --yes sireg@1.1.0 check \
-            --sitemap "$PRODUCTION_SITEMAP" \
-            --origin "$SITE_ORIGIN" \
-            --strategy random --limit 25 --seed "$PR_HEAD_SHA" \
-            --expect-status 200 --max-redirects 0 \
-            --report console --html reports/sireg.html
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: sireg-report
-          path: reports/sireg.html
-          if-no-files-found: ignore
+    uses: FaKleiser/sireg/.github/workflows/sireg-vercel.yml@master
+    with:
+      sitemap: https://example.com/sitemap.xml
+      project-id: ${{ vars.VERCEL_PROJECT_ID }}
+      team-id: ${{ vars.VERCEL_TEAM_ID }}
+    secrets:
+      token: ${{ secrets.VERCEL_TOKEN }}

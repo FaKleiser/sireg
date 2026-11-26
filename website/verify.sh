@@ -15,17 +15,32 @@ trap 'exit 1' HUP INT TERM
 
 # Keep the GitHub Pages project path in the local requests.
 ln -s "$PWD/website/public" "$preview/sireg"
-python3 -m http.server 8765 --bind 127.0.0.1 --directory "$preview" > "$preview/server.log" 2>&1 &
+python3 - "$preview" > "$preview/port" 2> "$preview/server.log" <<'PYTHON' &
+import sys
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+
+handler = partial(SimpleHTTPRequestHandler, directory=sys.argv[1])
+with ThreadingHTTPServer(("127.0.0.1", 0), handler) as server:
+    print(server.server_port, flush=True)
+    server.serve_forever()
+PYTHON
 server=$!
-if ! curl --fail --silent --show-error --retry 5 --retry-delay 1 --retry-connrefused \
-  http://127.0.0.1:8765/sireg/sitemap.xml > /dev/null; then
+for _ in 1 2 3 4 5; do
+  if [ -s "$preview/port" ] || ! kill -0 "$server" 2>/dev/null; then
+    break
+  fi
+  sleep 1
+done
+if [ ! -s "$preview/port" ] || ! kill -0 "$server" 2>/dev/null; then
   cat "$preview/server.log"
   exit 1
 fi
+origin="http://127.0.0.1:$(cat "$preview/port")"
 node dist/cli.js check \
-  --sitemap http://127.0.0.1:8765/sireg/sitemap.xml \
-  --origin http://127.0.0.1:8765 \
-  --expect-status 200 \
+  --sitemap "$origin/sireg/sitemap.xml" \
+  --origin "$origin" \
+  --expect-status 200 --max-redirects 0 \
   --report console --html "$preview/report.html"
 
 test -s "$preview/report.html"
