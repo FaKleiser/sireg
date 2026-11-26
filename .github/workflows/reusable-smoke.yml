@@ -1,0 +1,63 @@
+name: Verify reusable sireg workflows
+
+on:
+  push:
+    branches: [test/reusable-sireg-workflows]
+
+permissions:
+  contents: read
+
+env:
+  SITE_PREFIX: /sireg
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      site-prefix: ${{ env.SITE_PREFIX }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build docs
+        run: |
+          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.131.0/hugo_extended_0.131.0_linux-amd64.tar.gz |
+            tar -xz -C "$RUNNER_TEMP" hugo
+          "$RUNNER_TEMP/hugo" --source website --panicOnWarning
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-site
+          path: website/public
+          if-no-files-found: error
+
+  static:
+    needs: build
+    uses: FaKleiser/sireg/.github/workflows/sireg.yml@docs/reusable-sireg-checks
+    with:
+      sitemap: https://fakleiser.github.io/sireg/sitemap.xml
+      site-artifact: built-site
+      site-prefix: ${{ needs.build.outputs.site-prefix }}
+      limit: 0
+      report-name: static-report
+
+  hosted:
+    uses: FaKleiser/sireg/.github/workflows/sireg.yml@docs/reusable-sireg-checks
+    with:
+      sitemap: https://fakleiser.github.io/sireg/sitemap.xml
+      origin: https://fakleiser.github.io
+      limit: 2
+      report-name: hosted-report
+
+  netlify:
+    uses: FaKleiser/sireg/.github/workflows/sireg-netlify.yml@docs/reusable-sireg-checks
+    with:
+      sitemap: https://fakleiser.github.io/sireg/sitemap.xml
+      site-id: fixture
+    secrets:
+      token: fixture
+
+  vercel:
+    uses: FaKleiser/sireg/.github/workflows/sireg-vercel.yml@docs/reusable-sireg-checks
+    with:
+      sitemap: https://fakleiser.github.io/sireg/sitemap.xml
+      project-id: fixture
+    secrets:
+      token: fixture
