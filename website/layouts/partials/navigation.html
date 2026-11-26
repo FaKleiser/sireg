@@ -1,20 +1,17 @@
+{{- $current := .page -}}
 <nav class="docs-nav" aria-label="Documentation">
-  <a href="{{ .Site.Home.RelPermalink }}"{{ if .IsHome }} aria-current="page"{{ end }}>Home</a>
-  {{ $current := . }}
+  <a href="{{ $current.Site.Home.RelPermalink }}"{{ if $current.IsHome }} aria-current="page"{{ end }}>Home</a>
   {{ range slice "/guides" "/ci-cd" "/reference" "/development" }}
     {{ with $current.Site.GetPage . }}
-      <div class="nav-group">
-        {{ if eq .Section "ci-cd" }}
-          <a class="nav-heading" href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .Title }}</a>
-        {{ else }}
-          <p>{{ .Title }}</p>
-        {{ end }}
+      <details class="nav-group" name="{{ $.group }}"{{ if eq .Section $current.Section }} open{{ end }}>
+        <summary>{{ .Title }}</summary>
         <ul>
+          <li><a href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>Overview</a></li>
           {{ range .RegularPages.ByWeight }}
             <li><a href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a></li>
           {{ end }}
         </ul>
-      </div>
+      </details>
     {{ end }}
   {{ end }}
 </nav>

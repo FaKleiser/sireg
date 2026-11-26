@@ -28,8 +28,40 @@ jobs:
         run: |
           npm ci
           npm run build
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            export HUGO_BASEURL=http://localhost:8000/sireg/
+          fi
           "$RUNNER_TEMP/hugo" --source website --panicOnWarning --cleanDestinationDir
           sh website/verify.sh
+      - name: Package the verified PR preview
+        if: github.event_name == 'pull_request'
+        run: |
+          mkdir -p "$RUNNER_TEMP/docs-preview"
+          cp -R website/public "$RUNNER_TEMP/docs-preview/sireg"
+      - name: Upload the PR preview
+        id: preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-preview
+          path: ${{ runner.temp }}/docs-preview/
+          if-no-files-found: error
+      - name: Link the preview in the run summary
+        if: github.event_name == 'pull_request'
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.artifact-url }}
+        run: |
+          {
+            echo '## Documentation preview'
+            printf '[Download docs-preview.zip](%s).\n\n' "$PREVIEW_URL"
+            echo 'Extract the archive and run this from the directory containing the extracted sireg folder:'
+            echo
+            echo '```sh'
+            echo 'python3 -m http.server 8000 --bind 127.0.0.1'
+            echo '```'
+            echo
+            echo 'Open [http://localhost:8000/sireg/](http://localhost:8000/sireg/).'
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         with:

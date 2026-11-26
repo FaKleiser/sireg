@@ -24,10 +24,10 @@
     </div>
   </header>
   <div class="shell site-layout">
-    <div class="desktop-nav">{{ partial "navigation.html" . }}</div>
+    <div class="desktop-nav">{{ partial "navigation.html" (dict "page" . "group" "desktop-docs") }}</div>
     <details class="mobile-nav">
       <summary>Browse documentation</summary>
-      {{ partial "navigation.html" . }}
+      {{ partial "navigation.html" (dict "page" . "group" "compact-docs") }}
     </details>
     <main id="main" tabindex="-1">{{ block "main" . }}{{ end }}</main>
   </div>
