@@ -1,0 +1,3 @@
+{{- $labels := dict "bash" "Shell" "js" "JavaScript" "json" "JSON" "text" "Plain text" "yaml" "YAML" -}}
+{{- $language := .Type | default "text" -}}
+{{- partial "code-sample.html" (dict "label" (index $labels $language | default $language) "highlighted" (highlight .Inner $language .Options)) -}}

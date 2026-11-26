@@ -12,6 +12,7 @@ This file keeps track of all changes to this project. This project follows [sema
 - Add a step-by-step guide for defining a reusable test suite.
 
 ### Changed
+- Polish the documentation layout and add syntax highlighting to downloadable YAML workflow examples.
 - Replace the homepage sitemap preview with a command-only builder and a three-step workflow for local checks, saved suites, and CI.
 - Split configuration into topic-specific reference pages and move releasing under Development.
 - Redesign the homepage command builder with full, randomized, and percentage runs, plus editable target and status options.

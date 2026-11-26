@@ -35,12 +35,7 @@ if (navigator.clipboard?.writeText) {
   const terminal = document.querySelector('.terminal');
   if (terminal) addCopyButton(terminal.querySelector('[data-copy]'), terminal.querySelector('code'));
 
-  for (const code of document.querySelectorAll('.prose pre > code')) {
-    const pre = code.parentElement;
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-sample';
-    pre.before(wrapper);
-    wrapper.append(pre);
-    addCopyButton(wrapper, code);
+  for (const sample of document.querySelectorAll('.code-sample')) {
+    addCopyButton(sample.querySelector('.code-toolbar'), sample.querySelector('pre > code'));
   }
 }

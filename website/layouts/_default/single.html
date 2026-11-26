@@ -1,5 +1,10 @@
 {{ define "main" }}
 <div class="article-layout{{ if not .Fragments.Identifiers }} no-outline{{ end }}">
+  <header class="article-header">
+    <p class="section-label">{{ .CurrentSection.Title }}</p>
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p class="lede">{{ . }}</p>{{ end }}
+  </header>
   {{ if .Fragments.Identifiers }}
     <aside class="outline">
       <p>On this page</p>
@@ -7,11 +12,6 @@
     </aside>
   {{ end }}
   <article class="prose">
-    <header class="article-header">
-      <p class="section-label">{{ .CurrentSection.Title }}</p>
-      <h1>{{ .Title }}</h1>
-      {{ with .Description }}<p class="lede">{{ . }}</p>{{ end }}
-    </header>
     {{ .Content }}
     <nav class="article-pagination" aria-label="More in {{ .CurrentSection.Title }}">
       {{ with .NextInSection }}
