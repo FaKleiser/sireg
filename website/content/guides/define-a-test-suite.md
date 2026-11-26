@@ -43,6 +43,6 @@ This suite requires an exact final `200`. Use `"2xx"` if other success statuses 
 npx --yes sireg@1.1.0 check --config sireg.config.json
 ~~~
 
-The console gives you the result immediately. Open `reports/sireg.html` beside the config to inspect the target URLs, statuses, and redirect chains. Add the same command after your build and server readiness steps in [GitHub Actions]({{< relref "/guides/github-actions" >}}). A failed check returns exit code `1`, which fails the job.
+The console gives you the result immediately. Open `reports/sireg.html` beside the config to inspect the target URLs, statuses, and redirect chains. Add the same command after your build and server readiness steps in [GitHub Actions]({{< relref "/ci-cd" >}}). A failed check returns exit code `1`, which fails the job.
 
 Use the [configuration reference]({{< relref "/reference/configuration" >}}) when you need to change how paths resolve, tune request settings, or choose another report format.

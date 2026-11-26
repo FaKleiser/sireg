@@ -1,0 +1,141 @@
+name: Netlify preview regression
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+env:
+  PRODUCTION_SITEMAP: https://example.com/sitemap.xml
+  PREVIEW_PROBE_PATH: /
+  NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Wait for the deployment for this commit
+        id: preview
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          node --input-type=commonjs <<'NODE'
+          const { appendFileSync } = require('node:fs');
+          const { performance } = require('node:perf_hooks');
+          const { setTimeout: sleep } = require('node:timers/promises');
+
+          const { PR_HEAD_SHA, PREVIEW_PROBE_PATH, GITHUB_OUTPUT } = process.env;
+          const { NETLIFY_SITE_ID, NETLIFY_TOKEN, PR_NUMBER } = process.env;
+          if (!NETLIFY_SITE_ID || !NETLIFY_TOKEN) {
+            throw new Error('Set the NETLIFY_SITE_ID variable and NETLIFY_TOKEN secret.');
+          }
+          const api = new URL(`https://api.netlify.com/api/v1/sites/${encodeURIComponent(NETLIFY_SITE_ID)}/deploys`);
+          const pageSize = 50;
+          api.searchParams.set('per_page', pageSize);
+
+          const deadline = performance.now() + 300_000;
+
+          async function fetchBeforeDeadline(url, headers) {
+            const remaining = deadline - performance.now();
+            if (remaining < 1) return;
+            try {
+              return await fetch(url, {
+                headers,
+                redirect: 'manual',
+                signal: AbortSignal.timeout(Math.min(10_000, Math.floor(remaining))),
+              });
+            } catch (error) {
+              console.warn(`Request to ${url.hostname} failed (${error.message}); retrying.`);
+            }
+          }
+
+          async function findDeployment() {
+            for (let page = 1; performance.now() < deadline; page++) {
+              api.searchParams.set('page', page);
+              const response = await fetchBeforeDeadline(api, { Authorization: `Bearer ${NETLIFY_TOKEN}` });
+              if (!response) return;
+              if (!response.ok) {
+                await response.body?.cancel();
+                if (response.status === 429 || response.status >= 500) {
+                  console.warn(`Netlify API returned HTTP ${response.status}; retrying.`);
+                  return;
+                }
+                throw new Error(`Netlify API returned HTTP ${response.status}. Check the configured IDs and API token.`);
+              }
+              const deployments = await response.json();
+              const match = deployments.find((deploy) =>
+                deploy.context === 'deploy-preview' &&
+                deploy.review_id === Number(PR_NUMBER) &&
+                deploy.commit_ref === PR_HEAD_SHA
+              );
+              if (match || deployments.length < pageSize) return match;
+            }
+          }
+
+          async function waitForPreview() {
+            while (performance.now() < deadline) {
+              const deployment = await findDeployment();
+              if (deployment) {
+                const state = deployment.state;
+                if (['error', 'failed', 'canceled', 'cancelled'].includes(state)) {
+                  throw new Error(`Netlify deployment for ${PR_HEAD_SHA} failed (${state}).`);
+                }
+                if (state === 'ready' && deployment.deploy_ssl_url) {
+                  const preview = new URL(deployment.deploy_ssl_url);
+                  const probe = new URL(PREVIEW_PROBE_PATH, preview);
+                  if (preview.protocol !== 'https:' || preview.href !== `${preview.origin}/` ||
+                      probe.origin !== preview.origin) {
+                    throw new Error('Expected an HTTPS deployment origin and a probe path on that origin.');
+                  }
+                  const response = await fetchBeforeDeadline(probe);
+                  await response?.body?.cancel();
+                  if (response?.status === 200 && performance.now() < deadline) {
+                    appendFileSync(GITHUB_OUTPUT, `origin=${preview.origin}\n`);
+                    return;
+                  }
+                  if (response?.status >= 300 && response.status < 400) {
+                    throw new Error(`Preview probe redirected (HTTP ${response.status}). Use a canonical preview path.`);
+                  }
+                  if ([401, 403].includes(response?.status)) {
+                    throw new Error(`Preview probe returned HTTP ${response.status}. Check deployment protection.`);
+                  }
+                  if (response) console.warn(`Preview probe returned HTTP ${response.status}; retrying.`);
+                }
+              }
+              await sleep(Math.max(0, Math.min(5_000, deadline - performance.now())));
+            }
+            throw new Error(`Timed out after 5 minutes waiting for a reachable Netlify preview for ${PR_HEAD_SHA}.`);
+          }
+
+          waitForPreview().catch((error) => {
+            console.error(error.message);
+            process.exitCode = 1;
+          });
+          NODE
+      - name: Check preview routes
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          SITE_ORIGIN: ${{ steps.preview.outputs.origin }}
+        run: |
+          npx --yes sireg@1.1.0 check \
+            --sitemap "$PRODUCTION_SITEMAP" \
+            --origin "$SITE_ORIGIN" \
+            --strategy random --limit 25 --seed "$PR_HEAD_SHA" \
+            --expect-status 200 --max-redirects 0 \
+            --report console --html reports/sireg.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sireg-report
+          path: reports/sireg.html
+          if-no-files-found: ignore

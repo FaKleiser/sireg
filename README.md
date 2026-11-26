@@ -66,7 +66,7 @@ Follow [Define a test suite](https://fakleiser.github.io/sireg/guides/define-a-t
 
 ## GitHub Actions
 
-Build and serve the pull request's site, wait for it to respond, then run sireg and upload its HTML report even if the checks fail. The [Hugo pull request guide](https://fakleiser.github.io/sireg/guides/github-actions/) shows the workflow, including how to seed a smoke test with the commit SHA.
+Check a hosted preview or build and serve your site inside Actions. The [CI/CD guides](https://fakleiser.github.io/sireg/ci-cd/) help you choose and provide seven downloadable workflows, including a manual check for WordPress staging.
 
 ## CLI
 

@@ -1,10 +1,14 @@
 <nav class="docs-nav" aria-label="Documentation">
   <a href="{{ .Site.Home.RelPermalink }}"{{ if .IsHome }} aria-current="page"{{ end }}>Home</a>
   {{ $current := . }}
-  {{ range slice "/guides" "/reference" "/development" }}
+  {{ range slice "/guides" "/ci-cd" "/reference" "/development" }}
     {{ with $current.Site.GetPage . }}
       <div class="nav-group">
-        <p>{{ .Title }}</p>
+        {{ if eq .Section "ci-cd" }}
+          <a class="nav-heading" href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .Title }}</a>
+        {{ else }}
+          <p>{{ .Title }}</p>
+        {{ end }}
         <ul>
           {{ range .RegularPages.ByWeight }}
             <li><a href="{{ .RelPermalink }}"{{ if eq . $current }} aria-current="page"{{ end }}>{{ .LinkTitle }}</a></li>
