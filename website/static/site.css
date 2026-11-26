@@ -109,9 +109,8 @@ code { font-family: var(--mono); }
 }
 .desktop-nav { border-right: 1px solid var(--line); padding: 2rem 1.1rem 2rem 0; }
 .docs-nav { font-size: .92rem; }
-.docs-nav ul { padding: 0; margin: 0; list-style: none; }
-.docs-nav a {
-  display: block;
+.docs-nav ul { padding: 0 0 0 .5rem; margin: .2rem 0 .45rem; list-style: none; }
+.docs-nav :is(a, summary) {
   padding: .32rem .7rem;
   border: 1px solid transparent;
   border-radius: .48rem;
@@ -119,17 +118,13 @@ code { font-family: var(--mono); }
   font-weight: 550;
   text-decoration: none;
 }
-.docs-nav a:hover { background: #eceff6; color: var(--ink); }
+.docs-nav :is(a, summary):hover { background: #eceff6; color: var(--ink); }
 .docs-nav a[aria-current] { background: #e9eefc; border-color: #d6e0fa; color: var(--accent); font-weight: 700; }
-.docs-nav a:focus-visible { outline-offset: -2px; }
-.nav-group { margin-top: 1.45rem; }
-.nav-group p, .docs-nav .nav-heading {
-  padding-inline: .75rem;
-  margin-bottom: .25rem;
-  color: var(--ink);
-  font-size: .83rem;
-  font-weight: 700;
-}
+.docs-nav :is(a, summary):focus-visible { outline-offset: -2px; }
+.docs-nav a { display: block; }
+.docs-nav summary { color: var(--ink); font-weight: 700; cursor: pointer; }
+.docs-nav summary::marker { color: var(--muted); }
+.nav-group { margin-top: .25rem; }
 .mobile-nav { display: none; }
 
 .section-label {
@@ -278,15 +273,14 @@ code { font-family: var(--mono); }
   }
   .article-layout:not(.no-outline) .prose { grid-row: 3; }
 }
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-height: 40rem) {
   .shell { width: calc(100% - 2rem); }
   .header-inner, .footer { min-height: 3.65rem; }
   .site-layout { display: block; }
   .desktop-nav { display: none; }
   .mobile-nav { display: block; margin-top: .8rem; border: 1px solid var(--line); border-radius: .7rem; background: var(--surface); }
-  .mobile-nav summary { padding: .55rem .85rem; cursor: pointer; font-weight: 650; }
+  .mobile-nav > summary { padding: .55rem .85rem; cursor: pointer; font-weight: 650; }
   .mobile-nav .docs-nav { padding: 0 .55rem .55rem; }
-  .mobile-nav .nav-group { margin-top: .65rem; }
   .article-layout { padding-block: 1.75rem 3rem; row-gap: 1.15rem; }
   .section-index { padding-top: 1.75rem; }
 }
