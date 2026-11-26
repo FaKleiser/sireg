@@ -8,16 +8,12 @@
 <section class="command-builder" aria-labelledby="builder-title">
   <div class="builder-controls" hidden>
     <h2 id="builder-title">Build your command</h2>
-    <form class="sitemap-form">
-      <label for="sitemap-source">Sitemap or domain</label>
-      <div class="sitemap-input">
-        <input id="sitemap-source" name="source" type="text" placeholder="example.com" required
-          autocapitalize="none" spellcheck="false" inputmode="url" aria-describedby="sitemap-hint">
-        <button class="button" type="submit">Preview sitemap</button>
-      </div>
-      <p id="sitemap-hint" class="field-hint">A domain uses <code>/sitemap.xml</code>. Preview availability depends on the site's CORS policy.</p>
-      <p class="sitemap-status" role="status" aria-atomic="true"></p>
-    </form>
+    <div class="sitemap-source">
+      <label for="sitemap-source">Sitemap URL or domain</label>
+      <input id="sitemap-source" name="source" type="text" placeholder="example.com"
+        autocapitalize="none" spellcheck="false" inputmode="url" aria-describedby="sitemap-hint">
+      <p id="sitemap-hint" class="field-hint">Enter a full sitemap URL or a domain to use <code>/sitemap.xml</code>.</p>
+    </div>
 
     <fieldset class="coverage">
       <legend>Coverage</legend>
@@ -71,9 +67,31 @@
   </div>
 </section>
 
-<section class="collection">
-  <h2>Guides</h2>
-  {{ partial "cards.html" (.Site.GetPage "/guides").RegularPages.ByWeight }}
+<section class="collection" aria-labelledby="workflow-title">
+  <h2 id="workflow-title">From your terminal to CI</h2>
+  <ol class="workflow-steps" role="list">
+    <li>
+      <a class="card" href="{{ "guides/local/" | relURL }}">
+        <strong>Try the CLI locally</strong>
+        <p>Serve your local build and run the command above. Start with a small random sample to confirm you’re checking the right site.</p>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </li>
+    <li>
+      <a class="card" href="{{ "guides/define-a-test-suite/" | relURL }}">
+        <strong>Define a test suite</strong>
+        <p>Decide which routes must pass every run and where sampling is enough. Commit the config and choose a report for investigating failures.</p>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </li>
+    <li>
+      <a class="card" href="{{ "guides/github-actions/" | relURL }}">
+        <strong>Run the suite before merge</strong>
+        <p>Build and serve the pull request version in CI, run your saved suite, and make the job a required check.</p>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </li>
+  </ol>
 </section>
-<script type="module" src="{{ "sitemap-demo.js" | relURL }}"></script>
+<script type="module" src="{{ "command-builder.js" | relURL }}"></script>
 {{ end }}

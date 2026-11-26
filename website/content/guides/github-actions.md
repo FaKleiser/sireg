@@ -53,3 +53,6 @@ jobs:
 Each PR run samples up to 25 routes and fails if any selected route fails its expected status. To check every route, remove the three sampling flags. To guarantee a few routes from each section, add a separate [curated route check]({{< relref "smoke-tests#cover-critical-sections-every-time" >}}).
 
 The example assumes the generated site is served at the origin root. If production uses a path prefix such as `/docs/`, serve the build at that same prefix. To require the check before merge, add it to your branch protection or ruleset.
+
+
+If you already [defined a test suite]({{< relref "define-a-test-suite" >}}), replace the `npx` invocation in the workflow with `npx --yes sireg@1.1.0 check --config sireg.config.json`. Match the artifact upload path to the HTML report path in that config.
