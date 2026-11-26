@@ -30,5 +30,3 @@ Use [a smoke test]({{< relref "smoke-tests" >}}) to check fewer URLs while itera
 ## Run with npx
 
 Node.js 20 or newer with npm provides `npx`. `npx sireg check` runs the published package without a global install. Use `npx --yes sireg@1.1.0 check` to pin the release and skip the install prompt.
-
-The homepage preview runs in your browser and can read only sitemaps that allow its origin through CORS. It previews up to six same-origin child files for an index. The CLI fetches sitemaps from Node.js and does not have the browser's CORS restriction.
